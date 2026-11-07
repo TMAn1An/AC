@@ -1,0 +1,26 @@
+// Captures phone screens from the prototype for marketing material. Run with the prototype served on PORT (default 8080).
+import { chromium } from 'playwright';
+const PORT = process.env.PORT || 8080, base = `http://localhost:${PORT}/`;
+const browser = await chromium.launch();
+const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
+const wait = (p, ms) => p.waitForTimeout(ms);
+const shot = async (p, name) => { await p.screenshot({ path: `prototype/video/shots/${name}.png` }); console.log('shot', name); };
+const c = await ctx.newPage(); await c.goto(base + 'customer/index.html'); await wait(c, 1200);
+await shot(c, 'customer-home');
+await c.click('.tab[data-v=services]'); await wait(c, 400); await shot(c, 'customer-services');
+await c.click('[data-a=book][data-v=ac-cooling]'); await wait(c, 400); await shot(c, 'customer-booking');
+await c.click('[data-a=confirm]'); await wait(c, 500); await c.fill('#f-otp', '4829'); await wait(c, 1800);
+const id = await c.evaluate(() => { const S = AC.store, j = S.get().jobs[0]; S.act.assign(j.id, 'T1', 'Admin'); S.act.respond(j.id, true); S.act.startTrip(j.id, { dur: 40000 }); return j.id; });
+await wait(c, 9000); await shot(c, 'customer-tracking');
+await c.evaluate(id => { const S = AC.store; S.act.arrive(id); S.act.startWork(id); }, id); await wait(c, 600);
+await c.evaluate(() => { document.getElementById('view').scrollTop = 250; }); await wait(c, 300); await shot(c, 'customer-code');
+await c.evaluate(() => { document.getElementById('view').scrollTop = 0; }); await c.click('[data-a=back]'); await wait(c, 300); await c.click('.tab[data-v=shop]'); await wait(c, 500);
+await c.click('.chip[data-v=ac]'); await wait(c, 400); await shot(c, 'customer-shop');
+await c.click('[data-a=prod][data-v=ac1] >> nth=0'); await wait(c, 400); await c.click('[data-a=pinst]'); await wait(c, 200); await shot(c, 'customer-product');
+await c.click('[data-a=addcart]'); await wait(c, 300); await c.click('[data-a=cart]'); await wait(c, 400); await shot(c, 'customer-cart');
+const t = await ctx.newPage(); await t.goto(base + 'technician/index.html'); await wait(t, 1000);
+await t.evaluate(() => { const S = AC.store, j = S.get().jobs.find(x => x.status === 'ontheway'); window.__j = j; });
+await t.click('[data-a=sim]'); await wait(t, 400); await shot(t, 'tech-offer');
+await t.click('.offer [data-a=accept]'); await wait(t, 300); await t.click('[data-a=trip]'); await wait(t, 6000); await shot(t, 'tech-nav');
+await t.click('[data-a=back]'); await t.click('.tab[data-v=earn]'); await wait(t, 500); await shot(t, 'tech-wallet');
+await browser.close();
