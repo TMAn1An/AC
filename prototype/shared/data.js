@@ -24,7 +24,9 @@ window.AC = window.AC || {};
     badda: { n: 'Badda', x: 905, y: 355 }, farmgate: { n: 'Farmgate', x: 440, y: 345 }, mohammadpur: { n: 'Mohammadpur', x: 235, y: 365 },
     dhanmondi: { n: 'Dhanmondi', x: 355, y: 420 }, motijheel: { n: 'Motijheel', x: 650, y: 490 }, olddhaka: { n: 'Old Dhaka', x: 450, y: 548 }
   };
-  AC.SERVICE_RADIUS = 160; // map units, about 4 km
+  /* Business rules live here so they can change without touching app code. */
+  AC.config = { SERVICE_RADIUS: 160, OFFER_SECONDS: 60, VENDOR_MINUTES: 15, INSTALL_FEE: 1800, INSTALL_DISCOUNT: 0.2, INCENTIVE_RATE: 0.12, CONFIRM_DISCOUNT: 100 };
+  AC.SERVICE_RADIUS = AC.config.SERVICE_RADIUS; // map units, about 4 km
 
   AC.services = [
     { id: 'ac-repair', tone: 0, name: 'AC Repair', price: 1000, dur: '60-90 min', icon: 'wrench', desc: 'Diagnosis and repair of any fault: noise, water leak, tripping, remote or board issues.' },
@@ -39,7 +41,7 @@ window.AC = window.AC || {};
     { label: 'Compressor capacitor', price: 650 }, { label: 'Gas top-up (R32)', price: 2500 },
     { label: 'Control board repair', price: 3200 }, { label: 'Fan motor', price: 1800 }
   ];
-  AC.INSTALL_FEE = 1800;
+  AC.INSTALL_FEE = AC.config.INSTALL_FEE;
 
   AC.catalog = [
     { id: 'ac1', cat: 'ac', brand: 'Arctica', name: 'Inverter Split AC 1.5 Ton', price: 68500, was: 72000, rating: 4.8, kind: 'split', tint: 0, tag: 'Inverter', variants: ['1 Ton', '1.5 Ton', '2 Ton'], stock: 14, sold: 63 },
@@ -109,4 +111,30 @@ window.AC = window.AC || {};
     { id: 'card', name: 'Card or net banking', note: 'Visa, Mastercard, DBBL via SSLCommerz', icon: 'card' }
   ];
   AC.payName = id => (AC.payMethods.find(m => m.id === id) || {}).name || id;
+
+  /* Shop promo codes. rule: pct (percent) or flat, optional cap, min subtotal, first (first order only), cat (only for that category) */
+  AC.shopPromos = [
+    { code: 'FIRST15', title: 'First purchase', desc: '15% off your first order, up to \u09F3500', pct: 15, cap: 500, first: true },
+    { code: 'COOL10', title: 'AC offer', desc: '10% off air conditioners above \u09F330,000, up to \u09F33,000', pct: 10, cap: 3000, min: 30000, cat: 'ac' },
+    { code: 'WELCOME100', title: 'Welcome', desc: '\u09F3100 off orders above \u09F31,000', flat: 100, min: 1000 }
+  ];
+  AC.courierSteps = ['Parcel picked up', 'At sorting hub', 'In transit', 'Out for delivery', 'Delivered', 'Delivery attempt failed', 'Returning to Shital'];
+  /* Public tracking pages. Confirm the exact URL format with each courier before launch. */
+  AC.courierLinks = { 'Pathao Courier': id => 'https://merchant.pathao.com/tracking?consignment_id=' + id, 'RedX': id => 'https://redx.com.bd/track-global-parcel/?trackingId=' + id };
+
+  /* Staff permissions and default roles. Editable at runtime in the admin web app (Team and roles). */
+  AC.perms = [['dispatch', 'Dispatch and bookings'], ['override', 'Override job status'], ['extra', 'Price extra work'], ['orders', 'Orders and couriers'], ['catalog', 'Services, products, categories'], ['promos', 'Promotions'], ['people', 'Users, technicians, vendors'], ['kyc', 'Onboard and verify technicians'], ['finance', 'Payments, collections, earnings'], ['reviews', 'Reviews and ratings'], ['messages', 'Customer messages'], ['roles', 'Staff and roles']];
+  AC.defaultRoles = [
+    { id: 'super', name: 'Super admin', perms: AC.perms.map(p => p[0]) },
+    { id: 'ops', name: 'Operations executive', perms: ['dispatch', 'override', 'extra', 'orders', 'kyc', 'messages', 'people'] },
+    { id: 'fin', name: 'Finance', perms: ['finance', 'reviews'] },
+    { id: 'cat', name: 'Catalog manager', perms: ['catalog', 'promos', 'orders'] },
+    { id: 'sup', name: 'Support agent', perms: ['messages', 'dispatch'] }
+  ];
+  AC.defaultStaff = [
+    { id: 'U1', name: 'Rafi Ahmed', email: 'rafi@shital.example', role: 'super' }, { id: 'U2', name: 'Tania Rahman', email: 'tania@shital.example', role: 'ops' },
+    { id: 'U3', name: 'Imran Chowdhury', email: 'imran@shital.example', role: 'fin' }, { id: 'U4', name: 'Salma Akter', email: 'salma@shital.example', role: 'cat' }, { id: 'U5', name: 'Joy Das', email: 'joy@shital.example', role: 'sup' }
+  ];
+  /* Technician identity records (demo). Onboarded by admin or by a vendor. Vendors only ever see their own technicians. */
+  AC.techs.forEach((t, i) => { t.by = t.vendor || 'admin'; t.kyc = { status: 'verified', nid: '*** *** ' + (4100 + i * 37), method: 'NID photos, live check, live selfie', verifiedBy: t.vendor ? AC.vendById[t.vendor].name : 'Shital Admin', at: 'Mar 2026' }; });
 })();

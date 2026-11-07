@@ -26,7 +26,7 @@ const result = await page.evaluate(async () => {
   const S = AC.store; S.act.reset();
   const id = S.act.createJob({ cust: 'C1', svc: 'ac-repair', slot: 'Today, 4-6 PM', method: 'cod', discount: 100 });
   S.act.assign(id, 'T1', 'Admin'); S.act.respond(id, true); S.act.startTrip(id); S.act.arrive(id); S.act.startWork(id);
-  S.act.proposeExtra(id, [AC.parts[0]]); S.act.resolveExtra(id, true, 'Customer'); S.act.complete(id, true);
+  S.act.proposeExtra(id, [AC.parts[0]]); S.act.resolveExtra(id, true, 'Customer'); S.act.complete(id, true, S.job(id).otp);
   const j = S.job(id); return { status: j.status, total: S.jobTotal(j), paid: j.pay.status };
 });
 const ok = result.status === 'completed' && result.total === 1550 && result.paid === 'paid';
@@ -43,5 +43,37 @@ const routing = await page.evaluate(() => {
 const rok = JSON.stringify(routing.direct) === '["admin","cust:C1"]' && JSON.stringify(routing.viaVendor) === '["admin","cust:C1","vendor:V1"]';
 console.log(rok ? 'ok  ' : 'FAIL', 'notification routing', JSON.stringify(routing));
 if (!rok) failed = true;
+// Rules added after client review: timeouts, completion code, override, extra work, wallet, KYC, unread.
+const r2 = await page.evaluate(async () => {
+  const S = AC.store, out = {}; S.act.reset(); const mkJob = () => S.act.createJob({ cust: 'C1', svc: 'ac-repair', slot: 'x', method: 'cod', verified: true });
+  const a = mkJob(); S.act.assign(a, 'T1', 'Admin'); AC.config.OFFER_SECONDS = 0; await new Promise(r => setTimeout(r, 30)); S.act.expire(); AC.config.OFFER_SECONDS = 60;
+  let j = S.job(a);
+  out.timeout = j.status === 'requested' && j.tried.techs.includes('T1') && S.get().notifs.some(n => n.job === a && n.kind === 'timeout' && n.aud === 'admin');
+  S.act.assign(a, 'T3', 'Admin'); S.act.respond(a, true); S.act.startTrip(a); S.act.arrive(a); S.act.startWork(a);
+  out.wrongCode = S.act.complete(a, true, '0000') === false && S.job(a).status === 'working';
+  S.act.requestExtraItem(a, 'Drain pipe'); out.priceNotif = S.get().notifs.some(n => n.job === a && n.kind === 'extra_req' && n.aud === 'admin');
+  S.act.quoteExtra(a, 'Drain pipe', 900, 'Admin', true); out.quoted = S.job(a).extra.status === 'proposed' && S.get().extraCatalog.some(x => x.label === 'Drain pipe');
+  S.act.resolveExtra(a, true, 'Customer');
+  const before = S.wallet('T3');
+  out.rightCode = S.act.complete(a, true, S.job(a).otp) === true && S.job(a).status === 'completed' && /Customer code verified/.test(S.job(a).tl.slice(-1)[0].note);
+  const w = S.wallet('T3'); out.cash = w.cash === before.cash + S.jobTotal(S.job(a)); out.incentive = w.incentive > before.incentive;
+  // deposit: cash only goes down when accepted
+  const d = S.act.requestDeposit('T3', w.cash, 'bKash', 'TRX123'); out.pending = S.wallet('T3').cash === w.cash;
+  S.act.acceptDeposit(d, 'Admin'); out.zeroed = S.wallet('T3').cash === 0;
+  const wd = S.act.requestWithdraw('T3', 100, 'bKash', '01700000203'); out.withdraw = !!wd && S.wallet('T3').incentive === w.incentive - 100; S.act.payWithdraw(wd, 'Admin'); out.paid = S.get().withdrawals.find(x => x.id === wd).status === 'paid';
+  // admin override and its log
+  const b = S.act.createJob({ cust: 'C1', svc: 'ac-gas', slot: 'x', method: 'cod', verified: true }); S.act.assign(b, 'T1', 'Admin'); S.act.adminSetStatus(b, 'completed', 'App crashed');
+  out.override = S.job(b).status === 'completed' && /Admin panel/.test(S.job(b).tl.slice(-1)[0].note);
+  // KYC: technician added by a vendor is visible to that vendor and admin only
+  const tid = S.act.addTech({ name: 'Test Tech', phone: '01712345678', area: 'mirpur', vendor: 'V1', kyc: { status: 'verified', nid: '*** 1234' } });
+  out.kyc = AC.techById[tid].vendor === 'V1' && AC.techs.filter(t => t.vendor === 'V2').every(t => t.id !== tid);
+  // unread: new booking is unread for admin, own action does not re-flag it
+  const c = mkJob(); out.unread = S.unread('admin', 'jobs').includes(c); S.act.markSeen('admin', 'j:' + c); out.read = !S.unread('admin', 'jobs').includes(c); S.act.assign(c, 'T1', 'Admin'); out.ownAction = !S.unread('admin', 'jobs').includes(c);
+  out.forVendor = !S.unread('vendor:V2', 'jobs').includes(c);
+  return out;
+});
+const bad = Object.entries(r2).filter(([, v]) => v !== true).map(([k]) => k);
+console.log(bad.length ? 'FAIL' : 'ok  ', 'rules', bad.length ? bad.join(', ') : Object.keys(r2).length + ' checks');
+if (bad.length) failed = true;
 await browser.close(); server.kill();
 process.exit(failed ? 1 : 0);

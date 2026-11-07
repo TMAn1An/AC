@@ -1,7 +1,7 @@
 /* Shital customer app prototype. Signed in as Nadia Rahman (C1). */
 (function () {
   const S = AC.store, ME = 'C1', me = AC.custById[ME], money = AC.fmt.money, $app = document.getElementById('app');
-  const ui = { tab: 'home', stack: [], sheet: null, cat: 'all', cart: [], d: {}, ot: 'book', key: '', pdraft: null, book: null, map: null, scroll: {} };
+  const ui = { tab: 'home', stack: [], sheet: null, cat: 'all', cart: [], d: {}, ot: 'book', key: '', pdraft: null, buy: [], buyMode: false, promo: null, promoOff: false, promoOpen: false, promoErr: '', undo: null, wish: {}, sort: 'popular', added: false, book: null, map: null, scroll: {} };
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const myJobs = () => S.get().jobs.filter(j => j.cust.id === ME);
   const myOrders = () => S.get().orders.filter(o => o.cust === ME);
@@ -13,23 +13,35 @@
   }
 
   /* ---------- Cart ---------- */
+  const lines = () => ui.buyMode ? ui.buy : ui.cart;
+  function promoEval(p, sub, acSub, first) {
+    if (p.first && !first) return { err: p.code + ' is for first orders only.' };
+    if (p.cat === 'ac' && !acSub) return { err: p.code + ' works on air conditioners.' };
+    const base = p.cat === 'ac' ? acSub : sub;
+    if (p.min && base < p.min) return { err: 'Add ' + money(p.min - base) + ' more to use ' + p.code + '.' };
+    let d = p.flat ? p.flat : Math.round(base * p.pct / 100); if (p.cap) d = Math.min(p.cap, d); return { disc: d };
+  }
   function cartCalc() {
-    let sub = 0, inst = 0, ac = false, n = 0;
-    ui.cart.forEach(l => { const p = AC.catById[l.pid]; sub += p.price * l.qty; n += l.qty; if (p.cat === 'ac') { ac = true; if (l.install) inst += Math.round(AC.INSTALL_FEE * 0.8) * l.qty; } });
-    const first = !myOrders().length, disc = first ? Math.min(500, Math.round(sub * 0.15)) : 0, delivery = ui.cart.length ? (ac ? 350 : 80) : 0;
-    return { sub, inst, disc, delivery, total: sub + inst - disc + delivery, ac, n, first };
+    let sub = 0, inst = 0, ac = false, n = 0, acSub = 0;
+    lines().forEach(l => { const p = AC.catById[l.pid], v = p.price * l.qty; sub += v; n += l.qty; if (p.cat === 'ac') { ac = true; acSub += v; if (l.install) inst += Math.round(AC.INSTALL_FEE * (1 - AC.config.INSTALL_DISCOUNT)) * l.qty; } });
+    const first = !myOrders().length, code = ui.promo || (first && !ui.promoOff ? 'FIRST15' : null), pr = code && AC.shopPromos.find(p => p.code === code);
+    const ev = pr ? promoEval(pr, sub, acSub, first) : {}, disc = ev.disc || 0, free = !ac && sub >= 3000;
+    const delivery = lines().length ? (ac ? 350 : (free ? 0 : 80)) : 0;
+    const avail = AC.shopPromos.filter(p => p.code !== code && !promoEval(p, sub, acSub, first).err);
+    return { sub, inst, disc, code: disc ? code : null, err: ev.err, delivery, total: sub + inst - disc + delivery, ac, n, first, avail, toFree: !ac && !free && sub ? 3000 - sub : 0 };
   }
 
   /* ---------- Pieces ---------- */
   const art = (p) => Art.product(p);
   const tone = s => { const t = Art.tints[s.tone || 0]; return 'background:' + t.bg + ';color:' + t.fg; };
   function pcard(p) {
-    const off = p.was ? Math.round((1 - p.price / p.was) * 100) : 0;
-    return `<div class="pcard fade"><button class="plink" style="text-align:left;width:100%" data-a="prod" data-v="${p.id}"><div class="pimg">${art(p)}<span class="ptag">${esc(p.tag)}</span>${off ? `<span class="pdisc">-${off}%</span>` : ''}</div>
-      <div class="pb">${esc(p.brand)}</div><div class="pn">${esc(p.name)}</div><div class="pp"><b>${money(p.price)}</b>${p.was ? `<s>${money(p.was)}</s>` : ''}</div></button>
-      <button class="padd" data-a="quick" data-v="${p.id}" aria-label="Add ${esc(p.name)} to cart">${icon('plus', 18, 2.2)}</button></div>`;
+    const off = p.was ? Math.round((1 - p.price / p.was) * 100) : 0, l = ui.cart.find(x => x.pid === p.id), q = l ? l.qty : 0;
+    return `<div class="pc ${q ? 'in' : ''} fade"><div class="pimg"><button class="plink-img" data-a="prod" data-v="${p.id}" aria-label="View ${esc(p.name)}">${art(p)}</button><span class="ptag">${esc(p.tag)}</span>${off ? `<span class="pdisc">-${off}%</span>` : ''}<button class="heart ${ui.wish[p.id] ? 'on' : ''}" data-a="wish" data-v="${p.id}" aria-label="Save ${esc(p.name)}">${icon('heart', 18)}</button></div>
+      <button class="ptext" data-a="prod" data-v="${p.id}"><span class="pb">${esc(p.brand)}</span><span class="pn">${esc(p.name)}</span><span class="prate">${icon('star', 12)} ${p.rating} <i>${p.sold} sold</i></span><span class="pp"><b>${money(p.price)}</b>${p.was ? `<s>${money(p.was)}</s>` : ''}</span></button>
+      <div class="pact">${q ? `<div class="step sm" role="group" aria-label="Quantity"><button data-a="pq" data-v="${p.id}" data-d="-1" aria-label="Less">${icon('minus', 16)}</button><b>${q}</b><button data-a="pq" data-v="${p.id}" data-d="1" aria-label="More">${icon('plus', 16)}</button></div>` : `<button class="btn btn-s pbtn" data-a="quick" data-v="${p.id}" aria-label="Add ${esc(p.name)} to cart">${icon('cart', 16)}Add</button>`}<button class="btn btn-p pbtn" data-a="buynow" data-v="${p.id}">Buy now</button></div></div>`;
   }
-  const top = (title, o) => `<div class="top">${o && o.back === false ? '' : `<button class="back" data-a="back" aria-label="Back">${icon('left', 22)}</button>`}<h1>${title}</h1>${(o && o.right) || ''}</div>`;
+  const top = (title, o) => o && o.back === false ? `<div class="band sm">${top0(title, o)}</div>` : top0(title, o);
+  const top0 = (title, o) => `<div class="top">${o && o.back === false ? '' : `<button class="back" data-a="back" aria-label="Back">${icon('left', 22)}</button>`}<h1>${title}</h1>${(o && o.right) || ''}</div>`;
   const cartBtn = () => { const n = cartCalc().n; return `<button class="icon-btn" data-a="cart" aria-label="Cart">${icon('cart', 22)}${n ? `<span class="badge-n">${n}</span>` : ''}</button>`; };
 
   /* ---------- Screens ---------- */
@@ -40,9 +52,9 @@
       const t = AC.techById[aj.techId];
       banner = `<button class="live-banner fade" data-a="track" data-v="${aj.id}"><span class="pulse-dot"></span><span class="grow"><b>${esc(aj.svcName)}</b><small>${S.META[aj.status].cust}${t && aj.status === 'ontheway' ? ' . ' + S.etaMin(aj) + ' min away' : ''}</small></span>${icon('right', 18)}</button>`;
     }
-    return `<div class="top"><div class="loc">${icon('pin', 20)}<div><small>Service and delivery</small>Banani, Dhaka</div></div>${cartBtn()}<button class="icon-btn" data-a="notifs" aria-label="Notifications">${icon('bell', 22)}${S.unread('cust:' + ME) ? `<span class="badge-n">${S.unread('cust:' + ME)}</span>` : ''}</button></div>
-    <div class="pad"><h1 class="greet">Hello, ${esc(firstName)}</h1><p class="greet-s">Cool air, fixed fast. Shop or book a technician.</p></div>
-    <button class="search" data-a="tab" data-v="shop">${icon('search', 18)}<span>Search ACs, bags, cosmetics</span></button>
+    return `<div class="band"><div class="top"><div class="loc">${icon('pin', 20)}<div><small>Service and delivery</small>Banani, Dhaka</div></div>${cartBtn()}<button class="icon-btn" data-a="notifs" aria-label="Notifications">${icon('bell', 22)}${S.notifUnread('cust:' + ME) ? `<span class="badge-n">${S.notifUnread('cust:' + ME)}</span>` : ''}</button></div>
+    <div class="pad"><h1 class="greet">Hello, ${esc(firstName)}</h1><p class="greet-s">Cool air, fixed fast. Shop or book a technician.</p></div></div>
+    <button class="search float" data-a="tab" data-v="shop">${icon('search', 18)}<span>Search ACs, bags, cosmetics</span></button>
     ${banner}
     <div class="hero"><div><div class="eyebrow">First purchase</div><h2>15% off your first order</h2><span class="code">${icon('tag', 14)} FIRST15</span></div><div class="art">${Art.draw('split', 1)}</div></div>
     <div class="sec"><div class="sec-h"><h2>Shop by category</h2></div>
@@ -50,7 +62,7 @@
       <button class="cat" style="background:#FCEFD6" data-a="shopcat" data-v="bag"><div class="art">${Art.draw('tote', 1)}</div><span><div>Bags</div>${icon('right', 16)}</span></button>
       <button class="cat" style="background:#F9E4DE" data-a="shopcat" data-v="cos"><div class="art">${Art.draw('bottle', 3)}</div><span><div>Cosmetics<small>Made locally</small></div>${icon('right', 16)}</span></button></div></div>
     <div class="sec"><div class="sec-h"><h2>Book a service</h2><button data-a="tab" data-v="services">See all</button></div>
-      <div class="hscroll">${AC.services.map(s => `<button class="svc-chip" data-a="book" data-v="${s.id}"><span class="svc-ic" style="${tone(s)}">${icon(s.icon, 22)}</span><b>${s.name}</b><small>From ${money(s.price)}</small></button>`).join('')}</div></div>
+      <div class="hscroll">${AC.services.map(s => `<button class="svc-chip" style="background:${Art.tints[s.tone || 0].bg}" data-a="book" data-v="${s.id}"><span class="svc-ic" style="color:${Art.tints[s.tone || 0].fg}">${icon(s.icon, 22)}</span><b>${s.name}</b><small>From ${money(s.price)}</small></button>`).join('')}</div></div>
     <div class="sec"><div class="sec-h"><h2>Air conditioners</h2><button data-a="shopcat" data-v="ac">See all</button></div><div class="hscroll">${P('ac').map(pcard).join('')}</div></div>
     <div class="sec"><div class="sec-h"><h2>Bags</h2><button data-a="shopcat" data-v="bag">See all</button></div><div class="hscroll">${P('bag').map(pcard).join('')}</div></div>
     <div class="sec"><div class="sec-h"><h2>Local cosmetics</h2><button data-a="shopcat" data-v="cos">See all</button></div><div class="hscroll">${P('cos').map(pcard).join('')}</div></div>
@@ -97,7 +109,7 @@
       return `<div class="tl-i ${cls}"><div class="tl-dot">${cls === 'done' ? icon('check', 13, 3) : ''}</div><div><div class="tl-t">${st[0]}</div><div class="muted" style="font-size:12.5px">${e ? AC.fmt.time(e.at) + (e.note && i === 0 ? '' : '') : (i === idx ? 'In progress' : 'Pending')}</div></div></div>`;
     }).join('');
     const vend = t && t.vendor ? AC.vendById[t.vendor].name : '';
-    const techCard = t && j.status !== 'cancelled' ? `<div class="cardx"><div class="techcard"><div class="avatar lg">${AC.fmt.ini(t.name)}</div><div class="grow"><b>${esc(t.name)}</b><div class="muted" style="font-size:13px">${vend ? 'Partner: ' + esc(vend) : 'Shital technician'}</div><div class="rate">${icon('star', 13)} ${t.rating} . ${t.jobs} jobs</div></div></div>
+    const techCard = t && j.status !== 'cancelled' ? `<div class="cardx"><div class="techcard"><div class="avatar lg">${AC.fmt.ini(t.name)}</div><div class="grow"><b>${esc(t.name)}</b><div class="muted" style="font-size:13px">${vend ? 'Partner: ' + esc(vend) : 'Shital technician'}</div><div class="rate" style="font-weight:600;color:var(--ink-3)">${t.jobs} jobs completed</div></div></div>
       <div class="actions"><button class="btn btn-s" data-a="toast" data-v="Calling ${esc(t.name)} (opens the phone dialer in the real app)">${icon('phone', 18)}Call</button><button class="btn btn-s" data-a="toast" data-v="Opening WhatsApp chat with ${esc(t.name)}">${icon('chat', 18)}WhatsApp</button><button class="btn btn-s" data-a="chat">${icon('send', 18)}Support</button></div></div>` : '';
     let extra = '';
     if (j.extra.status === 'proposed') {
@@ -114,17 +126,19 @@
       <div class="row between" style="margin-top:12px"><span class="muted">${AC.payName(j.pay.method)}</span>${j.pay.status === 'paid' ? '<span class="badge b-ok">Paid</span>' : '<span class="badge b-warn">' + (j.pay.method === 'cod' ? 'Pay the technician' : 'Pay after service') + '</span>'}</div>
       ${j.status === 'completed' && j.pay.status !== 'paid' && j.pay.method !== 'cod' ? `<button class="btn btn-p btn-lg btn-block" style="margin-top:14px" data-a="paynow" data-id="${j.id}">Pay ${money(tot)}</button>` : ''}</div>`;
     let rate = '';
+    const rt = ui.d.rt || {}, pick = (k, label) => `<div class="rt-row"><span>${label}</span><div class="star-in" style="margin:0;gap:2px">${[1, 2, 3, 4, 5].map(n => `<button class="${n <= (rt[k] || 0) ? 'on' : ''}" data-a="star" data-k="${k}" data-v="${n}" aria-label="${label} ${n} star">${icon('star', k === 'overall' ? 32 : 26, 1.6).replace('fill="none"', 'fill="' + (n <= (rt[k] || 0) ? 'currentColor' : 'none') + '"')}</button>`).join('')}</div></div>`;
     if (j.status === 'completed' && !j.rating) {
-      const st = ui.d.stars || 0;
-      rate = `<div class="cardx" style="text-align:center"><b>How was ${esc(t ? t.name.split(' ')[0] : 'the technician')}?</b><div class="star-in">${[1, 2, 3, 4, 5].map(n => `<button class="${n <= st ? 'on' : ''}" data-a="star" data-v="${n}" aria-label="${n} star">${icon('star', 32, 1.6).replace('fill="none"', 'fill="' + (n <= st ? 'currentColor' : 'none') + '"')}</button>`).join('')}</div>
-        <textarea class="textarea" id="f-rev" data-b="rev" placeholder="Tell us more (optional)">${esc(ui.d.rev || '')}</textarea><button class="btn btn-p btn-block" style="margin-top:10px" data-a="rate" data-id="${j.id}" ${st ? '' : 'disabled'}>Submit review</button></div>`;
-    } else if (j.rating) rate = `<div class="cardx row">${starRow(j.rating.stars, 16)}<span class="muted grow">Thanks for your review</span></div>`;
+      rate = `<div class="cardx"><b style="font-size:16px">How was ${esc(t ? t.name.split(' ')[0] : 'the technician')}?</b><div class="muted" style="font-size:13px;margin:2px 0 8px">Your review goes to Shital only. The technician does not see it.</div>${pick('overall', 'Overall')}<hr class="divider" style="margin:6px 0">${pick('work', 'Quality of work')}${pick('behavior', 'Behaviour')}${pick('punctuality', 'Punctuality')}
+        <textarea class="textarea" id="f-rev" data-b="rev" placeholder="Anything else you would like us to know? (optional)" style="margin-top:10px">${esc(ui.d.rev || '')}</textarea><button class="btn btn-p btn-block" style="margin-top:10px" data-a="rate" data-id="${j.id}" ${rt.overall ? '' : 'disabled'}>Submit review</button></div>`;
+    } else if (j.rating) rate = `<div class="cardx row">${starRow(S.ratingOf(j), 16)}<span class="muted grow">Thanks for your review</span></div>`;
+    const codeCard = ['arrived', 'working'].includes(j.status) ? `<div class="cardx code-card"><div class="row" style="gap:10px;align-items:flex-start">${icon('lock', 20)}<div class="grow"><b>Completion code</b><div class="muted" style="font-size:13px;margin-top:2px">When you are happy with the work, tell this code to the technician. The job closes only after they enter it.</div></div></div><div class="otp-show" aria-label="Completion code ${j.otp.split('').join(' ')}">${j.otp.split('').map(x => `<span>${x}</span>`).join('')}</div></div>` : '';
     const prog = `<div class="prog">${[0, 1, 2, 3, 4, 5].map(i => `<i class="${i <= idx ? 'on' : ''}"></i>`).join('')}</div>`;
     const searching = !t && S.isActive(j) ? `<div class="searching"><span class="gate" style="padding:0"><span class="ring"></span></span><span class="grow">${j.status === 'forwarded' ? 'A partner is assigning a technician' : 'Finding the closest technician'}<div class="muted" style="font-weight:500;font-size:12.5px">Usually under 10 minutes</div></span></div>` : '';
+    const ssearch = null;
     return `${top('Booking ' + j.id, { right: `<button class="icon-btn" data-a="chat" aria-label="Chat with support">${icon('chat', 22)}</button>` })}
     <div class="trackmap" id="trackmap">${searching}</div>
     <div class="statuscard fade"><div class="eyebrow">${esc(j.svcName)} . ${esc(j.slot)}</div><h2 style="margin-top:4px">${head[0]}</h2><div class="eta">${head[1]}</div>${j.status === 'cancelled' ? '' : prog}</div>
-    <div class="stack" style="margin-top:14px">${techCard}${extra}
+    <div class="stack" style="margin-top:14px">${codeCard}${techCard}${extra}
       <div class="cardx"><h3 style="font-size:16px;margin-bottom:14px">Progress</h3><div class="tl">${tlHtml}</div></div>
       ${payBox}${rate}
       <div class="cardx"><div class="lrow">${icon('pin', 20)}<div class="grow"><b>${esc(j.cust.addr)}</b><small>${esc(j.cust.phone)}</small></div></div>${j.note ? `<div class="muted" style="margin-top:10px;font-size:13px">Note: ${esc(j.note)}</div>` : ''}</div>
@@ -132,46 +146,59 @@
   }
 
   function Shop() {
-    const list = AC.catalog.filter(p => ui.cat === 'all' || p.cat === ui.cat);
-    const cats = [['all', 'All'], ['ac', 'Air conditioners'], ['bag', 'Bags'], ['cos', 'Cosmetics']];
-    return `<div class="top"><h1>Shop</h1>${cartBtn()}</div>
-    <div class="hscroll" style="padding-top:8px;padding-bottom:14px">${cats.map(c => `<button class="chip ${ui.cat === c[0] ? 'on' : ''}" data-a="shopcat" data-v="${c[0]}">${c[1]}</button>`).join('')}</div>
+    const q = (ui.d.q || '').trim().toLowerCase(), SORT = { popular: (a, b) => b.sold - a.sold, low: (a, b) => a.price - b.price, high: (a, b) => b.price - a.price, rating: (a, b) => b.rating - a.rating };
+    const list = AC.catalog.filter(p => (ui.cat === 'all' || p.cat === ui.cat) && (!q || (p.name + ' ' + p.brand + ' ' + p.tag).toLowerCase().includes(q))).sort(SORT[ui.sort]);
+    const cats = [['all', 'All'], ['ac', 'Air conditioners'], ['bag', 'Bags'], ['cos', 'Cosmetics']], sorts = [['popular', 'Popular'], ['low', 'Price: low to high'], ['high', 'Price: high to low'], ['rating', 'Top rated']];
+    return `<div class="band sm"><div class="top"><h1>Shop</h1>${cartBtn()}</div></div>
+    <label class="search float" style="cursor:text;margin-bottom:0">${icon('search', 18)}<input id="f-q" data-b="q" placeholder="Search ACs, bags, cosmetics" value="${esc(ui.d.q || '')}" autocomplete="off" style="border:0;background:none;outline:none;flex:1;min-width:0;font:inherit">${q ? `<button data-a="qclear" aria-label="Clear search">${icon('x', 16)}</button>` : ''}</label>
+    <div class="hscroll" style="padding-top:12px">${cats.map(x => `<button class="chip ${ui.cat === x[0] ? 'on' : ''}" data-a="shopcat" data-v="${x[0]}">${x[1]}</button>`).join('')}</div>
+    <div class="hscroll" style="padding-top:2px;padding-bottom:10px"><span class="muted" style="font-size:12px;font-weight:700;align-self:center;white-space:nowrap">Sort</span>${sorts.map(x => `<button class="chip sm ${ui.sort === x[0] ? 'on' : ''}" data-a="sort" data-v="${x[0]}">${x[1]}</button>`).join('')}</div>
     ${ui.cat === 'ac' ? `<div class="pad" style="margin-bottom:14px"><div class="note acc">${icon('gift', 18)}<span>Buy an AC and get 20% off installation plus a 1 year repair warranty.</span></div></div>` : ''}
-    <div class="pgrid">${list.map(pcard).join('')}</div>`;
+    <div class="muted" style="padding:0 20px 10px;font-size:13px">${list.length} product${list.length === 1 ? '' : 's'}</div>
+    ${list.length ? `<div class="pgrid">${list.map(pcard).join('')}</div>` : `<div class="empty"><h3>No matches</h3><span>Try a different word or clear the search.</span><button class="btn btn-p" data-a="qclear">Clear search</button></div>`}`;
   }
 
   function Prod(id) {
-    const p = AC.catById[id], d = ui.pdraft, off = p.was ? Math.round((1 - p.price / p.was) * 100) : 0, isAC = p.cat === 'ac', ins = Math.round(AC.INSTALL_FEE * 0.8);
-    return `<div class="phero" style="background:${Art.tints[p.tint].bg}">${art(p)}<button class="back" data-a="back" aria-label="Back">${icon('left', 22)}</button></div>
-    <div class="pbody"><div class="row between"><span class="eyebrow">${esc(p.brand)}</span><span class="rate">${icon('star', 14)} ${p.rating}</span></div><h1>${esc(p.name)}</h1>
+    const p = AC.catById[id], d = ui.pdraft, off = p.was ? Math.round((1 - p.price / p.was) * 100) : 0, isAC = p.cat === 'ac', ins = Math.round(AC.INSTALL_FEE * (1 - AC.config.INSTALL_DISCOUNT)), n = cartCalc().n;
+    return `<div class="phero" style="background:${Art.tints[p.tint].bg}">${art(p)}<button class="back" data-a="back" aria-label="Back">${icon('left', 22)}</button><button class="cartb" data-a="cart" aria-label="Cart">${icon('cart', 22)}${ui.cart.length ? `<span class="badge-n">${ui.cart.reduce((a, l) => a + l.qty, 0)}</span>` : ''}</button></div>
+    <div class="pbody"><div class="row between"><span class="eyebrow">${esc(p.brand)}</span><span class="rate">${icon('star', 14)} ${p.rating} <span class="muted" style="font-weight:500">. ${p.sold} sold</span></span></div><h1>${esc(p.name)}</h1>
       <div class="price-big"><b>${money(p.price)}</b>${p.was ? `<s>${money(p.was)}</s><span class="save">Save ${money(p.was - p.price)}</span>` : ''}</div>
+      ${p.stock < 10 ? `<div class="stock">${icon('alert', 14)} Only ${p.stock} left</div>` : `<div class="stock ok">${icon('check', 14)} In stock</div>`}
       <label class="lab">${isAC ? 'Capacity' : 'Option'}</label><div class="row wrap" style="gap:8px">${p.variants.map(v => `<button class="chip ${d.variant === v ? 'on' : ''}" data-a="pvar" data-v="${esc(v)}">${esc(v)}</button>`).join('')}</div>
+      <div class="row between" style="margin-top:18px"><b>Quantity</b><div class="step" role="group" aria-label="Quantity"><button data-a="pqty" data-v="-1" aria-label="Less">${icon('minus', 16)}</button><b>${d.qty}</b><button data-a="pqty" data-v="1" aria-label="More">${icon('plus', 16)}</button></div></div>
       ${isAC ? `<label class="lab">Add installation</label><button class="addon ${d.install ? 'on' : ''}" data-a="pinst"><span class="ck">${d.install ? icon('check', 14, 3) : ''}</span><span class="grow"><b>Professional installation</b><div class="muted" style="font-size:13px"><s>${money(AC.INSTALL_FEE)}</s> <b style="color:var(--accent-d)">${money(ins)}</b> with AC purchase</div></span>${icon('wrench', 20)}</button>` : ''}
       <div class="bullets cardx" style="margin-top:20px">${isAC ? `<div>${icon('shield', 20)}<span><b>1 year warranty</b><br><span class="muted">Free repair labour after installation by Shital.</span></span></div>` : ''}
-        <div>${icon('truck', 20)}<span><b>Delivery by courier partner</b><br><span class="muted">${isAC ? 'Safe handling for large items. 3-5 days.' : 'Pathao or RedX. 2-4 days.'}</span></span></div>
+        <div>${icon('truck', 20)}<span><b>Delivery by courier partner</b><br><span class="muted">${isAC ? 'Safe handling for large items. 3-5 days.' : 'Pathao or RedX. 2-4 days.'} Track every step in the app.</span></span></div>
         <div>${icon('wallet', 20)}<span><b>Cash, bKash, Nagad or card</b><br><span class="muted">Choose how to pay at checkout.</span></span></div></div></div>`;
   }
+
+  function promoBlock() {
+    const c = cartCalc(), open = ui.promoOpen;
+    const applied = c.code ? `<div class="promo-on">${icon('tag', 18)}<div class="grow"><b>${c.code} applied</b><div class="muted" style="font-size:13px">You save ${money(c.disc)}</div></div><button class="btn btn-g btn-sm" data-a="promorm">Remove</button></div>` : '';
+    const entry = c.code ? '' : `<div class="cardx promo-c"><button class="lrow" data-a="promotoggle" aria-expanded="${open}">${icon('tag', 18)}<b class="grow">Have a promo code?</b>${icon(open ? 'up' : 'down', 18)}</button>${open ? `<div class="row" style="margin-top:12px"><input class="input" id="f-promo" data-b="promoIn" placeholder="Enter code" autocomplete="off" value="${esc(ui.d.promoIn || '')}" style="text-transform:uppercase"><button class="btn btn-p" data-a="promoapply">Apply</button></div>` : ''}${ui.promoErr ? `<div class="err">${esc(ui.promoErr)}</div>` : ''}</div>`;
+    const offers = c.avail.length ? `<div class="cardx promo-c"><div class="mini" style="margin-bottom:10px">Offers for you</div><div class="col" style="gap:8px">${c.avail.map(p => `<button class="offer-row" data-a="promopick" data-v="${p.code}"><span class="code2">${p.code}</span><span class="grow">${esc(p.desc)}</span><b>Apply</b></button>`).join('')}</div></div>` : '';
+    return `<div class="col" style="gap:12px">${applied}${entry}${offers}</div>`;
+  }
+  const lineRow = (l, i, big) => { const p = AC.catById[l.pid]; return `<div class="cline"><div class="pimg">${art(p)}</div><div class="col" style="gap:6px;min-width:0"><div class="row between" style="align-items:flex-start;gap:8px"><h3>${esc(p.name)}</h3><button class="rm" data-a="crm" data-i="${i}" aria-label="Remove ${esc(p.name)}">${icon('trash', 18)}</button></div><span class="muted" style="font-size:12.5px">${esc(l.variant)} . ${money(p.price)} each</span><div class="row between"><b>${money(p.price * l.qty)}</b><div class="step" role="group" aria-label="Quantity"><button data-a="cqty" data-i="${i}" data-v="-1" aria-label="Less">${icon('minus', 14)}</button><b>${l.qty}</b><button data-a="cqty" data-i="${i}" data-v="1" aria-label="More">${icon('plus', 14)}</button></div></div></div>
+    ${p.cat === 'ac' ? `<button class="addon sub ${l.install ? 'on' : ''}" style="padding:10px 12px" data-a="cinst" data-i="${i}"><span class="ck">${l.install ? icon('check', 14, 3) : ''}</span><span class="grow"><b style="font-size:13px">Add installation</b><div class="muted" style="font-size:12.5px">${money(Math.round(AC.INSTALL_FEE * (1 - AC.config.INSTALL_DISCOUNT)))} each, 20% off</div></span></button>` : ''}</div>`; };
+  const summary = c => `<div class="cardx sum"><div><span>Subtotal (${c.n} item${c.n > 1 ? 's' : ''})</span><span>${money(c.sub)}</span></div>${c.inst ? `<div><span>Installation</span><span>${money(c.inst)}</span></div>` : ''}${c.disc ? `<div class="sv"><span>Promo ${c.code}</span><span>-${money(c.disc)}</span></div>` : ''}<div><span>Delivery</span><span>${c.delivery ? money(c.delivery) : 'Free'}</span></div><div class="tot"><span>Total</span><span>${money(c.total)}</span></div></div>`;
 
   function Cart() {
     if (!ui.cart.length) return top('Cart') + `<div class="empty"><div class="ill">${Art.draw('tote', 1)}</div><h3>Your cart is empty</h3><span>Browse ACs, bags and local cosmetics.</span><button class="btn btn-p" data-a="shopcat" data-v="all">Start shopping</button></div>`;
     const c = cartCalc();
-    return `${top('Cart')}<div class="stack">${ui.cart.map((l, i) => {
-      const p = AC.catById[l.pid];
-      return `<div class="cline"><div class="pimg">${art(p)}</div><div class="col" style="gap:6px"><h3>${esc(p.name)}</h3><span class="muted" style="font-size:12.5px">${esc(l.variant)}</span><div class="row between"><b>${money(p.price * l.qty)}</b><div class="step"><button data-a="cqty" data-i="${i}" data-v="-1" aria-label="Less">${icon('minus', 14)}</button><b>${l.qty}</b><button data-a="cqty" data-i="${i}" data-v="1" aria-label="More">${icon('plus', 14)}</button></div></div></div>
-        ${p.cat === 'ac' ? `<button class="addon sub ${l.install ? 'on' : ''}" style="padding:10px 12px" data-a="cinst" data-i="${i}"><span class="ck">${l.install ? icon('check', 14, 3) : ''}</span><span class="grow"><b style="font-size:13px">Add installation</b><div class="muted" style="font-size:12.5px">${money(Math.round(AC.INSTALL_FEE * .8))} each, 20% off</div></span></button>` : ''}</div>`;
-    }).join('')}
-      <div class="cardx sum"><div><span>Subtotal</span><span>${money(c.sub)}</span></div>${c.inst ? `<div><span>Installation</span><span>${money(c.inst)}</span></div>` : ''}${c.disc ? `<div class="sv"><span>FIRST15 first purchase</span><span>-${money(c.disc)}</span></div>` : ''}<div><span>Delivery</span><span>${money(c.delivery)}</span></div><div class="tot"><span>Total</span><span>${money(c.total)}</span></div></div>
-      ${c.first ? `<div class="note acc">${icon('tag', 18)}<span>First purchase discount applied automatically.</span></div>` : ''}</div>`;
+    return `${top('Cart')}<div class="stack">${c.toFree ? `<div class="free-bar"><span>Add ${money(c.toFree)} more for free delivery</span><i style="--w:${Math.min(100, Math.round(c.sub / 30))}%"></i></div>` : ''}${ui.cart.map((l, i) => lineRow(l, i)).join('')}${promoBlock()}${summary(c)}</div>`;
   }
 
   function Checkout() {
-    const c = cartCalc(), d = ui.d;
+    const L = lines(), c = cartCalc(), d = ui.d;
+    if (!L.length) return top('Checkout') + `<div class="empty"><h3>Nothing to check out</h3><button class="btn btn-p" data-a="shopcat" data-v="all">Back to the shop</button></div>`;
     return `${top('Checkout')}<div class="pad">
-      <label class="lab" style="margin-top:4px">Delivery address</label><div class="field"><input class="input" id="f-caddr" data-b="caddr" value="${esc(d.caddr != null ? d.caddr : me.addr)}"></div>
+      <label class="lab" style="margin-top:4px">${ui.buyMode ? 'Buying now' : 'Your items'}</label><div class="col" style="gap:10px">${L.map((l, i) => lineRow(l, i)).join('')}</div>
+      <label class="lab">Delivery address</label><div class="field"><input class="input" id="f-caddr" data-b="caddr" value="${esc(d.caddr != null ? d.caddr : me.addr)}"></div>
       <div class="field" style="margin-top:10px"><label for="f-cphone">Phone</label><input class="input" id="f-cphone" data-b="cphone" value="${esc(d.cphone != null ? d.cphone : me.phone)}" inputmode="tel"></div>
-      <div class="note" style="margin-top:12px">${icon('truck', 18)}<span>Your order is delivered by a courier partner (Pathao or RedX). You get the tracking id once it ships.</span></div>
+      <div class="note" style="margin-top:12px">${icon('truck', 18)}<span>Delivered by a courier partner (Pathao or RedX). You can follow each step in Orders.</span></div>
       <label class="lab">Payment</label><div class="col" style="gap:8px">${AC.payMethods.map(m => `<button class="opt ${(d.pm || 'cod') === m.id ? 'on' : ''}" data-a="pm" data-v="${m.id}"><span class="rd"></span><span class="grow"><b>${m.name}</b><small>${m.note}</small></span>${icon(m.icon, 20)}</button>`).join('')}</div>
-      <div class="cardx sum" style="margin-top:18px"><div><span>${c.n} item${c.n > 1 ? 's' : ''}</span><span>${money(c.sub)}</span></div>${c.inst ? `<div><span>Installation</span><span>${money(c.inst)}</span></div>` : ''}${c.disc ? `<div class="sv"><span>First purchase</span><span>-${money(c.disc)}</span></div>` : ''}<div><span>Delivery</span><span>${money(c.delivery)}</span></div><div class="tot"><span>Total</span><span>${money(c.total)}</span></div></div></div>`;
+      <div style="margin-top:18px">${promoBlock()}</div><div style="margin-top:12px">${summary(c)}</div></div>`;
   }
 
   function OrderDone(id) {
@@ -180,24 +207,31 @@
       <div class="col" style="width:100%;margin-top:14px"><button class="btn btn-p btn-lg btn-block" data-a="order" data-v="${id}" data-replace="1">Track order</button><button class="btn btn-g btn-block" data-a="tab" data-v="home">Continue shopping</button></div></div>`;
   }
 
+  function courierCard(o) {
+    const ev = o.tl.filter(e => e.k === 'courier'), link = AC.courierLinks[o.courier] ? AC.courierLinks[o.courier](o.tracking) : '#';
+    return `<div class="cardx"><div class="row"><span class="svc-ic">${icon('truck', 20)}</span><div class="grow"><b>${esc(o.courier)}</b><div class="muted" style="font-size:13px">Tracking <span class="mono">${esc(o.tracking)}</span></div></div>${bd(o.courierStatus || 'Handed over', 'b-brand')}</div>
+      ${ev.length ? `<div class="tl" style="margin-top:14px">${ev.slice().reverse().map((e, i) => `<div class="tl-i ${i === 0 ? 'now' : 'done'}"><div class="tl-dot">${i === 0 ? '' : icon('check', 13, 3)}</div><div><div class="tl-t">${esc(e.label)}</div><div class="muted" style="font-size:12.5px">${AC.fmt.time(e.at)}</div></div></div>`).join('')}</div>` : ''}
+      <a class="btn btn-s btn-block" style="margin-top:14px" href="${link}" target="_blank" rel="noopener">${icon('arrowur', 16)}Open ${esc(o.courier)} tracking</a><div class="muted" style="font-size:12.5px;margin-top:10px">Updates come from Shital and the courier. You can also paste the tracking id on the courier's own site.</div></div>`;
+  }
+  const bd = (t, c) => `<span class="badge ${c}">${t}</span>`;
   const OSTEPS = [['placed', 'Order placed'], ['packed', 'Packed'], ['shipped', 'Handed to courier'], ['delivered', 'Delivered']];
   function Order(id) {
     const o = S.get().orders.find(x => x.id === id); if (!o) return top('Order');
     const idx = OSTEPS.findIndex(s => s[0] === o.status);
     return `${top('Order ' + o.id)}<div class="stack">
-      <div class="cardx"><div class="row between"><b>${idx === 3 ? 'Delivered' : OSTEPS[idx][1]}</b><span class="badge ${idx === 3 ? 'b-ok' : 'b-brand'}">${o.status[0].toUpperCase() + o.status.slice(1)}</span></div>
-        ${o.courier ? `<div class="note" style="margin:12px 0 0">${icon('truck', 18)}<span>${esc(o.courier)} . Tracking <span class="mono">${esc(o.tracking)}</span></span></div>` : ''}
+      <div class="cardx"><div class="row between"><b>${o.status === 'cancelled' ? 'Cancelled' : idx === 3 ? 'Delivered' : OSTEPS[Math.max(0, idx)][1]}</b><span class="badge ${o.status === 'cancelled' ? 'b-bad' : idx === 3 ? 'b-ok' : 'b-brand'}">${o.status[0].toUpperCase() + o.status.slice(1)}</span></div>
         <div class="tl" style="margin-top:16px">${OSTEPS.map((st, i) => { const e = o.tl.find(x => x.k === st[0]); const cls = i < idx || (i === idx && o.status === 'delivered') ? 'done' : i === idx ? 'now' : ''; return `<div class="tl-i ${cls}"><div class="tl-dot">${cls === 'done' ? icon('check', 13, 3) : ''}</div><div><div class="tl-t">${st[1]}</div><div class="muted" style="font-size:12.5px">${e ? AC.fmt.time(e.at) : 'Pending'}</div></div></div>`; }).join('')}</div></div>
       <div class="cardx col" style="gap:14px">${o.items.map(i => { const p = AC.catById[i.pid]; return `<div class="row"><div class="pimg" style="width:52px;border-radius:10px;flex:none">${art(p)}</div><div class="grow"><b style="font-size:13.5px">${esc(p.name)}</b><div class="muted" style="font-size:12.5px">Qty ${i.qty}</div></div><b>${money(i.price * i.qty)}</b></div>`; }).join('')}
         <hr class="divider"><div class="sum"><div><span>Subtotal</span><span>${money(o.subtotal)}</span></div>${o.inst ? `<div><span>Installation</span><span>${money(o.inst)}</span></div>` : ''}${o.discount ? `<div class="sv"><span>Discount</span><span>-${money(o.discount)}</span></div>` : ''}<div><span>Delivery</span><span>${money(o.delivery)}</span></div><div class="tot"><span>Total</span><span>${money(S.ordTotal(o))}</span></div></div>
         <div class="row between"><span class="muted">${AC.payName(o.pay.method)}</span><span class="badge ${o.pay.status === 'paid' ? 'b-ok' : 'b-warn'}">${o.pay.status === 'paid' ? 'Paid' : 'Pay on delivery'}</span></div></div>
+      ${o.courier ? courierCard(o) : ''}
       ${o.jobId ? `<button class="cardx lrow" data-a="track" data-v="${o.jobId}"><span class="svc-ic">${icon('wrench', 20)}</span><span class="grow"><b>Installation booking ${o.jobId}</b><small>Scheduled after delivery</small></span>${icon('right', 18)}</button><div class="note ok">${icon('shield', 18)}<span>1 year free repair warranty starts after installation.</span></div>` : ''}</div>`;
   }
 
   function Orders() {
-    const jobs = myJobs(), ords = myOrders();
-    const jl = jobs.length ? jobs.map(j => { const t = AC.techById[j.techId]; return `<button class="cardx lrow" data-a="track" data-v="${j.id}"><span class="svc-ic">${icon((AC.svcById[j.svc] || {}).icon || 'wrench', 20)}</span><span class="grow"><b>${esc(j.svcName)}</b><small>${j.id} . ${t ? esc(t.name) : esc(j.slot)}</small></span><span class="col" style="gap:4px;align-items:flex-end"><span class="badge ${S.META[j.status].cls}">${S.META[j.status].cust}</span><b style="font-size:13px">${money(S.jobTotal(j))}</b></span></button>`; }).join('') : `<div class="empty"><h3>No bookings yet</h3><button class="btn btn-p" data-a="tab" data-v="services">Book a service</button></div>`;
-    const ol = ords.length ? ords.map(o => `<button class="cardx lrow" data-a="order" data-v="${o.id}"><span class="row" style="gap:0;flex:none">${o.items.slice(0, 2).map((i, k) => `<span class="pimg" style="width:44px;height:44px;border-radius:12px;border:2px solid #fff;margin-left:${k ? '-14px' : '0'};aspect-ratio:1">${art(AC.catById[i.pid])}</span>`).join('')}</span><span class="grow"><b>${o.id}</b><small>${o.items.reduce((s, i) => s + i.qty, 0)} items . ${o.courier ? esc(o.courier) : 'Preparing'}</small></span><span class="col" style="gap:4px;align-items:flex-end"><span class="badge ${o.status === 'delivered' ? 'b-ok' : 'b-brand'}">${o.status[0].toUpperCase() + o.status.slice(1)}</span><b style="font-size:13px">${money(S.ordTotal(o))}</b></span></button>`).join('') : `<div class="empty"><div class="ill">${Art.draw('pack', 2)}</div><h3>No orders yet</h3><span>Your first purchase gets 15% off.</span><button class="btn btn-p" data-a="shopcat" data-v="all">Browse the shop</button></div>`;
+    const jobs = myJobs(), ords = myOrders(), UCx = S.unread('cust:' + ME), UCj = new Set(UCx.jobs), UCo = new Set(UCx.orders);
+    const jl = jobs.length ? jobs.map(j => { const t = AC.techById[j.techId]; return `<button class="cardx lrow ${UCj.has(j.id) ? 'unread' : ''}" data-a="track" data-v="${j.id}"><span class="svc-ic">${icon((AC.svcById[j.svc] || {}).icon || 'wrench', 20)}</span><span class="grow"><b>${esc(j.svcName)}</b><small>${j.id} . ${t ? esc(t.name) : esc(j.slot)}</small></span><span class="col" style="gap:4px;align-items:flex-end"><span class="badge ${S.META[j.status].cls}">${S.META[j.status].cust}</span><b style="font-size:13px">${money(S.jobTotal(j))}</b></span></button>`; }).join('') : `<div class="empty"><h3>No bookings yet</h3><button class="btn btn-p" data-a="tab" data-v="services">Book a service</button></div>`;
+    const ol = ords.length ? ords.map(o => `<button class="cardx lrow ${UCo.has(o.id) ? 'unread' : ''}" data-a="order" data-v="${o.id}"><span class="row" style="gap:0;flex:none">${o.items.slice(0, 2).map((i, k) => `<span class="pimg" style="width:44px;height:44px;border-radius:12px;border:2px solid #fff;margin-left:${k ? '-14px' : '0'};aspect-ratio:1">${art(AC.catById[i.pid])}</span>`).join('')}</span><span class="grow"><b>${o.id}</b><small>${o.items.reduce((s, i) => s + i.qty, 0)} items . ${o.courier ? esc(o.courier) : 'Preparing'}</small></span><span class="col" style="gap:4px;align-items:flex-end"><span class="badge ${o.status === 'delivered' ? 'b-ok' : 'b-brand'}">${o.status[0].toUpperCase() + o.status.slice(1)}</span><b style="font-size:13px">${money(S.ordTotal(o))}</b></span></button>`).join('') : `<div class="empty"><div class="ill">${Art.draw('pack', 2)}</div><h3>No orders yet</h3><span>Your first purchase gets 15% off.</span><button class="btn btn-p" data-a="shopcat" data-v="all">Browse the shop</button></div>`;
     return `${top('Orders', { back: false })}<div class="seg"><button class="${ui.ot === 'book' ? 'on' : ''}" data-a="ot" data-v="book">Bookings</button><button class="${ui.ot === 'shop' ? 'on' : ''}" data-a="ot" data-v="shop">Shop orders</button></div><div class="stack">${ui.ot === 'book' ? jl : ol}</div>`;
   }
 
@@ -208,6 +242,7 @@
       <div class="cardx lrow">${icon('pin', 20)}<div class="grow"><b>Saved address</b><small>${me.addr}</small></div></div>
       <div class="cardx"><b>Warranty</b>${w.length ? w.map(o => `<div class="note ok" style="margin-top:10px">${icon('shield', 18)}<span>Order ${o.id}: 1 year free repair.</span></div>`).join('') : `<div class="muted" style="font-size:13px;margin-top:6px">Buy an AC with installation to get 1 year free repair.</div>`}</div>
       <div class="cardx"><b>Offers for you</b><div class="col" style="gap:10px;margin-top:12px">${AC.promos.filter(p => p.status === 'Active').map(p => `<div class="row"><span class="svc-ic" style="width:36px;height:36px;background:var(--accent-l);color:var(--accent-d)">${icon('tag', 18)}</span><div class="grow"><b style="font-size:13.5px">${p.title}</b><div class="muted" style="font-size:12.5px">${p.desc}</div></div></div>`).join('')}</div></div>
+      <button class="cardx lrow" data-a="history">${icon('clock', 20)}<div class="grow"><b>History</b><small>Everything you did, saved on this phone</small></div>${icon('right', 18)}</button>
       <button class="cardx lrow" data-a="chat">${icon('chat', 20)}<div class="grow"><b>Chat with support</b><small>Replies from our team in minutes</small></div>${icon('right', 18)}</button>
       <div class="proto"><div class="eyebrow">Prototype tools</div><div class="muted" style="font-size:13px">Plays the admin, vendor and technician roles on your latest booking so you can review this app alone.</div>
         <button class="btn btn-s" data-a="auto" ${activeJob() ? '' : 'disabled'}>Run autopilot on active booking</button><button class="btn btn-g" data-a="reset">Reset demo data</button></div></div>`;
@@ -244,17 +279,19 @@
     if (t) {
       if (t.s === 'book') { body = Book(); cta = `<div class="cta-bar"><div class="grow"><div class="muted" style="font-size:12px">Estimated total</div><b style="font-size:18px">${money(AC.svcById[ui.book.svc].price * ui.book.units - 100)}</b></div><button class="btn btn-p btn-lg" style="flex:1.4" data-a="confirm">Confirm booking</button></div>`; }
       else if (t.s === 'track') body = Track(t.p.id);
-      else if (t.s === 'prod') { body = Prod(t.p.id); const p = AC.catById[t.p.id]; cta = `<div class="cta-bar"><div class="step"><button data-a="pqty" data-v="-1" aria-label="Less">${icon('minus', 16)}</button><b>${ui.pdraft.qty}</b><button data-a="pqty" data-v="1" aria-label="More">${icon('plus', 16)}</button></div><button class="btn btn-p btn-lg grow" data-a="addcart">Add to cart . ${money((p.price + (ui.pdraft.install && p.cat === 'ac' ? Math.round(AC.INSTALL_FEE * .8) : 0)) * ui.pdraft.qty)}</button></div>`; }
+      else if (t.s === 'prod') { body = Prod(t.p.id); const p = AC.catById[t.p.id], d = ui.pdraft, unit = p.price + (d.install && p.cat === 'ac' ? Math.round(AC.INSTALL_FEE * (1 - AC.config.INSTALL_DISCOUNT)) : 0); cta = `<div class="cta-bar"><button class="btn btn-s btn-lg grow" data-a="addcart">${ui.added ? icon('check', 18, 2.5) + 'Added' : icon('cart', 18) + 'Add to cart'}</button><button class="btn btn-p btn-lg" style="flex:1.25" data-a="buynow2">Buy now . ${money(unit * d.qty)}</button></div>`; }
       else if (t.s === 'cart') { body = Cart(); if (ui.cart.length) cta = `<div class="cta-bar"><div class="grow"><div class="muted" style="font-size:12px">Total</div><b style="font-size:18px">${money(cartCalc().total)}</b></div><button class="btn btn-p btn-lg" style="flex:1.4" data-a="checkout">Checkout</button></div>`; }
       else if (t.s === 'checkout') { body = Checkout(); cta = `<div class="cta-bar"><div class="grow"><div class="muted" style="font-size:12px">Total</div><b style="font-size:18px">${money(cartCalc().total)}</b></div><button class="btn btn-p btn-lg" style="flex:1.4" data-a="place">Place order</button></div>`; }
       else if (t.s === 'done') { body = OrderDone(t.p.id); }
       else if (t.s === 'order') body = Order(t.p.id);
-      else if (t.s === 'notifs') body = top('Notifications') + `<div class="pad"><div class="cardx" style="padding:4px 16px">${AC.notifUI.html('cust:' + ME, 'track')}</div></div>`;
+      else if (t.s === 'history') body = top('History') + `<div class="pad">${AC.history.html('cust:' + ME)}</div>`;
+      else if (t.s === 'notifs') body = top('Notifications') + `<div class="pad"><div class="cardx" style="padding:4px 16px">${AC.notifUI.html('cust:' + ME, 'track', 'order')}</div></div>`;
       else if (t.s === 'chat') { const c = Chat(); body = c.body; cta = c.cta; flush = true; }
     } else body = { home: Home, services: Services, shop: Shop, orders: Orders, account: Account }[ui.tab]();
-    const n = cartCalc().n, ordDot = myOrders().filter(o => o.status !== 'delivered').length + myJobs().filter(S.isActive).length;
-    const wb = ['track', 'chat'].includes(t && t.s) ? ' w' : '';
-    $app.innerHTML = `<div class="statusbar${wb}"><span>${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(' PM', '').replace(' AM', '')}</span><span class="sb-r"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3.5" fill="none" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><rect x="24" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".5"/></svg></span></div><div class="view" id="view">${body}</div>${cta}${tabs ? `<nav class="tabbar">${TABS.map(x => `<button class="tab ${ui.tab === x[0] ? 'on' : ''}" data-a="tab" data-v="${x[0]}">${icon(x[2], 22, ui.tab === x[0] ? 2.1 : 1.7)}${x[1]}${x[0] === 'orders' && ordDot ? `<span class="dot">${ordDot}</span>` : ''}</button>`).join('')}</nav>` : ''}${Sheet()}`;
+    const n = cartCalc().n, UC = S.unread('cust:' + ME), ordDot = UC.jobs.length + UC.orders.length;
+    const wb = ['track', 'chat'].includes(t && t.s) ? ' w' : (!t ? ' dk' : '');
+    const snack = ui.undo ? `<div class="snack" role="status"><span>Removed ${esc(AC.catById[ui.undo.line.pid].name)}</span><button data-a="undo">Undo</button></div>` : '';
+    $app.innerHTML = `<div class="statusbar${wb}"><span>${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(' PM', '').replace(' AM', '')}</span><span class="sb-r"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3.5" fill="none" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><rect x="24" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".5"/></svg></span></div><div class="view" id="view">${body}</div>${cta}${tabs ? `<nav class="tabbar">${TABS.map(x => `<button class="tab ${ui.tab === x[0] ? 'on' : ''}" data-a="tab" data-v="${x[0]}">${icon(x[2], 22, ui.tab === x[0] ? 2.1 : 1.7)}${x[1]}${x[0] === 'orders' && ordDot ? `<span class="dot">${ordDot}</span>` : ''}</button>`).join('')}</nav>` : ''}${snack}${Sheet()}`;
     const v = document.getElementById('view');
     if (key === ui.key && ui.scroll[key] != null) v.scrollTop = ui.scroll[key]; else v.scrollTop = key.startsWith('chat') ? 99999 : 0;
     if (t && t.s === 'chat') v.scrollTop = 99999;
@@ -284,31 +321,50 @@
   const push = (s, p) => { ui.stack.push({ s, p }); render(); };
   const A = {
     tab(el) { ui.tab = el.dataset.v; ui.stack = []; render(); },
-    back() { const t = ui.stack[ui.stack.length - 1]; ui.stack.pop(); render(); if (t && t.s === 'notifs') S.act.markNotifs('cust:' + ME); },
-    notifs() { push('notifs'); },
+    back() { const t = ui.stack[ui.stack.length - 1]; ui.stack.pop(); if (t && t.s === 'checkout') ui.buyMode = false; ui.promoErr = ''; render(); if (t && t.s === 'notifs') S.act.markNotifs('cust:' + ME); },
+    notifs() { push('notifs'); }, history() { push('history'); }, hf(el) { AC.history.filter = el.dataset.v; render(); }, hclear() { AC.history.clear('cust:' + ME); render(); },
     toast(el) { toast(el.dataset.v, 'info'); },
     shopcat(el) { ui.cat = el.dataset.v; ui.tab = 'shop'; ui.stack = []; render(); },
     prod(el) { const p = AC.catById[el.dataset.v]; ui.pdraft = { variant: p.variants[0], qty: 1, install: false }; push('prod', { id: p.id }); },
     pvar(el) { ui.pdraft.variant = el.dataset.v; render(); },
     pqty(el) { ui.pdraft.qty = Math.max(1, ui.pdraft.qty + +el.dataset.v); render(); },
     pinst() { ui.pdraft.install = !ui.pdraft.install; render(); },
-    quick(el) { const p = AC.catById[el.dataset.v]; addLine(p, p.variants[0], 1, false); toast(p.name + ' added to cart', 'cart'); render(); },
-    addcart() { const p = AC.catById[ui.stack[ui.stack.length - 1].p.id], d = ui.pdraft; addLine(p, d.variant, d.qty, d.install); toast('Added to cart', 'cart'); ui.stack.pop(); render(); },
+    quick(el) { const p = AC.catById[el.dataset.v]; addLine(p, p.variants[0], 1, false); render(); },
+    pq(el) { const i = ui.cart.findIndex(l => l.pid === el.dataset.v); if (i < 0) return; ui.cart[i].qty += +el.dataset.d; if (ui.cart[i].qty < 1) ui.cart.splice(i, 1); render(); },
+    wish(el) { ui.wish[el.dataset.v] = !ui.wish[el.dataset.v]; render(); },
+    sort(el) { ui.sort = el.dataset.v; render(); }, qclear() { ui.d.q = ''; render(); },
+    buynow(el) { const p = AC.catById[el.dataset.v]; ui.buy = [{ pid: p.id, variant: p.variants[0], qty: 1, install: false }]; ui.buyMode = true; ui.d.pm = ui.d.pm || 'cod'; push('checkout'); },
+    buynow2() { const p = AC.catById[ui.stack[ui.stack.length - 1].p.id], d = ui.pdraft; ui.buy = [{ pid: p.id, variant: d.variant, qty: d.qty, install: d.install }]; ui.buyMode = true; ui.d.pm = ui.d.pm || 'cod'; push('checkout'); },
+    addcart() { const p = AC.catById[ui.stack[ui.stack.length - 1].p.id], d = ui.pdraft; addLine(p, d.variant, d.qty, d.install); ui.added = true; render(); setTimeout(() => { ui.added = false; render(); }, 1400); },
     cart() { push('cart'); },
-    cqty(el) { const l = ui.cart[+el.dataset.i]; l.qty += +el.dataset.v; if (l.qty < 1) ui.cart.splice(+el.dataset.i, 1); render(); },
-    cinst(el) { const l = ui.cart[+el.dataset.i]; l.install = !l.install; render(); },
-    checkout() { ui.d.pm = ui.d.pm || 'cod'; push('checkout'); },
+    cqty(el) { const L = lines(), l = L[+el.dataset.i]; l.qty = Math.max(1, l.qty + +el.dataset.v); render(); },
+    cinst(el) { const l = lines()[+el.dataset.i]; l.install = !l.install; render(); },
+    crm(el) { const L = lines(), i = +el.dataset.i, u = { line: L[i], idx: i, buy: ui.buyMode }; L.splice(i, 1); ui.undo = u; render(); setTimeout(() => { if (ui.undo === u) { ui.undo = null; render(); } }, 5000); },
+    undo() { const u = ui.undo; if (!u) return; (u.buy ? ui.buy : ui.cart).splice(u.idx, 0, u.line); ui.undo = null; render(); },
+    promotoggle() { ui.promoOpen = !ui.promoOpen; ui.promoErr = ''; render(); },
+    promorm() { ui.promo = null; ui.promoOff = true; ui.promoErr = ''; render(); },
+    promopick(el) { A.applyCode(el.dataset.v); },
+    promoapply() { A.applyCode((ui.d.promoIn || '').trim().toUpperCase()); },
+    applyCode(code) {
+      const pr = AC.shopPromos.find(p => p.code === code), c = cartCalc();
+      if (!code) { ui.promoErr = 'Enter a promo code.'; render(); return; }
+      if (!pr) { ui.promoErr = code + ' is not a valid code.'; ui.promoOpen = true; render(); return; }
+      const ev = promoEval(pr, c.sub, lines().reduce((a, l) => a + (AC.catById[l.pid].cat === 'ac' ? AC.catById[l.pid].price * l.qty : 0), 0), c.first);
+      if (ev.err) { ui.promoErr = ev.err; ui.promoOpen = true; render(); return; }
+      ui.promo = code; ui.promoOff = false; ui.promoErr = ''; ui.promoOpen = false; ui.d.promoIn = ''; render();
+    },
+    checkout() { ui.buyMode = false; ui.d.pm = ui.d.pm || 'cod'; push('checkout'); },
     pm(el) { ui.d.pm = el.dataset.v; render(); },
     place() { requireOtp(ui.d.cphone || me.phone, () => A.doPlace()); },
     doPlace() {
       const c = cartCalc(), m = ui.d.pm || 'cod';
       const finish = () => {
-        const id = S.act.placeOrder({ cust: ME, items: ui.cart.map(l => ({ pid: l.pid, qty: l.qty, price: AC.catById[l.pid].price, variant: l.variant })), subtotal: c.sub, inst: c.inst, discount: c.disc, delivery: c.delivery, install: ui.cart.some(l => l.install && AC.catById[l.pid].cat === 'ac'), addr: ui.d.caddr || me.addr, phone: ui.d.cphone || me.phone, verified: true, pay: { method: m, status: m === 'cod' ? 'unpaid' : 'paid' } });
-        ui.cart = []; ui.sheet = null; ui.stack = [{ s: 'done', p: { id } }]; ui.tab = 'orders'; ui.ot = 'shop'; render();
+        const id = S.act.placeOrder({ cust: ME, items: lines().map(l => ({ pid: l.pid, qty: l.qty, price: AC.catById[l.pid].price, variant: l.variant })), subtotal: c.sub, inst: c.inst, discount: c.disc, delivery: c.delivery, install: lines().some(l => l.install && AC.catById[l.pid].cat === 'ac'), addr: ui.d.caddr || me.addr, phone: ui.d.cphone || me.phone, verified: true, pay: { method: m, status: m === 'cod' ? 'unpaid' : 'paid' } });
+        if (ui.buyMode) { ui.buy = []; ui.buyMode = false; } else ui.cart = []; ui.promo = null; ui.promoOff = false; ui.sheet = null; ui.stack = [{ s: 'done', p: { id } }]; ui.tab = 'orders'; ui.ot = 'shop'; render();
       };
       if (m === 'cod') finish(); else gate(m, c.total, finish);
     },
-    order(el) { const s = { s: 'order', p: { id: el.dataset.v } }; if (el.dataset.replace) ui.stack = [s]; else ui.stack.push(s); render(); },
+    order(el) { const s = { s: 'order', p: { id: el.dataset.v } }; if (el.dataset.replace) ui.stack = [s]; else ui.stack.push(s); render(); S.act.markSeen('cust:' + ME, 'o:' + el.dataset.v); },
     ot(el) { ui.ot = el.dataset.v; render(); },
     book(el) { const s = AC.svcById[el.dataset.v]; ui.book = { svc: s.id, units: 1, ac: 'Split', slot: AC.slots[1], addr: me.addr, phone: me.phone, note: '', method: 'cod' }; push('book'); },
     bac(el) { ui.book.ac = el.dataset.v; render(); }, bslot(el) { ui.book.slot = el.dataset.v; render(); }, bpm(el) { ui.book.method = el.dataset.v; render(); },
@@ -318,12 +374,12 @@
       const b = ui.book, id = S.act.createJob({ verified: true, cust: ME, svc: b.svc, units: b.units, ac: b.ac, slot: b.slot, note: b.note, addr: b.addr, phone: b.phone, method: b.method, discount: 100 });
       ui.stack = [{ s: 'track', p: { id } }]; ui.tab = 'orders'; ui.ot = 'book'; toast('Booking ' + id + ' sent to Shital', 'checkc'); render();
     },
-    track(el) { ui.d.stars = 0; ui.d.rev = ''; push('track', { id: el.dataset.v }); },
+    track(el) { ui.d.rt = {}; ui.d.rev = ''; push('track', { id: el.dataset.v }); S.act.markSeen('cust:' + ME, 'j:' + el.dataset.v); },
     extra(el) { S.act.resolveExtra(el.dataset.id, el.dataset.v === 'yes', 'Customer'); toast(el.dataset.v === 'yes' ? 'Extra work approved' : 'Extra work declined'); },
     cancel(el) { S.act.cancel(el.dataset.id, 'Customer'); toast('Booking cancelled', 'info'); },
     paynow(el) { const j = S.job(el.dataset.id); gate(j.pay.method, S.jobTotal(j), () => { S.act.pay(j.id, j.pay.method); ui.sheet = null; render(); }); },
-    star(el) { ui.d.stars = +el.dataset.v; render(); },
-    rate(el) { S.act.rate(el.dataset.id, ui.d.stars, ui.d.rev || ''); toast('Thanks for your review'); },
+    star(el) { ui.d.rt = ui.d.rt || {}; ui.d.rt[el.dataset.k] = +el.dataset.v; render(); },
+    rate(el) { const r = ui.d.rt || {}; S.act.rate(el.dataset.id, { overall: r.overall, work: r.work || r.overall, behavior: r.behavior || r.overall, punctuality: r.punctuality || r.overall, text: ui.d.rev || '' }); toast('Thanks for your review'); },
     chat() { push('chat'); },
     send() { const v = (ui.d.chat || '').trim(); if (!v) return; ui.d.chat = ''; S.act.send(ME, 'customer', v); },
     quickmsg(el) { S.act.send(ME, 'customer', el.dataset.v); },
@@ -351,7 +407,7 @@
   function gate(m, amount, done) { ui.sheet = { t: 'gate', m, amount, stage: 'wait' }; render(); setTimeout(() => { ui.sheet.stage = 'ok'; render(); setTimeout(done, 1000); }, 1700); }
 
   $app.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el || el.disabled) return; const f = A[el.dataset.a]; if (f) f(el); });
-  $app.addEventListener('input', e => { const k = e.target.dataset.b; if (!k) return; if (['addr', 'phone', 'note'].includes(k)) ui.book[k] = e.target.value; else ui.d[k] = e.target.value; if (k === 'otp' && e.target.value.length === 4) setTimeout(checkOtp, 120); });
+  $app.addEventListener('input', e => { const k = e.target.dataset.b; if (!k) return; if (['addr', 'phone', 'note'].includes(k)) ui.book[k] = e.target.value; else ui.d[k] = e.target.value; if (k === 'otp' && e.target.value.length === 4) setTimeout(checkOtp, 120); if (k === 'q') render(); });
   $app.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'f-chat') A.send(); });
 
   /* Notifications on live changes from admin / vendor / technician */
@@ -361,6 +417,6 @@
     if (last && (!pl || last.id !== pl.id) && last.thread === ME && last.from === 'admin') toast('New message from Shital Support', 'chat');
     render();
   });
-  S.watch('cust:' + ME, n => toast(n.text, ({ completed: 'checkc', extra: 'alert', cancelled: 'x' })[n.kind] || 'bell'));
+  AC.history.track('cust:' + ME);
   render();
 })();

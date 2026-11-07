@@ -34,8 +34,9 @@ Open `http://localhost:8080` for the showcase hub, which runs all three apps sid
 2. Admin sees the request. If a Shital technician is within the service radius, admin assigns them. If not, admin forwards it to the nearest vendor, who assigns one of their own technicians.
 3. The technician accepts, travels (customer and admin see a live moving marker), arrives, works, optionally requests extra work, and completes.
 4. Extra work needs approval from the customer (or admin on their behalf) before it starts.
-5. Payment: cash on delivery, bKash, Nagad or card through a demo gateway. Customer rates the technician.
-6. Shop orders move through packed, shipped (courier and tracking id) and delivered. Buying an AC with installation creates the linked installation booking and a 1 year repair warranty.
+5. The job closes only when the customer gives the technician a completion code. Admin can override and it is logged.
+6. Payment: cash on delivery, bKash, Nagad or card through a demo gateway. Customer rates the technician.
+7. Shop orders move through packed, shipped (courier and tracking id) and delivered. Buying an AC with installation creates the linked installation booking and a 1 year repair warranty.
 
 ## Repository map
 

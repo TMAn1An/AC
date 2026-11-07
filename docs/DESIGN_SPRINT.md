@@ -13,7 +13,10 @@ Source: `Client_Requirements.pdf` (client notes plus developer Q&A). Where the b
 | Selling model | Single seller. Shital buys from vendors and sells. No marketplace of third-party sellers. | Client reply 2 |
 | Vendor role | Field service only, in areas without a Shital technician. Admin stores name, address and phone. Commission amount decided later. | Client reply 2 |
 | Routing | Admin assigns a nearby Shital technician. Otherwise forwards to a vendor who assigns their own technician. | Client reply 1 (second round) |
-| Confirmation | Technician informs admin. Admin talks to the customer to confirm extra work. Discounts help the customer cooperate. | Client reply 3 |
+| Extra work | Technician picks a priced item and the customer decides. Admin is informed only, no approval. Missing items are priced by admin or the vendor. | Client review round 3 |
+| Completion | Customer gives the technician a 4 digit code from the app. Admin can override and it is logged. | Client review round 3 |
+| Technician identity | NID photos, live NID check, live selfie. The onboarder (admin or vendor) is responsible. Strict visibility between vendors. | Client review round 3 |
+| Wallet | Cash deposit accepted by admin or vendor zeroes the balance. Incentive can be withdrawn after cash is cleared. | Client review round 4 |
 | Liability | Company covers extra work only if approved. Work outside the order is the technician's responsibility, not the company's. | Client reply 3 |
 | Cart | AC can be added to cart. Installation is an optional add-on. AC bought from Shital gets an installation discount and a 1 year repair warranty. | Client reply 3 |
 | Tracking | Timeline status. Live map with a moving technician. Vendor location fixed. No Google APIs. | Client reply 4 and brief |

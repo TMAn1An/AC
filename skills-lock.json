@@ -91,6 +91,12 @@
       "skillPath": "skills/dart-write-documentation/SKILL.md",
       "computedHash": "48724a1c25019504248ae10bdc37d77b077dcca2a26d4830860201c9d7a77126"
     },
+    "ecommerce-product-card-ux": {
+      "source": "bichitosshop/bichitosonline",
+      "sourceType": "github",
+      "skillPath": ".opencode/skills/ecommerce-product-card-ux/SKILL.md",
+      "computedHash": "71833a9d6d10f49a0b82916f09719fa9705612be41eeaa74493e695d696eabc4"
+    },
     "flutter-add-integration-test": {
       "source": "flutter/skills",
       "sourceType": "github",
@@ -150,6 +156,36 @@
       "sourceType": "github",
       "skillPath": "skills/flutter-use-http-package/SKILL.md",
       "computedHash": "17efcf4da9933afaf9c1d41940bd6b92f1ae73dcae4bf6c59cfe24f7e487ee9f"
+    },
+    "mobile-app-ui-design": {
+      "source": "ceorkm/mobile-app-ui-design",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "e477467d913d35f0502f4449e721df52ce6aafcad4268ccb8ed083440eae7f80"
+    },
+    "product-card": {
+      "source": "thedaviddias/ux-patterns-for-developers",
+      "sourceType": "github",
+      "skillPath": "skills/product-card/SKILL.md",
+      "computedHash": "773eb32118e33ee4fc01641299c2583681a4e69b9c75efa82c470654d2555a94"
+    },
+    "storefront-best-practices": {
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/ecommerce-storefront/skills/storefront-best-practices/SKILL.md",
+      "computedHash": "7cb664b5767378a57e1a78d6a9b277a00d3723625d563d033c7d979bbb65a487"
+    },
+    "ux-checkout-payment": {
+      "source": "uxcel-lab/product-skills",
+      "sourceType": "github",
+      "skillPath": "ux/flows/checkout-payment/SKILL.md",
+      "computedHash": "7754cccce2b1ca4d361a609eadcaeaef0baeab802ebe2c2ff7dca5e75da0876d"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-design-guidelines/SKILL.md",
+      "computedHash": "a6a44d5498f7e8f68289902f3dedfc6f38ae0cee1e96527c80724cf27f727c2a"
     }
   }
 }
