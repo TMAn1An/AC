@@ -6,6 +6,7 @@
 <title>NEW Walkthrough Studio</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="../shared/base.css">
+<script src="../shared/logo.js"></script>
 <style>
 /* Studio for the client walkthrough video, 1920 x 1080. The five real prototype apps run in iframes; a script drives them. */
 html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
@@ -26,16 +27,18 @@ html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; backgro
 #title .apps { display: flex; gap: 20px; margin-top: 18px; } #title .apps span { background: rgba(255,255,255,.1); border-radius: 18px; padding: 18px 28px; font-size: 28px; font-weight: 600; }
 #cur { position: absolute; left: 0; top: 0; width: 30px; height: 30px; margin: -6px 0 0 -6px; z-index: 99; pointer-events: none; transition: transform .6s cubic-bezier(.3,.7,.2,1); }
 #cur svg { filter: drop-shadow(0 3px 5px rgba(0,0,0,.35)); } #cur i { position: absolute; left: -14px; top: -14px; width: 40px; height: 40px; border-radius: 50%; border: 4px solid var(--accent); opacity: 0; } #cur.fx i { animation: fx .5s; } @keyframes fx { from { transform: scale(.4); opacity: .9; } to { transform: scale(1.5); opacity: 0; } }
+.mk, .mk2 { background: #fff !important; display: grid; place-items: center; } .mk svg, .mk2 svg { display: block; }
 </style>
 </head>
 <body>
-<div class="top"><div class="logo"><span class="mk"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M12 2v20"/><path d="m20 16-4-4 4-4"/><path d="m4 8 4 4-4 4"/><path d="m16 4-4 4-4-4"/><path d="m8 20 4-4 4 4"/></svg></span>NEW</div><div id="step"></div></div>
+<div class="top"><div class="logo"><span class="mk" id="mkL"></span>NEW</div><div id="step"></div></div>
 <div id="area"></div>
 <div id="cap"><div class="bar"></div><div><b id="capA"></b><span id="capB"></span></div></div>
-<div id="title"><div class="mk2"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M12 2v20"/><path d="m20 16-4-4 4-4"/><path d="m4 8 4 4-4 4"/><path d="m16 4-4 4-4-4"/><path d="m8 20 4-4 4 4"/></svg></div><h1 id="tA"></h1><p id="tB"></p><div class="apps" id="tC"></div></div>
+<div id="title"><div class="mk2" id="mkL2"></div><h1 id="tA"></h1><p id="tB"></p><div class="apps" id="tC"></div></div>
 <div id="cur"><i></i><svg width="30" height="30" viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-3 6z" fill="#1E1B18" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
 <script>
 const KIND = { admin: ['Admin web app', 'admin/index.html', 1140, 760 + 0], adminapp: ['Admin app', 'admin-app/index.html', 410, 820], vendor: ['Vendor app', 'vendor/index.html', 410, 820], technician: ['Technician app', 'technician/index.html', 410, 820], customer: ['Customer app', 'customer/index.html', 410, 820] };
+document.getElementById('mkL').innerHTML = AC.logo.mark(36); document.getElementById('mkL2').innerHTML = AC.logo.mark(92);
 const area = document.getElementById('area'), dev = {};
 Object.entries(KIND).forEach(([k, v]) => {
   const d = document.createElement('div'); d.className = 'dev'; d.id = 'd-' + k;
