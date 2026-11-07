@@ -34,8 +34,8 @@
     clip.appendChild(r); el.appendChild(clip);
     // Water splash: small droplets fly out from the touch point and fade
     const fx = document.createElement('i'); fx.className = 'splash'; fx.style.cssText = 'left:' + px + 'px;top:' + py + 'px';
-    for (let k = 0; k < 18; k++) {
-      const a = Math.random() * Math.PI * 2, dist = 14 + Math.random() * 28, s = 1.2 + Math.random() * 1.8, dl = Math.random() * 70;
+    for (let k = 0; k < 30; k++) {
+      const a = Math.random() * Math.PI * 2, dist = 10 + Math.random() * 26, s = 0.7 + Math.random() * 1.0, dl = Math.random() * 70;
       const dp = document.createElement('b');
       dp.style.cssText = '--dx:' + Math.cos(a) * dist + 'px;--dy:' + (Math.sin(a) * dist - 6) + 'px;width:' + s + 'px;height:' + s + 'px;animation-delay:' + (dl - late) + 'ms';
       fx.appendChild(dp);
