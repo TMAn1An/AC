@@ -27,9 +27,20 @@
      Tapping re-renders the bar, so the ripple is re-created on the new item with the time already elapsed. */
   let rip = null;
   function ripple(el, x, y, elapsed) {
-    const b = el.getBoundingClientRect(), d = Math.max(b.width, b.height) * 1.6, r = document.createElement('i');
-    r.className = 'ripple'; r.style.cssText = 'width:' + d + 'px;height:' + d + 'px;left:' + (x - b.left - d / 2) + 'px;top:' + (y - b.top - d / 2) + 'px;animation-delay:-' + (elapsed || 0) + 'ms';
-    el.appendChild(r); setTimeout(() => r.remove(), 760 - (elapsed || 0));
+    const b = el.getBoundingClientRect(), d = Math.max(b.width, b.height) * 1.6, px = x - b.left, py = y - b.top, late = elapsed || 0;
+    const clip = document.createElement('i'); clip.className = 'rip-clip';
+    const r = document.createElement('i'); r.className = 'ripple';
+    r.style.cssText = 'width:' + d + 'px;height:' + d + 'px;left:' + (px - d / 2) + 'px;top:' + (py - d / 2) + 'px;animation-delay:-' + late + 'ms';
+    clip.appendChild(r); el.appendChild(clip);
+    // Water splash: small droplets fly out from the touch point and fade
+    const fx = document.createElement('i'); fx.className = 'splash'; fx.style.cssText = 'left:' + px + 'px;top:' + py + 'px';
+    for (let k = 0; k < 11; k++) {
+      const a = Math.random() * Math.PI * 2, dist = 16 + Math.random() * 26, s = 2.5 + Math.random() * 3.5, dl = Math.random() * 70;
+      const dp = document.createElement('b');
+      dp.style.cssText = '--dx:' + Math.cos(a) * dist + 'px;--dy:' + (Math.sin(a) * dist - 6) + 'px;width:' + s + 'px;height:' + s + 'px;animation-delay:' + (dl - late) + 'ms';
+      fx.appendChild(dp);
+    }
+    el.appendChild(fx); setTimeout(() => { clip.remove(); fx.remove(); }, 800 - late);
   }
   document.addEventListener('pointerdown', e => {
     const t = e.target.closest && e.target.closest('.tabbar .tab'); if (!t) return;
@@ -37,7 +48,7 @@
   }, true);
   function reRipple() {
     if (!rip) return; const el = performance.now() - rip.at; if (el > 600) { rip = null; return; }
-    const t = document.querySelector('.tabbar .tab[data-v="' + rip.v + '"]'); if (t && !t.querySelector('.ripple')) ripple(t, rip.x, rip.y, el);
+    const t = document.querySelector('.tabbar .tab[data-v="' + rip.v + '"]'); if (t && !t.querySelector('.rip-clip')) ripple(t, rip.x, rip.y, el);
   }
   const queueGlass = () => { if (!queued) { queued = true; requestAnimationFrame(glassSync); } };
   new MutationObserver(queueGlass).observe(document.documentElement, { childList: true, subtree: true });
