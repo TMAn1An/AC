@@ -117,7 +117,7 @@ header.nav { background: var(--bg); }
 .tabbar, .seg, .tabs { position: relative; }
 .glass-ind { position: absolute; z-index: 0; pointer-events: none; background: var(--brand); border-radius: 3px;
   transition: left .32s cubic-bezier(.4,0,.2,1), width .32s cubic-bezier(.4,0,.2,1); }
-.tabbar > .glass-ind { top: 0 !important; height: 3px !important; border-radius: 0 0 3px 3px; margin: 0 22px; box-sizing: content-box; }
+.tabbar > .glass-ind { background: var(--brand-l); border-radius: 18px; transition: left .32s cubic-bezier(.4,0,.2,1), width .32s cubic-bezier(.4,0,.2,1), height .32s, top .32s; margin: 0; transform: scale(.82, .9); }
 .tabbar > :not(.glass-ind), .seg > :not(.glass-ind), .tabs > :not(.glass-ind) { position: relative; z-index: 1; }
 /* Top tabs and segmented controls: text tabs on a hairline with a sliding underline */
 .seg { background: none; border-bottom: 1px solid var(--line); border-radius: 0; padding: 0; margin: 4px 20px 14px; backdrop-filter: none; -webkit-backdrop-filter: none; }
@@ -139,3 +139,11 @@ header.nav { background: var(--bg); }
 .w-col .btn[disabled] { opacity: 1; background: var(--bg); color: var(--ink-4); border-color: transparent; }
 .seg { margin: 0 0 14px !important; padding: 0 20px; background: var(--surface); box-shadow: none !important; border-bottom: 1px solid var(--line); }
 .band + .seg { margin-top: 0 !important; }
+
+/* Press feedback: a soft tint flashes under the tapped tab, then the active tab keeps the tinted pill and a coloured icon */
+.screen .tabbar .tab { transition: color .2s, transform .12s; -webkit-tap-highlight-color: transparent; }
+.screen .tabbar .tab:active { transform: scale(.92); }
+.screen .tabbar .tab:active svg { color: var(--brand); }
+.screen .tabbar .tab.on svg { color: var(--brand); }
+.screen .tabbar .tab:not(.on):active::after { content: ''; position: absolute; inset: 2px 8px; border-radius: 16px; background: var(--brand-l); z-index: -1; animation: tabpress .25s ease-out both; }
+@keyframes tabpress { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: none; } }
