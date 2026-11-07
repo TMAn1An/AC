@@ -6,7 +6,7 @@
 | `shital-client-walkthrough.mp4` | Client presentation, 1920x1080, about 4 minutes, no sound. Shows the full workflow across all five apps |
 | `AUDIO_SCRIPT.md` | Which script goes with which video, plus ElevenLabs settings |
 | `audio/1-ad-vertical-english.md`, `audio/2-ad-vertical-bangla.md` | Voice-over for the ad, English or Bangla |
-| `audio/3-client-walkthrough-english.md` | Narration for the client walkthrough video |
+| `audio/3-client-walkthrough-english.md`, `audio/4-client-walkthrough-bangla.md` | Narration for the client walkthrough video, English or Bangla |
 
 Both videos are generated from the real prototype, so they can be remade after any change:
 

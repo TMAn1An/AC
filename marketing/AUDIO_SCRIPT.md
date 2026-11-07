@@ -7,8 +7,9 @@ Two videos, three scripts. Pick the script that matches the video.
 | `shital-ad-vertical.mp4` (marketing ad for social media) | 66 s | `audio/1-ad-vertical-english.md` | English |
 | `shital-ad-vertical.mp4` (the same ad) | 66 s | `audio/2-ad-vertical-bangla.md` | Bangla |
 | `shital-client-walkthrough.mp4` (presentation to the client) | 4 min 7 s | `audio/3-client-walkthrough-english.md` | English |
+| `shital-client-walkthrough.mp4` (the same video) | 4 min 7 s | `audio/4-client-walkthrough-bangla.md` | Bangla |
 
-Scripts 1 and 2 are the same ad in two languages, so use one or the other. Script 3 is for the client video only.
+Scripts 1 and 2 are the same ad in two languages, and scripts 3 and 4 are the same client video in two languages, so use one of each pair.
 
 ## How to generate the audio
 
