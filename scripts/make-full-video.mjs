@@ -202,7 +202,10 @@ const total = +now().toFixed(1);
 await ctx.close(); await browser.close();
 const raw = fs.readdirSync(out + '/raw-full').filter(f => f.endsWith('.webm')).map(f => out + '/raw-full/' + f).sort((a, b) => fs.statSync(a).mtimeMs - fs.statSync(b).mtimeMs).pop();
 // Start on the title card (about 1.6 s after the trim point), hold it 4 s longer for the opening line, then continue
-execSync(`ffmpeg -y -loglevel error -i "${raw}" -filter_complex "[0:v]trim=start=3.8:end=10.7,setpts=PTS-STARTPTS,tpad=stop_mode=clone:stop_duration=4[a];[0:v]trim=start=10.7,setpts=PTS-STARTPTS[b];[a][b]concat=n=2:v=1[v]" -map "[v]" -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p -r 30 marketing/out/with-markers.mp4`);
+execSync(`ffmpeg -y -loglevel error -ss 3.8 -t 6.9 -i "${raw}" -vf "tpad=stop_mode=clone:stop_duration=4" -c:v libx264 -preset fast -crf 18 -pix_fmt yuv420p -r 30 marketing/out/part-a.mp4`);
+execSync(`ffmpeg -y -loglevel error -ss 10.7 -i "${raw}" -c:v libx264 -preset fast -crf 18 -pix_fmt yuv420p -r 30 marketing/out/part-b.mp4`);
+fs.writeFileSync('marketing/out/parts.txt', "file 'part-a.mp4'\nfile 'part-b.mp4'\n");
+execSync('ffmpeg -y -loglevel error -f concat -safe 0 -i marketing/out/parts.txt -c copy marketing/out/with-markers.mp4');
 fs.mkdirSync('marketing/audio', { recursive: true }); fs.writeFileSync('marketing/audio/timeline.json', JSON.stringify({ total, items: TL }, null, 1));
 execSync('python3 scripts/video_timeline.py', { stdio: 'inherit' });
 execSync(`ffmpeg -y -loglevel error -i marketing/out/with-markers.mp4 -vf "crop=1920:1076:0:4,pad=1920:1080:0:4:color=0xF4F1EC" -c:v libx264 -preset medium -crf 21 -pix_fmt yuv420p -r 30 -movflags +faststart marketing/new-full-walkthrough.mp4`);
