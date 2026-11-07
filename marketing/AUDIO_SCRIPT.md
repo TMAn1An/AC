@@ -25,3 +25,9 @@ ffmpeg -i marketing/shital-ad-vertical.mp4 -i vo.mp3 -map 0:v -map 1:a -c:v copy
 ```
 
 Add quiet royalty-free background music at about 15 to 20 percent of the voice volume if you like.
+
+## Full client walkthrough (7 min 14 s)
+
+- Video: `marketing/new-full-walkthrough.mp4`. Covers the customer app, booking and OTP, dispatch, technician job and navigation, extra work, completion code, reviews, chat, wallet, vendors, the shop and courier, every admin module, all staff roles (Operations executive, Finance, Catalog manager, Support agent, Super admin, plus a custom role) and technician identity checks.
+- Scripts with exact times read back from the footage: `audio/5-full-walkthrough-english.md` and `audio/6-full-walkthrough-bangla.md`. Each file also has the text grouped by section, so you can paste one section at a time into ElevenLabs.
+- Rebuild everything: `./scripts/serve.sh`, then `node scripts/make-full-video.mjs`, then `python3 scripts/narration.py`. Edit the wording in `scripts/narration.py`.
