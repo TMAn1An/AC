@@ -8,7 +8,7 @@
   const GLASS = '.tabbar, .seg, .tabs', memo = {};
   let queued = false;
   function glassSync() {
-    queued = false;
+    queued = false; reRipple();
     const all = [...document.querySelectorAll(GLASS)];
     all.forEach((c, i) => {
       const on = c.querySelector(':scope > .on'); let ind = c.querySelector(':scope > .glass-ind');
@@ -23,6 +23,22 @@
       memo[key] = box;
     });
   }
+  /* Press ripple on tab bar items (foodpanda style): colour spreads from the touch point for a moment, then fades and only the icon stays coloured.
+     Tapping re-renders the bar, so the ripple is re-created on the new item with the time already elapsed. */
+  let rip = null;
+  function ripple(el, x, y, elapsed) {
+    const b = el.getBoundingClientRect(), d = Math.max(b.width, b.height) * 1.6, r = document.createElement('i');
+    r.className = 'ripple'; r.style.cssText = 'width:' + d + 'px;height:' + d + 'px;left:' + (x - b.left - d / 2) + 'px;top:' + (y - b.top - d / 2) + 'px;animation-delay:-' + (elapsed || 0) + 'ms';
+    el.appendChild(r); setTimeout(() => r.remove(), 760 - (elapsed || 0));
+  }
+  document.addEventListener('pointerdown', e => {
+    const t = e.target.closest && e.target.closest('.tabbar .tab'); if (!t) return;
+    rip = { v: t.dataset.v, x: e.clientX, y: e.clientY, at: performance.now(), bar: t.parentElement.className }; ripple(t, e.clientX, e.clientY, 0);
+  }, true);
+  function reRipple() {
+    if (!rip) return; const el = performance.now() - rip.at; if (el > 600) { rip = null; return; }
+    const t = document.querySelector('.tabbar .tab[data-v="' + rip.v + '"]'); if (t && !t.querySelector('.ripple')) ripple(t, rip.x, rip.y, el);
+  }
   const queueGlass = () => { if (!queued) { queued = true; requestAnimationFrame(glassSync); } };
   new MutationObserver(queueGlass).observe(document.documentElement, { childList: true, subtree: true });
   addEventListener('resize', queueGlass); addEventListener('load', queueGlass);
@@ -30,6 +46,21 @@
     const d = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML'); let last = null;
     Object.defineProperty(el, 'innerHTML', { get() { return d.get.call(this); }, set(v) { if (v === last) return; last = v; d.set.call(this, v); } });
   };
+  /* Tap rescue: if the control under the finger was replaced by a re-render between press and release, the browser drops the click.
+     Remember what was pressed and, when the release lands on an equivalent control and no click arrived, click it. */
+  let press = null, clicked = false;
+  const keyOf = el => el.dataset.a + '|' + (el.dataset.v || '') + '|' + (el.dataset.id || '') + '|' + (el.dataset.k || '');
+  document.addEventListener('pointerdown', e => { const el = e.target.closest && e.target.closest('[data-a]'); press = el ? { key: keyOf(el), x: e.clientX, y: e.clientY } : null; clicked = false; }, true);
+  document.addEventListener('click', () => { clicked = true; }, true);
+  document.addEventListener('pointerup', e => {
+    const p = press; press = null; if (!p || Math.hypot(e.clientX - p.x, e.clientY - p.y) > 8) return;
+    clicked = false;
+    setTimeout(() => {
+      if (clicked) return;
+      const at = document.elementFromPoint(e.clientX, e.clientY), el = at && at.closest && at.closest('[data-a]');
+      if (el && keyOf(el) === p.key && !el.disabled) el.click();
+    }, 40);
+  }, true);
   // Drag to scroll for horizontal strips (carousels, tabs, chips). Mouse users have no horizontal wheel, so these looked stuck.
   let drag = null;
   document.addEventListener('pointerdown', e => {

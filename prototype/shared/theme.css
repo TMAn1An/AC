@@ -147,3 +147,12 @@ header.nav { background: var(--bg); }
 .screen .tabbar .tab.on svg { color: var(--brand); }
 .screen .tabbar .tab:not(.on):active::after { content: ''; position: absolute; inset: 2px 8px; border-radius: 16px; background: var(--brand-l); z-index: -1; animation: tabpress .25s ease-out both; }
 @keyframes tabpress { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: none; } }
+
+/* Tab bar: no persistent pill. A colour ripple on press, then just the coloured icon. */
+.tabbar > .glass-ind { display: none; }
+.screen .tabbar .tab { overflow: hidden; border-radius: 18px; position: relative; }
+.screen .tabbar .tab:not(.on):active::after { display: none; }
+.ripple { position: absolute; border-radius: 50%; background: rgba(39,43,122,.28); pointer-events: none; z-index: 0; transform: scale(0); animation: rip .7s ease-out forwards; }
+@keyframes rip { 0% { transform: scale(0); opacity: .9; } 60% { opacity: .7; } 100% { transform: scale(1); opacity: 0; } }
+.screen .tabbar .tab > svg, .screen .tabbar .tab > span, .screen .tabbar .tab > small { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) { .ripple { animation-duration: .01s; } }
