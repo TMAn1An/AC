@@ -24,8 +24,9 @@ async function click(k, sel, after = 800) {
 }
 async function type(k, sel, text, delay = 120) { await click(k, sel, 200); try { await F(k).locator(sel).first().pressSequentially(text, { delay }); } catch (e) { logs.push(`type ${k} ${sel}`); } await wait(500); }
 const T0 = Date.now(), TL = []; const now = () => Math.max(0, (Date.now() - T0) / 1000 - 2.2);
-const say = async (a, b, ms = 2500) => { TL.push({ t: +now().toFixed(1), kind: 'caption', a, b }); await page.evaluate(([x, y]) => V.cap(x, y), [a, b]); await wait(ms); };
-const stepL = t => { TL.push({ t: +now().toFixed(1), kind: 'section', a: t }); return page.evaluate(x => V.step(x), t); }, show = (...k) => page.evaluate(x => V.show(x), k);
+let IDX = 0;
+const say = async (a, b, ms = 2500) => { const n = ++IDX; TL.push({ n, t: +now().toFixed(1), kind: 'caption', a, b }); await page.evaluate(([x, y, n]) => { V.cap(x, y); V.mark(n); }, [a, b, n]); await wait(ms); };
+const stepL = t => { const n = ++IDX; TL.push({ n, t: +now().toFixed(1), kind: 'section', a: t }); return page.evaluate(([x, n]) => { V.step(x); V.mark(n); }, [t, n]); }, show = (...k) => page.evaluate(x => V.show(x), k);
 const FRAMES = 'customer technician vendor adminapp admin'.split(' ');
 
 
@@ -37,7 +38,7 @@ const nav = (p, ms = 1700) => click('admin', `.nav a[data-v=${p}]`, ms);
 
 /* 0. Title */
 await page.evaluate(() => V.title('NEW: sell, book and dispatch in one live system', 'Air conditioners, bags and local cosmetics, plus field service across Dhaka. Five apps, one workflow.', ['Customer app', 'Technician app', 'Vendor app', 'Admin app', 'Admin web']));
-TL.push({ t: +now().toFixed(1), kind: 'section', a: 'Title' }); await wait(7000); await page.evaluate(() => V.untitle());
+{ const n = ++IDX; TL.push({ n, t: +now().toFixed(1), kind: 'section', a: 'Title' }); await page.evaluate(n => V.mark(n), n); } await wait(7000); await page.evaluate(() => V.untitle());
 
 /* 1. Customer app tour */
 await show('customer'); await stepL('1  Customer app');
@@ -196,11 +197,13 @@ await say('Vendor technicians are visible only to that vendor and admin', 'Admin
 
 /* 12. Close */
 await page.evaluate(() => V.title('Everything in one live system', 'Faster dispatch. Fewer surprises. Full accountability.', ['Live tracking', 'Completion code', 'Verified technicians', 'Wallet and payouts', 'Roles and permissions']));
-TL.push({ t: +now().toFixed(1), kind: 'section', a: 'Close' }); await wait(8000);
+{ const n = ++IDX; TL.push({ n, t: +now().toFixed(1), kind: 'section', a: 'Close' }); await page.evaluate(n => V.mark(n), n); } await wait(8000);
 const total = +now().toFixed(1);
 await ctx.close(); await browser.close();
 const raw = fs.readdirSync(out + '/raw-full').filter(f => f.endsWith('.webm')).map(f => out + '/raw-full/' + f).sort().pop();
-execSync(`ffmpeg -y -loglevel error -i "${raw}" -ss 2.2 -c:v libx264 -preset medium -crf 21 -pix_fmt yuv420p -r 30 -movflags +faststart marketing/new-full-walkthrough.mp4`);
+execSync(`ffmpeg -y -loglevel error -i "${raw}" -ss 2.2 -vf "tpad=start_duration=6:start_mode=clone" -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p -r 30 marketing/out/with-markers.mp4`);
 fs.mkdirSync('marketing/audio', { recursive: true }); fs.writeFileSync('marketing/audio/timeline.json', JSON.stringify({ total, items: TL }, null, 1));
+execSync('python3 scripts/video_timeline.py', { stdio: 'inherit' });
+execSync(`ffmpeg -y -loglevel error -i marketing/out/with-markers.mp4 -vf "crop=1920:1076:0:4,pad=1920:1080:0:4:color=0xF4F1EC" -c:v libx264 -preset medium -crf 21 -pix_fmt yuv420p -r 30 -movflags +faststart marketing/new-full-walkthrough.mp4`);
 console.log('duration', total, 's');
 console.log('issues:', logs.length ? '\n' + logs.join('\n') : 'none');

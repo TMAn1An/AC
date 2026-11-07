@@ -28,10 +28,12 @@ html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; backgro
 #cur { position: absolute; left: 0; top: 0; width: 30px; height: 30px; margin: -6px 0 0 -6px; z-index: 99; pointer-events: none; transition: transform .6s cubic-bezier(.3,.7,.2,1); }
 #cur svg { filter: drop-shadow(0 3px 5px rgba(0,0,0,.35)); } #cur i { position: absolute; left: -14px; top: -14px; width: 40px; height: 40px; border-radius: 50%; border: 4px solid var(--accent); opacity: 0; } #cur.fx i { animation: fx .5s; } @keyframes fx { from { transform: scale(.4); opacity: .9; } to { transform: scale(1.5); opacity: 0; } }
 .mk, .mk2 { background: #fff !important; display: grid; place-items: center; } .mk svg, .mk2 svg { display: block; }
+#mk { position: fixed; left: 0; top: 0; width: 1920px; height: 4px; z-index: 9999; display: flex; } #mk i { flex: 1; background: #101010; }
 </style>
 </head>
 <body>
 <div class="top"><div class="logo"><span class="mk" id="mkL"></span>NEW</div><div id="step"></div></div>
+<div id="mk"><i></i><i></i><i></i></div>
 <div id="area"></div>
 <div id="cap"><div class="bar"></div><div><b id="capA"></b><span id="capB"></span></div></div>
 <div id="title"><div class="mk2" id="mkL2"></div><h1 id="tA"></h1><p id="tB"></p><div class="apps" id="tC"></div></div>
@@ -46,6 +48,8 @@ Object.entries(KIND).forEach(([k, v]) => {
   area.appendChild(d); dev[k] = d;
 });
 window.V = {
+  /* Sync marker for the recorder: a 3 digit code (base 8) painted in the top 4 px, cropped off in the final video. Lets us read exact caption times back from the footage. */
+  mark(n) { const d = [n >> 6 & 7, n >> 3 & 7, n & 7], c = document.querySelectorAll('#mk i'); d.forEach((v, i) => { const g = v * 32 + 16; c[i].style.background = 'rgb(' + g + ',' + g + ',' + g + ')'; }); },
   show(kinds) {
     const gap = 56, sizes = kinds.map(k => KIND[k]), W = sizes.reduce((a, s) => a + s[2], 0) + gap * (kinds.length - 1), H = Math.max(...sizes.map(s => s[3]));
     const s = Math.min(1, 1808 / W, 740 / H); let x = (1920 - W * s) / 2;

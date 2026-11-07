@@ -109,8 +109,58 @@ BN = {
  'Close': "এই হলো নিউ। দ্রুত ডিসপ্যাচ, কম বিস্ময়, আর পূর্ণ জবাবদিহি, একটি লাইভ সিস্টেমে।",
 }
 
+
+# Tighter lines for beats that have little time on screen (checked against the recording timeline).
+EN.update({
+ 'Title': "This is NEW. One live system to sell air conditioners, bags and local cosmetics, and to dispatch field technicians across Dhaka. Five connected apps, one workflow.",
+ 'The customer app': "Start with the customer app: air conditioners, bags and local cosmetics, with a first-purchase offer always in view.",
+ 'Services with fixed prices': "Services have fixed prices: repair, cooling problem, servicing, gas refill, installation and relocation.",
+ 'Add to cart or Buy now': "Add to cart, Buy now, or save with a heart.",
+ 'Assigned. The customer is told right away.': "One tap assigns it. The customer is told at once, and every action is logged.",
+ 'Live dispatch map': "The live map shows technicians moving and vendors fixed.",
+ 'The technician gets an offer with a timer': "A job offer arrives with a countdown. No answer in sixty seconds, and admin can reassign it.",
+ 'The customer approves in the app': "The customer decides in the app, and admin is informed.",
+ 'Incentive withdrawal is paid by finance': "With cash cleared, the technician withdraws incentive. Finance pays it, all in an audit ledger.",
+ 'The admin app does the same on the go': "The admin mobile app does the same on the go.",
+ 'Shop ACs, bags and local cosmetics': "Customers shop ACs, bags and cosmetics. Installation is an add-on with a discount and a one year warranty.",
+ 'The dashboard': "Now the admin web panel. The dashboard shows bookings, jobs, revenue and what needs attention, live.",
+ 'Services and prices': "Admin adds services and changes prices and time slots, without a developer.",
+ 'Categories and promotions': "Categories organise the shop. Promotions create offers and codes; provider offers can be added later.",
+ 'Technicians and vendors': "Technicians and vendors have their own pages. Vendor name, address and phone live here.",
+ 'Choose exactly what each role can do': "Admin can also create new roles.",
+ 'Operations executive': "Operations executive: dispatch, overrides, extra-work pricing, orders and people. No finance.",
+ 'Finance': "Finance sees payments, collections, earnings and reviews. It cannot dispatch.",
+ 'Catalog manager': "Catalog manager: services, products, promotions and orders only.",
+ 'Super admin': "The Super admin can do everything, including roles. Menus appear only when a role allows them, and the server checks every request.",
+ 'Vendor technicians are visible only to that vendor and admin': "A vendor sees only its own technicians. Admin sees all.",
+})
+BN.update({
+ 'Title': "এটি নিউ। এসি, ব্যাগ ও দেশি কসমেটিকস বিক্রি এবং ঢাকা জুড়ে ফিল্ড টেকনিশিয়ান পাঠানোর একটি লাইভ সিস্টেম। পাঁচটি সংযুক্ত অ্যাপ, একটাই ওয়ার্কফ্লো।",
+ 'The customer app': "শুরু কাস্টমার অ্যাপ দিয়ে: এসি, ব্যাগ ও দেশি কসমেটিকস, আর প্রথম কেনাকাটার অফার সবসময় চোখের সামনে।",
+ 'Services with fixed prices': "সার্ভিসের দাম ঠিক করা: মেরামত, কুলিং সমস্যা, সার্ভিসিং, গ্যাস রিফিল, ইনস্টলেশন ও স্থানান্তর।",
+ 'Add to cart or Buy now': "কার্টে যোগ, এখনই কেনা, অথবা হার্ট দিয়ে সেভ।",
+ 'Assigned. The customer is told right away.': "এক ট্যাপে বরাদ্দ। কাস্টমার সাথে সাথে জানেন, আর প্রতিটি পদক্ষেপের লগ থাকে।",
+ 'Live dispatch map': "লাইভ ম্যাপে টেকনিশিয়ান চলছে, ভেন্ডর স্থির।",
+ 'The technician gets an offer with a timer': "কাউন্টডাউনসহ কাজের অফার আসে। ষাট সেকেন্ডে সাড়া না দিলে অ্যাডমিন আবার বরাদ্দ দিতে পারেন।",
+ 'The customer approves in the app': "কাস্টমার অ্যাপে সিদ্ধান্ত নেন, অ্যাডমিনকে জানানো হয়।",
+ 'Incentive withdrawal is paid by finance': "নগদ শূন্য হলে টেকনিশিয়ান ইনসেন্টিভ তোলেন। ফাইন্যান্স পরিশোধ করে, সবই অডিট খাতায়।",
+ 'The admin app does the same on the go': "মোবাইলের অ্যাডমিন অ্যাপে চলতি পথেও একই কাজ।",
+ 'Shop ACs, bags and local cosmetics': "কাস্টমার এসি, ব্যাগ ও কসমেটিকস কেনেন। ইনস্টলেশন ছাড়ে ঐচ্ছিক, সাথে এক বছরের ওয়ারেন্টি।",
+ 'The dashboard': "এবার অ্যাডমিন ওয়েব প্যানেল। ড্যাশবোর্ডে বুকিং, কাজ, আয় আর নজর দেওয়ার বিষয়, লাইভ।",
+ 'Services and prices': "অ্যাডমিন সার্ভিস যোগ করেন, দাম আর সময়ের স্লট বদলান, ডেভেলপার ছাড়াই।",
+ 'Categories and promotions': "ক্যাটাগরি শপ সাজায়। প্রমোশনে অফার ও কোড হয়, প্রোভাইডার অফার পরে যোগ হবে।",
+ 'Technicians and vendors': "টেকনিশিয়ান ও ভেন্ডরের আলাদা পেজ। ভেন্ডরের নাম, ঠিকানা, ফোন এখানে।",
+ 'Choose exactly what each role can do': "অ্যাডমিন নতুন রোলও বানাতে পারেন।",
+ 'Operations executive': "অপারেশনস এক্সিকিউটিভ: ডিসপ্যাচ, ওভাররাইড, বাড়তি কাজের দাম, অর্ডার ও মানুষ। ফাইন্যান্স নেই।",
+ 'Finance': "ফাইন্যান্স দেখে পেমেন্ট, কালেকশন, আর্নিংস ও রিভিউ। ডিসপ্যাচ করতে পারে না।",
+ 'Catalog manager': "ক্যাটালগ ম্যানেজার শুধু সার্ভিস, পণ্য, প্রমোশন ও অর্ডার।",
+ 'Super admin': "সুপার অ্যাডমিন সব পারেন, রোলসহ। অনুমতি থাকলেই কেবল মেনু দেখা যায়, আর সার্ভার প্রতিটি অনুরোধ যাচাই করে।",
+ 'Vendor technicians are visible only to that vendor and admin': "ভেন্ডর শুধু নিজের টেকনিশিয়ান দেখেন; অ্যাডমিন সবাইকে।",
+})
+OFFSET = 0.0  # timeline.json already holds the exact times read back from the footage (scripts/video_timeline.py)
+
 def build():
-    tl = json.load(open('marketing/audio/timeline.json')); items = tl['items']; total = tl['total']
+    tl = json.load(open('marketing/audio/timeline.json')); items = [dict(i, t=i['t'] + OFFSET) for i in tl['items']]; total = tl['total'] + OFFSET
     section = ''; rows = []; secname = {}
     for it in items:
         if it['kind'] == 'section': section = it['a']; secname[it['t']] = section
@@ -129,7 +179,7 @@ def build():
             out.append('| %s | %s | %s |' % (mm(t), sec, txt))
             nxt = rows[i + 1][0] if i + 1 < len(rows) else total
             words = len(txt.split()); secs = max(1, nxt - t); rate = words / secs
-            if lang == 'en' and rate > 3.0: warn.append('%s: %d words in %.0fs' % (key, words, secs))
+            if lang == 'en' and rate > 2.9: warn.append('%s: %d words in %.0fs' % (key, words, secs))
         out.append('\n## Full text by section (paste each block into ElevenLabs as one clip)\n')
         cur = None; block = []
         for t, sec, key in rows:
