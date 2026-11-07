@@ -11,7 +11,7 @@ Built from the client logo. The original artwork is kept in `prototype/assets/cl
 | Wordmark | `prototype/assets/new-wordmark.svg` | Wide spaces where the mark is shown separately |
 | In code | `AC.logo.full(size)`, `AC.logo.mark(size)`, `AC.logo.tile(size, full)` | Prototype apps |
 
-What changed from the client artwork: the same six blades, the same order (blue, red, green, blue, red, green, clockwise from the top) and the same three colours, redrawn with clean vector curves, even spacing and sharp tips. The wordmark is converted to outlines in a tight bold grotesque so it renders the same everywhere with no font file.
+What changed from the client artwork: the same six blades (traced from the client artwork with scripts/trace-logo.py), the same order (blue, red, green, blue, red, green, clockwise from the top) and the same three colours, redrawn with clean vector curves, even spacing and sharp tips. The wordmark is converted to outlines in a tight bold grotesque so it renders the same everywhere with no font file.
 
 Rules
 - Minimum size: 16 px for the mark, 40 px for the full logo.

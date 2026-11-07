@@ -64,7 +64,7 @@ header.nav { background: rgba(245,246,250,.88); }
 .stars, .rate .i, .prate .i { color: #F2A20C; }
 
 /* ---- Device frame: lighter graphite bezel so the dark header never merges with it, and a hard clip so glass bars stay inside the corners */
-@media (min-width: 560px) { .device { border-color: #262A44; clip-path: inset(0 round 48px); isolation: isolate; transform: translateZ(0); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 30px 60px rgba(16,20,38,.22); } }
+@media (min-width: 560px) { .device { border-color: #0A0B10; clip-path: inset(0 round 48px); isolation: isolate; transform: translateZ(0); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 30px 60px rgba(16,20,38,.22); } }
 .screen { isolation: isolate; }
 /* Headers use the brand blue, brighter than the bezel and the admin sidebar; the hero card takes the deep blue */
 .band, .statusbar.dk { background: var(--brand); }

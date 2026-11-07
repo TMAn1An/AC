@@ -29,16 +29,20 @@ def smooth(points):
 def blade_path(phi):
     pts = blade(phi); # remove duplicate tip points to keep sharp tips
     return smooth(pts)
-order = [(-90, BLUE), (-30, RED), (30, GREEN), (90, BLUE), (150, RED), (210, GREEN)]
+import json as _j
+_tr = _j.load(open('scripts/blades-traced.json'))  # traced from the client artwork by scripts/trace-logo.py
+class _B: pass
+order = [(i, t['color']) for i, t in enumerate(_tr)]
+def blade_path(i): return smooth(_tr[i]['pts'])
 blades = ''.join(f'<path d="{blade_path(p)}" fill="{c}"/>' for p, c in order)
 # Wordmark from Liberation Sans Bold, set tight like the original
 font = TTFont('/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf'); gs = font.getGlyphSet(); cmap = font.getBestCmap(); upm = font['head'].unitsPerEm
-cap = font['OS/2'].sCapHeight; scale = 15.5 / cap; track = -0.035 * upm
+cap = font['OS/2'].sCapHeight; scale = 19.0 / cap; track = -0.07 * upm
 x = 0; parts = []
 for ch in 'NEW':
     g = cmap[ord(ch)]; pen = SVGPathPen(gs); tp = TransformPen(pen, (scale, 0, 0, -scale, x * scale, 0)); gs[g].draw(tp); parts.append(pen.getCommands()); x += gs[g].width + track
 total = (x - track) * scale
-tx = C - total / 2; ty = C + 7.75
+tx = C - total / 2; ty = C + 9.5
 word = f'<g transform="translate({tx:.2f} {ty:.2f})" fill="#111111"><path d="{" ".join(parts)}"/></g>'
 def svg(body, vb='0 0 100 100'): return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{vb}" role="img" aria-label="NEW">{body}</svg>\n'
 open('prototype/assets/new-logo.svg', 'w').write(svg(blades + word))
