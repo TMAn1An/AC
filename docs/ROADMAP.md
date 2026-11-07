@@ -21,7 +21,7 @@ Done when: three apps boot, sign in by role, and read seeded services and techni
 - Customer: service list, booking form, tracking screen with timeline, support chat.
 - Admin: bookings table, dispatch drawer with nearest technicians (PostGIS) and vendor forward, live map.
 - Technician: job offer, accept, trip with location sharing, arrive, work, extra work request, complete.
-- Vendor portal: scoped job requests and technician assignment.
+- Vendor app and admin app: forwarded job requests, technician assignment, dispatch and approvals on mobile.
 - Extra work approval by customer or admin. Cash payment and Collections.
 
 Done when: the six-step demo on the hub runs against the real backend on two phones and a browser.

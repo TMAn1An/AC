@@ -4,13 +4,13 @@ Project: Shital, an AC service, AC sales, bag and local cosmetics platform for B
 
 ## Current state
 
-Phase 0 is done: a clickable design prototype in `prototype/` (plain HTML, CSS, JS). The production build (Flutter) has not started. Next step is phase 1 in `docs/ROADMAP.md`.
+Phase 0 is done: a clickable design prototype in `prototype/` (plain HTML, CSS, JS). The production build (Flutter) has not started. Next step is phase 1 in `docs/ROADMAP.md`, following `docs/PRODUCTION_PLAN.md`. Architecture follows the Flutter skill: MVVM (views, ChangeNotifier view models), repositories and services, optional use cases, `provider` for DI, `go_router`.
 
 ## Non-negotiable product decisions (from the client)
 
-- Three apps: customer, technician, admin/vendor panel. Flutter for all three (iOS and Android; web for admin; desktop optional).
+- Five apps, Android first: customer, technician, vendor, admin (mobile), admin web. Flutter for all. iOS later from the same code. See `docs/PRODUCTION_PLAN.md`.
 - Single seller for goods. Shital buys from vendors and sells itself. Vendors are only for field service in areas without a Shital technician.
-- Job routing: customer request goes to admin. Admin assigns a Shital technician if one is near. Otherwise admin forwards to a vendor, and the vendor assigns their own technician. Vendor details (name, address, phone) live in the admin panel. Vendors get a scoped portal inside the same admin app.
+- Job routing: customer request goes to admin. Admin assigns a Shital technician if one is near. Otherwise admin forwards to a vendor, and the vendor assigns their own technician. Vendor details (name, address, phone) live in the admin panel. Vendors use their own Vendor app (scoped to their jobs, team and earnings).
 - Tracking: the technician location moves live on a map while on the way. Vendors have a fixed location. No Google APIs. Use OpenStreetMap with flutter_map.
 - Customer app is an e-commerce app, not Daraz. Three sections: AC (sale plus service), bags, local cosmetics.
 - Services: AC Repair 1000, AC Cooling Problem 1000, others are placeholders. Extra work found on site must be approved by the customer or admin before it starts. Work outside the order is not covered by the company.

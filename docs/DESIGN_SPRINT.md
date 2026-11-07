@@ -8,7 +8,7 @@ Source: `Client_Requirements.pdf` (client notes plus developer Q&A). Where the b
 
 | Topic | Decision | Source |
 | --- | --- | --- |
-| Apps | Customer app, technician app, admin web panel. Vendors use a scoped role in the admin app. | Client reply 1 |
+| Apps | Customer, technician, vendor, admin (mobile) and admin web. Vendors get their own app, scoped to their jobs. Production plan: `docs/PRODUCTION_PLAN.md`. | Client reply 1 and later decision |
 | Platforms | Flutter. Android and iOS for the two mobile apps. Web for admin. Desktop possible later. | Client |
 | Selling model | Single seller. Shital buys from vendors and sells. No marketplace of third-party sellers. | Client reply 2 |
 | Vendor role | Field service only, in areas without a Shital technician. Admin stores name, address and phone. Commission amount decided later. | Client reply 2 |
@@ -94,7 +94,8 @@ Customer chooses a method at booking or checkout. Cash on delivery is collected 
 - Customer: Home, Services, Shop, Orders, Account. Pushed screens: service booking, tracking, product, cart, checkout, order detail, support chat.
 - Technician: Jobs, Map, Earnings, Profile. Pushed screens: job detail (one action at a time). Sheets: extra work, complete job.
 - Admin: Dashboard; Bookings, Live dispatch, Messages; Services, Products, Categories, Promotions; Orders; Users, Technicians, Vendors; Payments, Collections, Earnings; Reviews.
-- Vendor portal (same app, scoped): Dashboard, Job requests, Live map, My technicians, Earnings.
+- Vendor app: Jobs (new, active, completed), Team, Map, Earnings, Profile.
+- Admin app (mobile): Home, Jobs (with dispatch), Map, Inbox, More (orders, vendors, technicians, collections, payments, reviews, promotions).
 
 ## 7. Visual language
 

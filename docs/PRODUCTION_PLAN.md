@@ -16,7 +16,7 @@ Shital sells air conditioners, bags and local cosmetics, and runs a field-servic
 | 4 | Admin app | Shital operations, owner | Android phone and tablet | Play Store, closed track |
 | 5 | Admin web app | Shital operations, finance, catalog staff | Desktop browser | Web, behind login |
 
-Why five and not one: different permissions (only technician and customer tracking use location), different release speed, safer role isolation, smaller downloads, store listings that match each audience. They share packages so the cost is far below five separate builds.
+Why five and not one: different permissions (only the technician app shares location), different release speed, safer role isolation, smaller downloads, store listings that match each audience. They share packages so the cost is far below five separate builds.
 
 Division of work between the two admin surfaces. Admin app: on-the-go control (dispatch, approve extra work, chat, collections, quick lists). Admin web app: heavy work (catalog, bulk edits, finance reports, user management, settings).
 

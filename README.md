@@ -1,12 +1,14 @@
 # Shital: AC service, AC sales, bags and local cosmetics
 
-Design prototype for a Bangladesh marketplace and field-service platform. Three connected apps share one live system:
+Design prototype and production plan for a Bangladesh marketplace and field-service platform. Five connected apps share one live system:
 
 | App | Audience | Platform in production | Prototype |
 | --- | --- | --- | --- |
 | Customer app | Shoppers and service customers | Flutter (Android, iOS) | `prototype/customer` |
 | Technician app | Field technicians (direct and vendor) | Flutter (Android, iOS) | `prototype/technician` |
-| Admin and vendor panel | Shital staff, vendor owners | Flutter Web (desktop optional) | `prototype/admin` |
+| Vendor app | Vendor owners and dispatchers | Flutter (Android) | `prototype/vendor` |
+| Admin app | Shital operations on the go | Flutter (Android phone and tablet) | `prototype/admin-app` |
+| Admin web app | Shital staff, finance, catalog | Flutter Web | `prototype/admin` |
 
 "Shital" (Bangla for cool) is a working name. Change it in one place: `AC.brand` in `prototype/shared/data.js`.
 
@@ -23,7 +25,8 @@ Open `http://localhost:8080` for the showcase hub, which runs all three apps sid
 
 - `http://localhost:8080/customer/` (device frame on desktop, full screen on a phone)
 - `http://localhost:8080/technician/`
-- `http://localhost:8080/admin/` and `http://localhost:8080/admin/#vendor-V1` for the vendor portal
+- `http://localhost:8080/vendor/`, `http://localhost:8080/admin-app/` and `http://localhost:8080/admin/` (desktop)
+- `http://localhost:8080/plan.html` renders the production plan
 
 ## The workflow it demonstrates
 
@@ -40,8 +43,10 @@ Open `http://localhost:8080` for the showcase hub, which runs all three apps sid
 prototype/            static HTML, CSS and JS prototypes (no build step)
   index.html          showcase hub (live demo, design sprint, system, run guide)
   shared/             design tokens, icons, illustrations, data, live store, map
-  customer/ technician/ admin/
+  customer/ technician/ vendor/ admin-app/ admin/
+  plan.html           renders docs/PRODUCTION_PLAN.md
 docs/
+  PRODUCTION_PLAN.md  full plan: scope, rules, Android specifics, quality gates, phases, risks
   DESIGN_SPRINT.md    research, decisions, personas, flows, visual language
   ARCHITECTURE.md     production architecture for the Flutter build
   ROADMAP.md          phases, acceptance criteria, prompts to continue with Claude
@@ -61,4 +66,4 @@ Then ask: "Read CLAUDE.md and docs/ROADMAP.md, then start phase 1." The Flutter 
 
 ## Status
 
-Prototype v0.1: all flows are clickable and synchronised. All names, shops, phone numbers and amounts are fictional. Prices other than the two service prices in the client brief, the 4 km radius, commission rates and discount rules are placeholders listed in `docs/DESIGN_SPRINT.md`.
+Prototype v0.2: five apps, all flows clickable and synchronised. All names, shops, phone numbers and amounts are fictional. Prices other than the two service prices in the client brief, the 4 km radius, commission rates and discount rules are placeholders listed in `docs/DESIGN_SPRINT.md`.
