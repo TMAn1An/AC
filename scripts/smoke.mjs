@@ -5,7 +5,7 @@ import { spawn } from 'node:child_process';
 const PORT = 8099;
 const server = spawn('python3', ['-m', 'http.server', String(PORT), '--directory', 'prototype'], { stdio: 'ignore' });
 await new Promise(r => setTimeout(r, 800));
-const pages = ['index.html', 'customer/index.html', 'technician/index.html', 'admin/index.html', 'admin/index.html#vendor-V1'];
+const pages = ['index.html', 'plan.html', 'customer/index.html', 'technician/index.html', 'vendor/index.html', 'admin-app/index.html', 'admin/index.html'];
 const browser = await chromium.launch();
 let failed = false;
 for (const p of pages) {

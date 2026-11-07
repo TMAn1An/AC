@@ -1,7 +1,7 @@
 /* Shital admin and vendor panel prototype. One codebase: the role switcher shows the vendor portal view (scoped data, fewer menus). */
 (function () {
   const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app');
-  const ui = { page: 'dash', role: (location.hash.match(/vendor-?(V\d)?/) ? (RegExp.$1 || 'V1') : 'admin'), drawer: null, tab: 'all', q: '', thread: 'C2', pcat: 'all', pay: 'all', mapSel: null, menu: false, key: '', scroll: {}, map: null };
+  const ui = { page: 'dash', role: 'admin', drawer: null, tab: 'all', q: '', thread: 'C2', pcat: 'all', pay: 'all', mapSel: null, menu: false, key: '', scroll: {}, map: null };
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const vend = () => ui.role === 'admin' ? null : AC.vendById[ui.role];
   const jobs = () => { const v = vend(), all = S.get().jobs; return v ? all.filter(j => j.vendorId === v.id) : all; };
@@ -210,8 +210,8 @@
     return `<div class="dscrim" data-a="close"></div><aside class="drawer"><div class="d-h"><h2>${esc(v.name)}</h2><button class="icon-btn" data-a="close" aria-label="Close">${icon('x', 20)}</button></div><div class="d-b">
       <div class="sect"><span class="eyebrow">Registered details</span><dl class="kvs"><dt>Owner</dt><dd>${esc(v.owner)}</dd><dt>Phone</dt><dd class="mono">${v.phone}</dd><dt>Address</dt><dd>${esc(v.addr)}</dd><dt>Commission</dt><dd>${v.commission}% of each job</dd><dt>Partner since</dt><dd>${v.since}</dd><dt>Jobs</dt><dd>${j.length}</dd></dl></div>
       <div class="sect"><span class="eyebrow">Technicians</span>${ts.map(t => `<div class="pick">${av(t.name, 'amber')}<div class="grow"><b>${esc(t.name)}</b><div class="muted" style="font-size:13px">${AC.areas[t.area].n} . ${t.rating} rating</div></div>${badge(techState(t)[0], techState(t)[1])}</div>`).join('')}</div>
-      <div class="callout info">${icon('lock', 20)}<div><b>Vendor portal access</b>This vendor signs in to the same panel. They see only their own jobs, technicians and earnings.</div></div></div>
-      <div class="d-f"><button class="btn btn-s" data-a="role" data-v="${v.id}">${icon('eye', 16)}Open vendor portal view</button><button class="btn btn-p" data-a="close">Done</button></div></aside>`;
+      <div class="callout info">${icon('lock', 20)}<div><b>Vendor app access</b>This vendor signs in to the Shital Vendor app on Android. They see only their own jobs, technicians and earnings.</div></div></div>
+      <div class="d-f"><button class="btn btn-s" data-a="toast" data-v="Vendors sign in to the Shital Vendor app">${icon('phone', 16)}Call vendor</button><button class="btn btn-p" data-a="close">Done</button></div></aside>`;
   }
   const FORMS = {
     product: ['Add product', [['Name', 'Inverter Split AC 1.5 Ton'], ['Brand', 'Arctica'], ['Category', 'Air conditioners'], ['Price (BDT)', '68500'], ['Stock', '12']]],
@@ -236,10 +236,10 @@
     const cnt = { bookings: jobs().filter(j => v ? j.status === 'forwarded' : j.status === 'requested').length, messages: new Set(s.msgs.filter((m, i) => m.from === 'customer' && !s.msgs.some(n => n.thread === m.thread && n.from === 'admin' && n.at > m.at)).map(m => m.thread)).size };
     const old = document.getElementById('content'); if (old) ui.scroll[ui.key] = old.scrollTop; const key = ui.page;
     const D = ui.drawer ? (ui.drawer.t === 'job' ? JobDrawer(ui.drawer.id) : ui.drawer.t === 'order' ? OrderDrawer(ui.drawer.id) : ui.drawer.t === 'vendor' ? VendorDrawer(ui.drawer.id) : FormDrawer(ui.drawer.id)) : '';
-    $app.innerHTML = `<aside class="side ${ui.menu ? 'open' : ''}"><div class="brand"><span class="mark">${icon('snow', 20, 2)}</span><div>${AC.brand.name}<small>${v ? 'Vendor portal' : 'Admin panel'}</small></div></div><nav class="nav">${nav.map(g => `<div class="nav-g"><span class="eyebrow">${g[0]}</span>${g[1].map(i => `<a class="${ui.page === i[0] ? 'on' : ''}" data-a="go" data-v="${i[0]}">${icon(i[2], 18)}${i[1]}${(!v || i[0] === 'bookings') && cnt[i[0]] ? `<span class="cnt">${cnt[i[0]]}</span>` : ''}</a>`).join('')}</div>`).join('')}</nav>
+    $app.innerHTML = `<aside class="side ${ui.menu ? 'open' : ''}"><div class="brand"><span class="mark">${icon('snow', 20, 2)}</span><div>${AC.brand.name}<small>Admin panel</small></div></div><nav class="nav">${nav.map(g => `<div class="nav-g"><span class="eyebrow">${g[0]}</span>${g[1].map(i => `<a class="${ui.page === i[0] ? 'on' : ''}" data-a="go" data-v="${i[0]}">${icon(i[2], 18)}${i[1]}${(!v || i[0] === 'bookings') && cnt[i[0]] ? `<span class="cnt">${cnt[i[0]]}</span>` : ''}</a>`).join('')}</div>`).join('')}</nav>
       <div class="side-foot"><div class="vbox">${v ? `<b>${esc(v.name)}</b><br>${esc(v.addr)}` : '<b>Dhaka operations</b><br>9 technicians, 3 vendors, 12 areas'}</div></div></aside>
       <div class="main"><header class="topbar"><button class="icon-btn menu-btn" data-a="menu" aria-label="Menu">${icon('menu', 22)}</button><label class="search">${icon('search', 18)}<input id="gq" data-b="gq" placeholder="Search bookings, customers, orders" autocomplete="off" value="${esc(ui.q)}"></label><span class="grow"></span>
-        <select class="select" id="role" aria-label="View as"><option value="admin" ${!v ? 'selected' : ''}>Admin: Shital HQ</option>${AC.vendors.map(x => `<option value="${x.id}" ${v && v.id === x.id ? 'selected' : ''}>Vendor: ${x.name}</option>`).join('')}</select>
+
         <button class="icon-btn" data-a="go" data-v="${v ? 'bookings' : 'dash'}" aria-label="Notifications">${icon('bell', 22)}${attention().length ? `<span class="badge-n" style="position:absolute;top:4px;right:4px;min-width:16px;height:16px;border-radius:8px;background:var(--accent);font-size:10px;font-weight:700;display:grid;place-items:center">${attention().length}</span>` : ''}</button>${av(v ? v.name : 'Admin User', 'ink')}</header>
       <main class="content" id="content">${PAGES[ui.page]()}</main></div>${D}`;
     const c = document.getElementById('content'); c.scrollTop = key === ui.key ? (ui.scroll[key] || 0) : 0; ui.key = key;

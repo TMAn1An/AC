@@ -4,13 +4,15 @@ The prototype in `prototype/` proves the experience. This document is the plan f
 
 ## 1. Applications
 
-Flutter workspace (pub workspaces or Melos), one repo:
+Flutter workspace (pub workspaces or Melos), one repo. Five apps, Android first (see `docs/PRODUCTION_PLAN.md`):
 
 ```
 apps/
-  customer/      Android, iOS
-  technician/    Android, iOS
-  admin/         Web (desktop optional). Roles: admin, vendor
+  customer/      Android (iOS later)
+  technician/    Android (iOS later)
+  vendor/        Android
+  admin_mobile/  Android phone and tablet
+  admin_web/     Web (desktop optional)
 packages/
   shital_core/   models, repositories, API client, auth, realtime, payment and courier interfaces
   shital_ui/     theme from design tokens, buttons, badges, timeline, map widgets, product art
@@ -18,9 +20,18 @@ packages/
 backend/         database migrations, edge functions, seed data
 ```
 
-Why separate apps: different release cadence, permissions (location only in technician and customer tracking), store listings and bundle size. Shared packages keep one visual and data language.
+Why separate apps: different release cadence, permissions (location only in the technician app), store listings, role isolation and bundle size. Shared packages keep one visual and data language.
 
-Layering inside each app (skill: `flutter-apply-architecture-best-practices`): UI (widgets, view models) -> logic (use cases, state) -> data (repositories, data sources). State management: Riverpod. Routing: go_router with deep links (skill: `flutter-setup-declarative-routing`). Responsive layouts for admin (skill: `flutter-build-responsive-layout`).
+Layering inside each app (skill: `flutter-apply-architecture-best-practices`): MVVM. UI layer = Views (lean widgets) plus ViewModels extending `ChangeNotifier`, grouped by feature. Optional domain layer = use cases only for complex rules (dispatch ranking, pricing and discounts). Data layer = Services (stateless API and platform wrappers) and Repositories (single source of truth, map API models to immutable domain models, cache and retry). Dependency injection with `provider`. Routing with `go_router` and deep links (skill: `flutter-setup-declarative-routing`). Responsive admin layouts (skill: `flutter-build-responsive-layout`).
+
+```
+lib/
+  data/      models/ repositories/ services/
+  domain/    models/ use_cases/
+  ui/        core/ (theme, shared widgets)  features/<name>/ view_models/ views/
+```
+
+Shared repositories, services and domain models live in `packages/shital_core`; each app contains only its features and DI wiring.
 
 ## 2. Backend
 

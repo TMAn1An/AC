@@ -59,19 +59,21 @@ html, body { height: auto; } body { overflow-x: hidden; }
 </style>
 </head>
 <body>
-<header class="nav"><div class="w"><div class="logo"><span class="mk" id="mk"></span>Shital</div><nav><a href="#demo">Live demo</a><a href="#flow">Dispatch flow</a><a href="#sprint">Design sprint</a><a href="#system">System</a><a href="#run">Run locally</a></nav></div></header>
+<header class="nav"><div class="w"><div class="logo"><span class="mk" id="mk"></span>Shital</div><nav><a href="#demo">Live demo</a><a href="#flow">Dispatch flow</a><a href="#sprint">Design sprint</a><a href="#system">Plan</a><a href="#run">Run locally</a></nav></div></header>
 
 <section class="w hero">
   <div>
     <span class="eyebrow">Design prototype . v0.1</span>
     <h1>Cooling, serviced and delivered.</h1>
-    <p class="lead">One platform that sells air conditioners, bags and local cosmetics, and dispatches the nearest technician in minutes. Three connected apps share one live system, so every action shows up everywhere at once.</p>
+    <p class="lead">One platform that sells air conditioners, bags and local cosmetics, and dispatches the nearest technician in minutes. Five connected apps share one live system, so every action shows up everywhere at once.</p>
     <div class="row" style="margin-top:26px;gap:12px"><a class="btn btn-p btn-lg" href="#demo">Try the live demo</a><a class="btn btn-s btn-lg" href="#sprint">Read the design sprint</a></div>
   </div>
   <div class="roles">
     <button class="role" data-view="customer"><span class="ico" data-i="user"></span><span><b>Customer app</b><span class="s">Shop, book a service, track the technician live.</span></span></button>
     <button class="role" data-view="technician"><span class="ico" data-i="wrench"></span><span><b>Technician app</b><span class="s">Accept jobs, navigate, request extra work, collect payment.</span></span></button>
-    <button class="role" data-view="admin"><span class="ico" data-i="dash"></span><span><b>Admin and vendor panel</b><span class="s">Dispatch, catalog, orders, finance. Vendors see only their jobs.</span></span></button>
+    <button class="role" data-view="vendor"><span class="ico" data-i="store"></span><span><b>Vendor app</b><span class="s">Receive forwarded jobs, assign your own technicians, see earnings.</span></span></button>
+    <button class="role" data-view="adminapp"><span class="ico" data-i="bell"></span><span><b>Admin app</b><span class="s">Dispatch, approve extra work and answer customers on the go.</span></span></button>
+    <button class="role" data-view="admin"><span class="ico" data-i="dash"></span><span><b>Admin web app</b><span class="s">Catalog, orders, finance and settings on a desktop.</span></span></button>
   </div>
 </section>
 
@@ -80,10 +82,10 @@ html, body { height: auto; } body { overflow-x: hidden; }
   <p class="intro">These are the real prototype apps, not images. Book a service as the customer and watch the request arrive in the admin panel, move to a technician and come back to the customer as live updates.</p>
   <div class="demo">
     <div>
-      <div class="bar"><div class="seg" id="views"><button data-view="all" class="on">Together</button><button data-view="admin">Admin</button><button data-view="vendor">Vendor</button><button data-view="customer">Customer</button><button data-view="technician">Technician</button></div>
+      <div class="bar"><div class="seg" id="views"><button data-view="all" class="on">Together</button><button data-view="admin">Admin web</button><button data-view="adminapp">Admin app</button><button data-view="vendor">Vendor</button><button data-view="technician">Technician</button><button data-view="customer">Customer</button></div>
         <span style="flex:1"></span><button class="btn btn-s btn-sm" id="quick"></button><button class="btn btn-s btn-sm" id="auto"></button><button class="btn btn-g btn-sm" id="reset"></button></div>
       <div class="stagebox" id="stage"></div>
-      <p class="muted" style="font-size:13px;margin-top:12px">Tip: on a phone or narrow window, pick one app at a time. Each app also opens full screen: <a class="link" href="customer/index.html" target="_blank" rel="noopener">Customer</a> <a class="link" href="technician/index.html" target="_blank" rel="noopener">Technician</a> <a class="link" href="admin/index.html" target="_blank" rel="noopener">Admin</a> <a class="link" href="admin/index.html#vendor-V1" target="_blank" rel="noopener">Vendor</a></p>
+      <p class="muted" style="font-size:13px;margin-top:12px">Tip: on a phone or narrow window, pick one app at a time. Each app also opens full screen: <a class="link" href="customer/index.html" target="_blank" rel="noopener">Customer</a> <a class="link" href="technician/index.html" target="_blank" rel="noopener">Technician</a> <a class="link" href="vendor/index.html" target="_blank" rel="noopener">Vendor</a> <a class="link" href="admin-app/index.html" target="_blank" rel="noopener">Admin app</a> <a class="link" href="admin/index.html" target="_blank" rel="noopener">Admin web</a></p>
     </div>
     <aside class="guide"><div class="row between wrap"><div><h3>Guided demo</h3><p class="muted" style="font-size:13px;margin-top:4px">Follows the live state. The highlighted step is what to do next.</p></div></div><div class="steps" id="steps"></div>
       <div class="note" style="display:flex;gap:10px;padding:12px;border-radius:12px;background:var(--info-l);color:#1E4E80;font-size:13px"><span data-i="info"></span><span>No real payments, maps or messages are used. Payments show a demo gateway.</span></div></aside>
@@ -117,16 +119,18 @@ html, body { height: auto; } body { overflow-x: hidden; }
 
 <section class="w sec" id="system">
   <span class="eyebrow">Build plan</span><h2>One Flutter codebase family, one realtime backend</h2>
-  <p class="intro">The prototypes are static HTML so they can be reviewed anywhere. The product build follows the decisions below, and the repository includes Flutter skills so Claude can scaffold it to a consistent standard.</p>
+  <p class="intro">The prototypes are static HTML so they can be reviewed anywhere. The product build follows the decisions below. The full production plan covers scope, rules, Android specifics, quality gates, phases and risks.</p><p style="margin-top:14px"><a class="btn btn-p" href="plan.html">Read the production plan</a></p>
   <div class="panel card" style="margin-top:24px"><table class="stack-t">
-    <tr><td>Customer app</td><td>Flutter for Android and iOS. Shop, service booking, live tracking, orders, chat shortcuts.</td></tr>
-    <tr><td>Technician app</td><td>Flutter for Android and iOS. Separate app, shares the core package with the customer app.</td></tr>
-    <tr><td>Admin and vendor panel</td><td>Flutter Web, optionally packaged as a desktop app. One codebase, vendor role sees scoped data only.</td></tr>
-    <tr><td>Backend</td><td>PostgreSQL with PostGIS for nearest-technician queries, row level security for vendor scoping, realtime channels for status and location.</td></tr>
-    <tr><td>Maps</td><td>OpenStreetMap tiles through flutter_map. No Google APIs. Technician location is shared only while a job is on the way.</td></tr>
-    <tr><td>Payments</td><td>Cash on delivery first. SSLCommerz (bKash, Nagad, cards) behind a gateway interface, with provider offers added later.</td></tr>
-    <tr><td>Delivery</td><td>Third-party couriers (Pathao, RedX). Tracking id stored on the order and shown to the customer.</td></tr>
-    <tr><td>Messaging</td><td>Customer to Shital support in the app. Customer to technician by phone call or WhatsApp deep link.</td></tr>
+    <tr><td>Customer app</td><td>Flutter, Android first. Shop, service booking, live tracking, orders, support chat.</td></tr>
+    <tr><td>Technician app</td><td>Flutter, Android. Job offers, trip with foreground location service, extra work, completion, cash.</td></tr>
+    <tr><td>Vendor app</td><td>Flutter, Android. Forwarded jobs, assign own technicians, team, earnings and settlement.</td></tr>
+    <tr><td>Admin app</td><td>Flutter, Android phone and tablet. Dispatch, approvals, inbox, live map, collections on the go.</td></tr>
+    <tr><td>Admin web app</td><td>Flutter Web. Catalog, orders, finance, settings, user management.</td></tr>
+    <tr><td>Architecture</td><td>MVVM: views and ChangeNotifier view models, repositories and services, optional use cases. One workspace, shared core packages.</td></tr>
+    <tr><td>Backend</td><td>PostgreSQL with PostGIS for nearest-technician queries, row level security per role, realtime channels for status and location.</td></tr>
+    <tr><td>Maps</td><td>OpenStreetMap tiles through flutter_map. No Google APIs. Location shared only while a job is on the way.</td></tr>
+    <tr><td>Payments</td><td>Cash on delivery first. SSLCommerz (bKash, Nagad, cards) behind a gateway interface with webhook confirmation.</td></tr>
+    <tr><td>Delivery and contact</td><td>Third-party couriers with tracking id. Technician contact by call or WhatsApp. Customer to admin by in-app chat.</td></tr>
   </table></div>
 </section>
 
@@ -157,22 +161,24 @@ html, body { height: auto; } body { overflow-x: hidden; }
 
   /* Stage */
   const stage = $('#stage'); let view = 'all', mounted = {};
-  const AW = 1140, AH = 760, PW = 410, PH = 820;
+  const AW = 1140, AH = 760, PW = 410, PH = 820, CAP = { admin: 'Admin web app . Desktop', adminapp: 'Admin app . Android', vendor: 'Vendor app . Android', customer: 'Customer app . Android', technician: 'Technician app . Android' };
+  const isWeb = k => k === 'admin';
   function mk(kind) {
     const w = document.createElement('div'); w.className = 'dev'; const sc = document.createElement('div'); sc.className = 'scaler'; w.appendChild(sc);
-    if (kind === 'admin' || kind === 'vendor') sc.innerHTML = '<div class="browser"><div class="chrome"><i></i><i></i><i></i><span>' + (kind === 'vendor' ? 'vendor.shital.app' : 'admin.shital.app') + '</span></div><iframe title="' + kind + '" src="admin/index.html' + (kind === 'vendor' ? '#vendor-V1' : '') + '"></iframe></div>';
-    else sc.innerHTML = '<div class="phone"><iframe title="' + kind + '" src="' + kind + '/index.html"></iframe></div>';
-    const cap = document.createElement('div'); cap.className = 'dev-cap'; cap.textContent = { admin: 'Admin panel . Web', vendor: 'Vendor portal . Web', customer: 'Customer . iOS and Android', technician: 'Technician . iOS and Android' }[kind]; w.appendChild(cap);
-    w._sc = sc; w._k = kind; return w;
+    if (isWeb(kind)) sc.innerHTML = '<div class="browser"><div class="chrome"><i></i><i></i><i></i><span>admin.shital.app</span></div><iframe title="Admin web app" src="admin/index.html"></iframe></div>';
+    else sc.innerHTML = '<div class="phone"><iframe title="' + CAP[kind] + '" src="' + { adminapp: 'admin-app', vendor: 'vendor', customer: 'customer', technician: 'technician' }[kind] + '/index.html"></iframe></div>';
+    const cap = document.createElement('div'); cap.className = 'dev-cap'; cap.textContent = CAP[kind]; w.appendChild(cap); w._sc = sc; return w;
+  }
+  const dims = k => isWeb(k) ? [AW, AH] : [PW - 20, PH - 20];
+  function row(kinds, W, gap) {
+    const raw = kinds.reduce((a, k) => a + dims(k)[0], 0) + gap * (kinds.length - 1), s = Math.min(1, W / raw), r = document.createElement('div'); r.style.cssText = 'display:flex;gap:' + gap + 'px;justify-content:center;align-items:flex-start'; let hh = 0;
+    kinds.forEach(k => { const w = mounted[k] || (mounted[k] = mk(k)), d = dims(k); w.style.width = d[0] * s + 'px'; w.style.height = d[1] * s + 'px'; w._sc.style.transform = 'scale(' + s + ')'; hh = Math.max(hh, d[1] * s); r.appendChild(w); });
+    r.style.height = hh + 36 + 'px'; return r;
   }
   function layout() {
-    const W = stage.clientWidth - (innerWidth < 640 ? 16 : 48), kinds = view === 'all' ? ['admin', 'customer', 'technician'] : [view];
-    const gap = 24, dims = k => (k === 'admin' || k === 'vendor') ? [AW, AH + 2] : [PW - 20, PH - 20 + 0];
-    const raw = kinds.reduce((a, k) => a + dims(k)[0], 0) + gap * (kinds.length - 1);
-    const s = Math.min(1, W / raw);
-    stage.innerHTML = ''; let hh = 0;
-    kinds.forEach(k => { const w = mounted[k] || (mounted[k] = mk(k)); const d = dims(k); w.style.width = d[0] * s + 'px'; w.style.height = d[1] * s + 'px'; w._sc.style.transform = 'scale(' + s + ')'; hh = Math.max(hh, d[1] * s); stage.appendChild(w); });
-    stage.style.height = hh + 24 + 56 + 'px'; stage.style.paddingBottom = '56px'; stage.style.alignItems = 'flex-start';
+    const W = stage.clientWidth - (innerWidth < 640 ? 16 : 48); stage.innerHTML = ''; stage.style.flexDirection = 'column'; stage.style.alignItems = 'stretch'; stage.style.gap = '20px'; stage.style.height = 'auto'; stage.style.paddingBottom = '24px';
+    if (view === 'all') { stage.appendChild(row(['admin'], W, 24)); stage.appendChild(row(['adminapp', 'vendor', 'technician', 'customer'], W, 20)); }
+    else stage.appendChild(row([view], W, 24));
   }
   function setView(v) { view = v; document.querySelectorAll('#views button').forEach(b => b.classList.toggle('on', b.dataset.view === v)); layout(); }
   document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', e => { if (b.closest('#views')) setView(b.dataset.view); else { setView(b.dataset.view); location.hash = 'demo'; $('#demo').scrollIntoView({ behavior: 'smooth' }); } }));
@@ -187,10 +193,10 @@ html, body { height: auto; } body { overflow-x: hidden; }
   $('#reset').onclick = () => S.act.reset();
 
   /* Guided steps follow live state */
-  const STEPS = [['Customer', 'Book a service', 'Services tab, pick AC Cooling Problem, confirm.'], ['Admin', 'Dispatch the request', 'Open the booking and assign the nearest technician.'], ['Technician', 'Accept the job', 'Accept the offer, then start the trip.'], ['Customer', 'Watch live tracking', 'ETA and technician move on the map.'], ['Technician', 'Do the work', 'Arrive, start work, optionally request extra parts.'], ['Customer', 'Pay and review', 'Approve extras, pay, rate the technician.'], ['Customer', 'Try the shop', 'Add an AC with installation and check out. Admin advances the order.']];
+  const STEPS = [['Customer', 'Book a service', 'Services tab, pick AC Cooling Problem, confirm.'], ['Admin', 'Dispatch the request', 'Admin app or web: assign the nearest technician, or forward to a vendor.'], ['Vendor', 'Vendor assigns (if forwarded)', 'Vendor app: assign one of your own technicians.'], ['Technician', 'Accept and travel', 'Accept the offer, start the trip.'], ['Customer', 'Watch live tracking', 'ETA and the technician move on the map.'], ['Technician', 'Do the work', 'Arrive, start work, optionally request extra parts. Admin or customer approves.'], ['Customer', 'Pay and review', 'Pay, rate the technician.'], ['Customer', 'Try the shop', 'Add an AC with installation and check out. Admin advances the order.']];
   function stepIdx() {
-    const J = mine(), a = J.find(S.isActive); if (!a) { const d = J[0]; if (d && d.status === 'completed' && !d.rating && d.createdAt > Date.now() - 36e5) return 5; return J.some(j => j.createdAt > Date.now() - 36e5 && j.status === 'completed') ? 6 : 0; }
-    return { requested: 1, forwarded: 1, assigned: 2, accepted: 2, ontheway: 3, arrived: 4, working: 4 }[a.status] || 0;
+    const J = mine(), a = J.find(S.isActive); if (!a) { const d = J[0]; if (d && d.status === 'completed' && !d.rating && d.createdAt > Date.now() - 36e5) return 6; return J.some(j => j.createdAt > Date.now() - 36e5 && j.status === 'completed') ? 7 : 0; }
+    return { requested: 1, forwarded: 2, assigned: 3, accepted: 3, ontheway: 4, arrived: 5, working: 5 }[a.status] || 0;
   }
   function steps() { const i = stepIdx(); $('#steps').innerHTML = STEPS.map((s, k) => `<div class="st ${k < i ? 'done' : k === i ? 'now' : ''}"><span class="n">${k < i ? icon('check', 13, 3) : k + 1}</span><span><b>${s[1]}</b><small><span class="who">${s[0]}</span>${s[2]}</small></span></div>`).join(''); }
   S.subscribe(steps); steps();
@@ -200,17 +206,17 @@ html, body { height: auto; } body { overflow-x: hidden; }
   const arrow = (d, label, lx, ly) => `<path d="${d}" fill="none" stroke="#0E6B78" stroke-width="2" marker-end="url(#ah)"/>${label ? `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="12" font-weight="700" fill="#0A5560" font-family="Hanken Grotesk, sans-serif">${label}</text>` : ''}`;
   $('#flowsvg').innerHTML = `<svg viewBox="0 0 1100 330" role="img" aria-label="Dispatch flow from customer to admin to technician or vendor"><defs><marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M1 1 9 5 1 9z" fill="#0E6B78"/></marker></defs>
     ${box(20, 120, 170, 80, 'Customer app', 'Books a service', '#fff', '#CCD7DA')}
-    ${box(260, 120, 170, 80, 'Admin panel', 'Receives the request', '#E3F1F3', '#B9DCE1', '#0A5560')}
+    ${box(260, 120, 170, 80, 'Admin web and app', 'Receives the request', '#E3F1F3', '#B9DCE1', '#0A5560')}
     <path d="M520 160 575 125 630 160 575 195z" fill="#FDF2E0" stroke="#E5C48A"/><text x="575" y="157" text-anchor="middle" font-size="13" font-weight="700" fill="#7A4B08" font-family="Hanken Grotesk, sans-serif">Technician</text><text x="575" y="174" text-anchor="middle" font-size="12" fill="#7A4B08" font-family="Hanken Grotesk, sans-serif">within 4 km?</text>
     ${box(740, 72, 190, 80, 'Shital technician', 'Gets the job offer', '#fff', '#CCD7DA')}
-    ${box(740, 214, 190, 80, 'Vendor portal', 'Assigns own technician', '#fff', '#E5C48A')}
+    ${box(740, 214, 190, 80, 'Vendor app', 'Assigns own technician', '#fff', '#E5C48A')}
     ${box(960, 123, 130, 74, 'Technician app', 'Accept, travel, work', '#0E6B78', '#0E6B78', '#fff')}
     ${arrow('M190 160H258', '', 0, 0)}${arrow('M430 160H518', '', 0, 0)}
     ${arrow('M600 135C650 110 690 108 738 112', 'Yes', 676, 98)}${arrow('M600 185C650 230 690 252 738 254', 'No, forward to vendor', 676, 282)}
     ${arrow('M930 112C960 114 990 116 1010 121', '', 0, 0)}${arrow('M930 254C970 244 1010 220 1022 199', '', 0, 0)}
     <path d="M1025 121C1025 8 130 8 130 118" fill="none" stroke="#98A7AD" stroke-width="2" stroke-dasharray="3 7" marker-end="url(#ah)"/>
     <text x="580" y="28" text-anchor="middle" font-size="12.5" font-weight="700" fill="#66787F" font-family="Hanken Grotesk, sans-serif">Live status and location return to the customer and admin at every step</text>
-    <text x="548" y="322" text-anchor="middle" font-size="12.5" fill="#66787F" font-family="Hanken Grotesk, sans-serif">Vendor name, address and phone stay in the admin panel. Vendors keep a fixed map location.</text></svg>`;
+    <text x="548" y="322" text-anchor="middle" font-size="12.5" fill="#66787F" font-family="Hanken Grotesk, sans-serif">Vendor name, address and phone stay with admin. Vendors keep a fixed map location.</text></svg>`;
 
   /* Principles, personas, swatches */
   $('#principles').innerHTML = [['Calm over loud', 'Neutral surfaces, one teal for actions, amber only for savings. No gradients.'], ['Status is the product', 'Every screen answers what is happening and what comes next.'], ['One primary action', 'Large, obvious buttons. Technicians use the app one-handed.'], ['Local by default', 'Bangla names, taka, cash on delivery, bKash and Nagad from day one.']].map(p => `<div class="panel card"><h3>${p[0]}</h3><p>${p[1]}</p></div>`).join('');

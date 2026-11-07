@@ -50,3 +50,5 @@ Done when: the six-step demo on the hub runs against the real backend on two pho
 - "Port the booking form and tracking screen from prototype/customer into apps/customer, matching the prototype visuals."
 - "Implement the dispatch query and admin drawer from docs/ARCHITECTURE.md with tests."
 - "Update the prototype and docs for the new client decision: ..."
+
+Note: the detailed phase plan, timeline and quality gates are in docs/PRODUCTION_PLAN.md (sections 13 and 17).

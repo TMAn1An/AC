@@ -185,6 +185,7 @@
         else { push(j, 'declined', t.name, 'Technician declined'); j.techId = null; j.status = j.vendorId ? 'forwarded' : 'requested'; }
       });
     },
+    vendorDecline(id) { commit(s => { const j = s.jobs.find(x => x.id === id); const v = AC.vendById[j.vendorId]; push(j, 'declined', v ? v.name : 'Vendor', 'Vendor declined the job'); j.vendorId = null; j.techId = null; j.status = 'requested'; }); },
     startTrip(id, opt) { commit(s => { const j = s.jobs.find(x => x.id === id); j.status = 'ontheway'; j.trip = { startedAt: Date.now(), dur: (opt && opt.dur) || 36000 }; push(j, 'ontheway', AC.techById[j.techId].name); }); },
     arrive(id) { commit(s => { const j = s.jobs.find(x => x.id === id); j.status = 'arrived'; push(j, 'arrived', AC.techById[j.techId].name); }); },
     startWork(id) { commit(s => { const j = s.jobs.find(x => x.id === id); j.status = 'working'; push(j, 'working', AC.techById[j.techId].name); }); },

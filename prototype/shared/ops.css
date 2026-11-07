@@ -1,0 +1,11 @@
+/* Shared by the admin and vendor mobile apps (operations apps). Builds on mobile.css. */
+.tabbar.t4 { grid-template-columns: repeat(4, 1fr); }
+.kgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 20px; margin-top: 16px; }
+.kcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-m); padding: 14px; } .kcard small { color: var(--ink-3); font-weight: 600; display: flex; gap: 6px; align-items: center; } .kcard b { display: block; font-family: var(--f-display); font-size: 26px; letter-spacing: -.02em; margin-top: 4px; } .kcard span { font-size: 12px; font-weight: 700; color: var(--ok); } .kcard span.bad { color: var(--bad); }
+.jcard { display: flex; gap: 12px; align-items: center; padding: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-m); width: 100%; text-align: left; }
+.jcard.hot { border-color: var(--accent); background: var(--accent-l); }
+.pick { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); } .pick.dim { opacity: .5; }
+.btn-big { height: 56px; border-radius: 16px; font-size: 17px; }
+.cta-bar.two .btn { flex: 1; }
+.spark { display: block; width: 100%; height: 64px; }
+.mini-h { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); padding: 0 20px; margin: 22px 0 10px; display: block; }

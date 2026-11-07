@@ -1,0 +1,128 @@
+/* Shital admin mobile app prototype: control on the go (dispatch, approvals, inbox, collections). Heavy catalog and finance work lives in the admin web app. */
+(function () {
+  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app');
+  const ui = { tab: 'home', seg: 'all', stack: [], sheet: null, thread: null, msg: '', key: '', scroll: {}, map: null, sel: null };
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const toast = (m, ic) => { const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = icon(ic || 'checkc', 18) + '<span>' + esc(m) + '</span>'; document.getElementById('toasts').appendChild(t); setTimeout(() => t.remove(), 3300); };
+  const top = (t, o) => `<div class="top">${o && o.back === false ? '' : `<button class="back" data-a="back" aria-label="Back">${icon('left', 22)}</button>`}<h1>${t}</h1>${(o && o.right) || ''}</div>`;
+  const av = (n, c) => `<span class="avatar ${c || ''}">${AC.fmt.ini(n)}</span>`, bd = (t, c) => `<span class="badge ${c}">${t}</span>`;
+  const km = (a, b) => AC.fmt.km(S.dist(a, b));
+  const state = t => { const s = S.get(); if (s.online[t.id] === false) return ['Offline', 'b-n']; const b = s.jobs.find(j => j.techId === t.id && ['ontheway', 'arrived', 'working'].includes(j.status)); if (b) return [S.META[b.status].label, 'b-brand']; if (s.jobs.find(j => j.techId === t.id && ['assigned', 'accepted'].includes(j.status))) return ['Assigned', 'b-warn']; return ['Available', 'b-ok']; };
+  const cash = t => S.get().jobs.filter(j => j.techId === t.id && j.pay.method === 'cod' && j.pay.status === 'paid' && !j.deposited).reduce((s, j) => s + S.jobTotal(j), 0);
+  const attention = () => { const a = []; S.get().jobs.forEach(j => { if (j.status === 'requested') a.push({ k: 'req', j }); if (j.status === 'forwarded') a.push({ k: 'fwd', j }); if (j.extra.status === 'proposed') a.push({ k: 'extra', j }); }); return a; };
+  const SEG = { all: () => true, new: j => j.status === 'requested', vendor: j => !!j.vendorId && S.isActive(j), active: j => ['assigned', 'accepted', 'ontheway', 'arrived', 'working'].includes(j.status), done: j => j.status === 'completed' };
+
+  function spark(vals) {
+    const W = 300, H = 64, mx = Math.max(...vals), pts = vals.map((v, i) => [i * W / (vals.length - 1), H - 6 - (H - 14) * v / mx]), d = 'M' + pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('L'), last = pts[pts.length - 1];
+    return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Revenue trend"><path d="${d}L${W} ${H}L0 ${H}Z" fill="#E3F1F3"/><path d="${d}" fill="none" stroke="#0E6B78" stroke-width="2.5" stroke-linejoin="round"/><circle cx="${last[0]}" cy="${last[1]}" r="4.5" fill="#0E6B78" stroke="#fff" stroke-width="2"/></svg>`;
+  }
+
+  function Home() {
+    const s = S.get(), J = s.jobs, att = attention(), rev = J.filter(j => j.status === 'completed').reduce((a, j) => a + S.jobTotal(j), 0) + s.orders.filter(o => o.pay.status === 'paid').reduce((a, o) => a + S.ordTotal(o), 0);
+    const M = { req: ['info', 'list', 'Unassigned request', 'Dispatch'], fwd: ['warn', 'store', 'Waiting for vendor', 'View'], extra: ['bad', 'alert', 'Extra work approval', 'Review'] };
+    return `<div class="top"><div class="grow"><small class="muted" style="font-weight:600">Dhaka operations</small><h1 style="font-size:24px">Good afternoon</h1></div>${av('Admin User', 'ink')}</div>
+    <div class="kgrid"><div class="kcard"><small>${icon('list', 14)}Bookings</small><b>${J.length}</b><span>+12% vs yesterday</span></div><div class="kcard"><small>${icon('wrench', 14)}Active jobs</small><b>${J.filter(S.isActive).length}</b><span style="color:var(--ink-3)">${J.filter(j => ['ontheway', 'arrived', 'working'].includes(j.status)).length} in the field</span></div><div class="kcard"><small>${icon('wallet', 14)}Revenue</small><b>${money(rev)}</b><span>+8% vs yesterday</span></div><div class="kcard"><small>${icon('alert', 14)}Attention</small><b>${att.length}</b><span class="${att.length ? 'bad' : ''}">${att.length ? 'Action required' : 'All clear'}</span></div></div>
+    <span class="mini-h">Needs attention</span><div class="stack">${att.map(x => `<button class="jcard ${x.k === 'extra' ? 'hot' : ''}" data-a="job" data-v="${x.j.id}"><span class="ico ${M[x.k][0]}" style="width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--${M[x.k][0] === 'bad' ? 'bad' : M[x.k][0]}-l);color:var(--${M[x.k][0]})">${icon(M[x.k][1], 18)}</span><span class="grow"><b>${M[x.k][2]}</b><div class="muted" style="font-size:13px">${x.j.id} . ${esc(x.j.svcName)} . ${AC.areas[x.j.cust.area].n}</div></span><span class="btn btn-s btn-sm">${M[x.k][3]}</span></button>`).join('') || '<div class="cardx muted">Nothing needs your attention.</div>'}</div>
+    <span class="mini-h">Revenue, last 14 days</span><div class="pad"><div class="cardx" style="padding:14px 14px 8px">${spark([38, 44, 41, 52, 58, 49, 43, 55, 61, 57, 63, 70, 66, 68])}<div class="row between muted" style="font-size:12px;margin-top:6px"><span>14 days ago</span><span>Today</span></div></div></div>
+    <span class="mini-h">Field team</span><div class="hscroll">${AC.techs.map(t => { const st = state(t); return `<div class="cardx" style="flex:none;width:150px;padding:12px">${av(t.name, t.vendor ? 'amber' : '')}<b style="display:block;margin-top:8px;font-size:14px">${esc(t.name)}</b><div class="muted" style="font-size:12px;margin-bottom:8px">${t.vendor ? esc(AC.vendById[t.vendor].name) : 'Shital direct'}</div>${bd(st[0], st[1])}</div>`; }).join('')}</div>`;
+  }
+
+  function Jobs() {
+    const J = S.get().jobs, L = J.filter(SEG[ui.seg]), T = [['all', 'All'], ['new', 'New'], ['vendor', 'Vendors'], ['active', 'In progress'], ['done', 'Done']];
+    return `${top('Jobs', { back: false })}<div class="hscroll" style="padding-bottom:12px">${T.map(t => `<button class="chip ${ui.seg === t[0] ? 'on' : ''}" data-a="seg" data-v="${t[0]}">${t[1]} ${J.filter(SEG[t[0]]).length}</button>`).join('')}</div>
+    <div class="stack">${L.map(j => { const t = AC.techById[j.techId]; return `<button class="jcard" data-a="job" data-v="${j.id}">${av(j.cust.name)}<span class="grow"><b>${esc(j.svcName)}</b><div class="muted" style="font-size:13px">${esc(j.cust.name)} . ${AC.areas[j.cust.area].n}</div><div class="muted" style="font-size:12.5px">${t ? esc(t.name) : j.vendorId ? esc(AC.vendById[j.vendorId].name) : 'Unassigned'}</div></span><span class="col" style="gap:4px;align-items:flex-end">${bd(S.META[j.status].label, S.META[j.status].cls)}<b style="font-size:13px">${money(S.jobTotal(j))}</b></span></button>`; }).join('') || '<div class="empty"><h3>No jobs here</h3></div>'}</div>`;
+  }
+
+  function Job(id) {
+    const j = S.job(id); if (!j) return top('Job'); const t = AC.techById[j.techId]; let disp = '';
+    if (j.status === 'requested') {
+      const L = S.nearbyTechs(j.cust, { vendor: null }), ok = L.filter(x => x.d <= AC.SERVICE_RADIUS && x.online && !x.busy), VL = AC.vendors.map(v => [v, S.dist(v, j.cust)]).sort((a, b) => a[1] - b[1]);
+      disp = `<div class="cardx"><b>Step 1. Nearest Shital technicians</b><div class="muted" style="font-size:13px;margin:2px 0 12px">Within ${AC.fmt.km(AC.SERVICE_RADIUS)} of the customer</div>${ok.length ? '' : `<div class="note warn" style="margin-bottom:10px">${icon('alert', 18)}<span><b>No technician available nearby.</b> Forward to a vendor.</span></div>`}<div class="col" style="gap:8px">${L.slice(0, 4).map((x, i) => { const inR = x.d <= AC.SERVICE_RADIUS, can = inR && x.online && !x.busy; return `<div class="pick ${can ? '' : 'dim'}">${av(x.t.name)}<div class="grow"><b>${esc(x.t.name)}</b><div class="muted" style="font-size:13px">${AC.fmt.km(x.d)} . ${!x.online ? 'Offline' : x.busy ? 'Busy' : inR ? 'Available' : 'Outside radius'}</div></div>${can ? `<button class="btn ${i === 0 ? 'btn-p' : 'btn-s'} btn-sm" data-a="assign" data-id="${j.id}" data-v="${x.t.id}">Assign</button>` : ''}</div>`; }).join('')}</div></div>
+      <div class="cardx"><b>Step 2. Forward to a vendor</b><div class="col" style="gap:8px;margin-top:12px">${VL.map((x, i) => `<div class="pick"><span class="avatar amber">${AC.fmt.ini(x[0].name)}</span><div class="grow"><b>${esc(x[0].name)}</b><div class="muted" style="font-size:13px">${AC.fmt.km(x[1])} . ${x[0].commission}% commission</div></div><button class="btn ${!ok.length && i === 0 ? 'btn-p' : 'btn-s'} btn-sm" data-a="fwd" data-id="${j.id}" data-v="${x[0].id}">Forward</button></div>`).join('')}</div></div>`;
+    } else if (j.status === 'forwarded') { const v = AC.vendById[j.vendorId]; disp = `<div class="note">${icon('store', 18)}<span><b>With ${esc(v.name)}.</b> Waiting for them to assign a technician. ${esc(v.owner)}, ${v.phone}</span></div>`; }
+    const ex = j.extra.status === 'proposed' ? `<div class="cardx" style="border-color:var(--accent);background:var(--accent-l)"><div class="row" style="align-items:flex-start;gap:10px">${icon('alert', 20)}<div class="grow"><b>${esc(t.name)} proposes extra work</b><div class="sum" style="margin:10px 0">${j.extra.items.map(i => `<div><span>${esc(i.label)}</span><span>${money(i.price)}</span></div>`).join('')}</div></div></div><div class="note" style="margin-bottom:12px">${icon('phone', 18)}<span>Call the customer to confirm before approving.</span></div><div class="row"><button class="btn btn-s grow" data-a="toast" data-v="Calling ${esc(j.cust.name)}">${icon('phone', 16)}Call</button><button class="btn btn-d grow" data-a="xres" data-id="${j.id}" data-v="no">Decline</button><button class="btn btn-p grow" data-a="xres" data-id="${j.id}" data-v="yes">Approve</button></div></div>` : '';
+    return `${top(j.id, { right: bd(S.META[j.status].label, S.META[j.status].cls) })}<div class="stack">
+      <div class="cardx"><div class="row"><span class="svc-ic">${icon(AC.svcById[j.svc].icon, 22)}</span><div class="grow"><b style="font-size:16px">${esc(j.svcName)} x ${j.units}</b><div class="muted" style="font-size:13px">${esc(j.slot)} . ${AC.payName(j.pay.method)}</div></div><b>${money(S.jobTotal(j))}</b></div></div>
+      <div class="cardx"><div class="row">${av(j.cust.name)}<div class="grow"><b>${esc(j.cust.name)}</b><div class="muted" style="font-size:13px">${esc(j.cust.addr)}</div></div></div><div class="actions" style="grid-template-columns:1fr 1fr"><button class="btn btn-s" data-a="toast" data-v="Calling ${esc(j.cust.name)}">${icon('phone', 18)}Call</button><button class="btn btn-s" data-a="chatc" data-v="${j.cust.id}">${icon('chat', 18)}Message</button></div>${j.note ? `<div class="muted" style="margin-top:10px;font-size:13px">Note: ${esc(j.note)}</div>` : ''}</div>
+      ${ex}${disp}${t ? `<div class="cardx"><div class="row">${av(t.name, t.vendor ? 'amber' : '')}<div class="grow"><b>${esc(t.name)}</b><div class="muted" style="font-size:13px">${t.vendor ? esc(AC.vendById[t.vendor].name) : 'Shital direct'}${j.status === 'ontheway' ? ' . ' + S.etaMin(j) + ' min away' : ''}</div></div><button class="btn btn-s btn-sm" data-a="toast" data-v="Calling ${esc(t.name)}">${icon('phone', 16)}Call</button></div></div>` : ''}
+      <div class="cardx"><h3 style="font-size:16px;margin-bottom:14px">Timeline</h3><div class="tl">${j.tl.map((e, i) => `<div class="tl-i ${i === j.tl.length - 1 && S.isActive(j) ? 'now' : 'done'}"><div class="tl-dot">${i === j.tl.length - 1 && S.isActive(j) ? '' : icon('check', 13, 3)}</div><div><div class="tl-t">${esc(({ requested: 'Booking requested', forwarded: 'Forwarded to vendor', assigned: 'Technician assigned', accepted: 'Technician accepted', declined: 'Declined', ontheway: 'On the way', arrived: 'Arrived', working: 'Work started', extra: 'Extra work proposed', extra_ok: 'Extra work approved', extra_no: 'Extra work declined', completed: 'Completed', paid: 'Payment received', cancelled: 'Cancelled' })[e.k] || e.k)}</div><div class="muted" style="font-size:12.5px">${esc(e.by)}${e.note ? ' . ' + esc(e.note) : ''} . ${AC.fmt.time(e.at)}</div></div></div>`).join('')}</div></div>
+      ${S.isActive(j) ? `<button class="btn btn-g btn-block" style="color:var(--bad)" data-a="cancel" data-id="${j.id}">Cancel booking</button>` : ''}</div>`;
+  }
+
+  function MapTab() {
+    const J = S.get().jobs.filter(S.isActive);
+    return `${top('Live map', { back: false })}<div class="trackmap" id="trackmap" style="height:340px"></div><div class="hscroll" style="padding-top:14px">${J.map(j => `<button class="chip ${ui.sel === j.id ? 'on' : ''}" data-a="msel" data-v="${j.id}">${j.id} . ${AC.areas[j.cust.area].n}</button>`).join('')}</div><div class="stack" style="margin-top:6px">${J.slice(0, 4).map(j => `<button class="jcard" data-a="job" data-v="${j.id}">${av(j.cust.name)}<span class="grow"><b>${esc(j.svcName)}</b><div class="muted" style="font-size:13px">${AC.techById[j.techId] ? esc(AC.techById[j.techId].name) : 'Unassigned'}</div></span>${bd(S.META[j.status].label, S.META[j.status].cls)}</button>`).join('')}</div>`;
+  }
+
+  function Inbox() {
+    const s = S.get(), ids = [...new Set(s.msgs.map(m => m.thread))].sort((a, b) => Math.max(...s.msgs.filter(m => m.thread === b).map(m => m.at)) - Math.max(...s.msgs.filter(m => m.thread === a).map(m => m.at)));
+    return `${top('Inbox', { back: false })}<div class="stack" style="gap:0;background:var(--surface);margin:0 20px;padding:0;border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden">${ids.map(id => { const c = AC.custById[id], last = s.msgs.filter(m => m.thread === id).sort((a, b) => b.at - a.at)[0]; return `<button class="lrow" style="padding:14px;border-bottom:1px solid var(--line)" data-a="chatc" data-v="${id}">${av(c.name)}<span class="grow"><b>${esc(c.name)}</b><small class="ellip" style="display:block;max-width:220px">${esc(last.text)}</small></span><span class="col" style="align-items:flex-end;gap:4px"><small>${AC.fmt.ago(last.at)}</small>${last.from === 'customer' ? '<span class="badge-n" style="position:static;background:var(--accent)">1</span>' : ''}</span></button>`; }).join('')}</div>`;
+  }
+  function Chat(id) {
+    const c = AC.custById[id], ms = S.threadMsgs(id).sort((a, b) => a.at - b.at);
+    return { body: `${top(esc(c.name), { right: `<button class="icon-btn" data-a="toast" data-v="Calling ${esc(c.name)}" aria-label="Call">${icon('phone', 22)}</button>` })}<div class="chat">${ms.map(m => `<div class="bub ${m.from === 'admin' ? 'me' : 'them'}">${esc(m.text)}<small>${AC.fmt.time(m.at)}</small></div>`).join('')}</div>`, cta: `<div class="chat-in"><input class="input" id="f-msg" placeholder="Reply to ${esc(c.name.split(' ')[0])}" value="${esc(ui.msg)}" autocomplete="off"><button class="send" data-a="send" aria-label="Send">${icon('send', 20)}</button></div>` };
+  }
+
+  const LISTS = { orders: 'Orders', vendors: 'Vendors', techs: 'Technicians', cash: 'Collections', pays: 'Payments', reviews: 'Reviews', promos: 'Promotions' };
+  function More() {
+    const L = [['orders', 'cart', 'Orders', 'Pack, ship and track goods'], ['vendors', 'store', 'Vendors', 'Partner companies and contacts'], ['techs', 'briefcase', 'Technicians', 'Status, rating, cash in hand'], ['cash', 'wallet', 'Collections', 'Cash held by technicians'], ['pays', 'card', 'Payments', 'All transactions'], ['reviews', 'star', 'Reviews', 'Customer feedback'], ['promos', 'megaphone', 'Promotions', 'Active offers']];
+    return `${top('More', { back: false })}<div class="stack">${L.map(x => `<button class="cardx lrow" data-a="list" data-v="${x[0]}"><span class="svc-ic">${icon(x[1], 20)}</span><span class="grow"><b>${x[2]}</b><small>${x[3]}</small></span>${icon('right', 18)}</button>`).join('')}<div class="note">${icon('info', 18)}<span>Catalog, finance reports, settings and user management are in the Shital admin web app.</span></div></div>`;
+  }
+  function List(k) {
+    const s = S.get(); let h = '';
+    if (k === 'orders') { const N = { placed: 'Pack order', packed: 'Hand to courier', shipped: 'Mark delivered' }; h = s.orders.map(o => `<div class="cardx"><div class="row between"><b>${o.id}</b>${bd(o.status[0].toUpperCase() + o.status.slice(1), o.status === 'delivered' ? 'b-ok' : 'b-brand')}</div><div class="muted" style="font-size:13px;margin:4px 0 10px">${esc(AC.custById[o.cust].name)} . ${o.items.reduce((a, i) => a + i.qty, 0)} items . ${money(S.ordTotal(o))}${o.courier ? '<br>' + esc(o.courier) + ' ' + o.tracking : ''}</div>${N[o.status] ? `<button class="btn btn-s btn-block btn-sm" data-a="adv" data-v="${o.id}">${N[o.status]}</button>` : ''}</div>`).join(''); }
+    if (k === 'vendors') h = AC.vendors.map(v => `<div class="cardx"><div class="row"><span class="avatar amber">${AC.fmt.ini(v.name)}</span><div class="grow"><b>${esc(v.name)}</b><div class="muted" style="font-size:13px">${esc(v.owner)} . ${v.phone}</div></div>${bd(v.commission + '%', 'b-n')}</div><div class="muted" style="font-size:13px;margin-top:10px">${esc(v.addr)}<br>${AC.techs.filter(t => t.vendor === v.id).length} technicians . ${s.jobs.filter(j => j.vendorId === v.id).length} jobs</div></div>`).join('');
+    if (k === 'techs') h = AC.techs.map(t => { const st = state(t), c = cash(t); return `<div class="cardx"><div class="row">${av(t.name, t.vendor ? 'amber' : '')}<div class="grow"><b>${esc(t.name)}</b><div class="muted" style="font-size:13px">${t.vendor ? esc(AC.vendById[t.vendor].name) : 'Shital direct'} . ${AC.areas[t.area].n}</div></div>${bd(st[0], st[1])}</div>${c ? `<div class="muted" style="font-size:13px;margin-top:8px">Cash in hand ${money(c)}</div>` : ''}</div>`; }).join('');
+    if (k === 'cash') h = AC.techs.map(t => [t, cash(t)]).filter(x => x[1] > 0).map(x => `<div class="cardx"><div class="row">${av(x[0].name, x[0].vendor ? 'amber' : '')}<div class="grow"><b>${esc(x[0].name)}</b><div class="muted" style="font-size:13px">Cash to deposit</div></div><b style="font-size:18px">${money(x[1])}</b></div><button class="btn btn-s btn-block btn-sm" style="margin-top:12px" data-a="dep" data-v="${x[0].id}">Mark deposited</button></div>`).join('') || '<div class="empty"><h3>All cash deposited</h3></div>';
+    if (k === 'pays') { const r = []; s.jobs.filter(j => j.status === 'completed').forEach(j => r.push([j.id, j.cust.name, j.pay.method, S.jobTotal(j), j.pay.status])); s.orders.forEach(o => r.push([o.id, AC.custById[o.cust].name, o.pay.method, S.ordTotal(o), o.pay.status])); h = `<div class="cardx col" style="gap:14px">${r.map(x => `<div class="row"><div class="grow"><b class="mono">${x[0]}</b><div class="muted" style="font-size:12.5px">${esc(x[1])} . ${AC.payName(x[2])}</div></div><div style="text-align:right"><b>${money(x[3])}</b><div>${bd(x[4] === 'paid' ? 'Paid' : 'Pending', x[4] === 'paid' ? 'b-ok' : 'b-warn')}</div></div></div>`).join('')}</div>`; }
+    if (k === 'reviews') h = s.jobs.filter(j => j.rating).map(j => `<div class="cardx">${starRow(j.rating.stars, 15)}<p style="margin:8px 0">${esc(j.rating.text)}</p><div class="muted" style="font-size:12.5px">${esc(j.cust.name)} . ${esc(j.svcName)}</div></div>`).join('');
+    if (k === 'promos') h = AC.promos.map(p => `<div class="cardx"><div class="row between"><span class="code" style="font-family:var(--f-mono);background:var(--accent-l);color:var(--accent-d);padding:3px 9px;border-radius:6px;font-size:12.5px">${p.code}</span>${bd(p.status, p.status === 'Active' ? 'b-ok' : 'b-n')}</div><b style="display:block;margin-top:8px">${p.title}</b><div class="muted" style="font-size:13px">${p.desc}</div></div>`).join('');
+    return `${top(LISTS[k])}<div class="stack">${h}</div>`;
+  }
+
+  const TABS = [['home', 'Home', 'dash'], ['jobs', 'Jobs', 'list'], ['map', 'Map', 'map'], ['inbox', 'Inbox', 'chat'], ['more', 'More', 'menu']];
+  const clock = () => new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(/ [AP]M/, '');
+  function render() {
+    const af = document.activeElement, afId = af && af.id, sel = af && af.selectionStart;
+    const t = ui.stack[ui.stack.length - 1], key = t ? t.s + (t.id || '') : ui.tab, old = document.getElementById('view'); if (old) ui.scroll[ui.key] = old.scrollTop;
+    let body, cta = '';
+    if (t) { if (t.s === 'job') body = Job(t.id); else if (t.s === 'chat') { const c = Chat(t.id); body = c.body; cta = c.cta; } else body = List(t.id); } else body = { home: Home, jobs: Jobs, map: MapTab, inbox: Inbox, more: More }[ui.tab]();
+    const att = attention().length, unread = new Set(S.get().msgs.filter(m => m.from === 'customer' && !S.get().msgs.some(n => n.thread === m.thread && n.from === 'admin' && n.at > m.at)).map(m => m.thread)).size;
+    $app.innerHTML = `<div class="statusbar"><span>${clock()}</span></div><div class="view" id="view">${body}</div>${cta}${t ? '' : `<nav class="tabbar">${TABS.map(x => { const n = x[0] === 'home' ? att : x[0] === 'inbox' ? unread : 0; return `<button class="tab ${ui.tab === x[0] ? 'on' : ''}" data-a="tab" data-v="${x[0]}">${icon(x[2], 22, ui.tab === x[0] ? 2.1 : 1.7)}${x[1]}${n ? `<span class="dot">${n}</span>` : ''}</button>`; }).join('')}</nav>`}${Sheet()}`;
+    const v = document.getElementById('view'); v.scrollTop = key === ui.key ? (ui.scroll[key] || 0) : 0; if (t && t.s === 'chat') v.scrollTop = 99999; ui.key = key;
+    if (afId) { const e = document.getElementById(afId); if (e) { e.focus(); try { e.setSelectionRange(sel, sel); } catch (x) { } } }
+    mountMap();
+  }
+  const Sheet = () => '';
+
+  function mountMap() { ui.map = null; const h = document.getElementById('trackmap'); if (!h) return; ui.map = { api: CityMap.mount(h) }; fit(); draw(); }
+  function fit() { const j = ui.sel && S.job(ui.sel); if (j) { const t = AC.techById[j.techId]; ui.map.api.fit(t ? [j.cust, t] : [j.cust], t ? 110 : 160); } else ui.map.api.full(); }
+  function draw() {
+    if (!ui.map) return; const now = Date.now(), s = S.get(), J = s.jobs.filter(S.isActive), pins = [], routes = [];
+    AC.vendors.forEach(v => pins.push({ key: 'v' + v.id, kind: 'vendor', x: v.x, y: v.y }));
+    J.forEach(j => { pins.push({ key: 'c' + j.id, kind: 'cust', x: j.cust.x, y: j.cust.y, label: ui.sel === j.id ? j.id : '' }); if (AC.techById[j.techId] && ['assigned', 'accepted', 'ontheway'].includes(j.status)) routes.push({ key: 'r' + j.id, pts: S.tripPoints(j), p: S.tripProgress(j, now) }); });
+    AC.techs.forEach(t => { const j = J.find(x => x.techId === t.id && ['ontheway', 'arrived', 'working'].includes(x.status)), p = j ? S.techPos(j, now) : t; pins.push({ key: 't' + t.id, kind: 'tech', x: p.x, y: p.y, label: ui.sel && j && j.id === ui.sel ? t.name.split(' ')[0] : '', pulse: !!j && j.status === 'ontheway', dim: s.online[t.id] === false }); });
+    ui.map.api.setPins(pins); ui.map.api.setRoutes(routes);
+  }
+  setInterval(draw, 450);
+
+  const A = {
+    tab(el) { ui.tab = el.dataset.v; ui.stack = []; render(); }, back() { ui.stack.pop(); render(); }, seg(el) { ui.seg = el.dataset.v; render(); }, toast(el) { toast(el.dataset.v, 'phone'); },
+    job(el) { ui.stack.push({ s: 'job', id: el.dataset.v }); render(); }, list(el) { ui.stack.push({ s: 'list', id: el.dataset.v }); render(); }, msel(el) { ui.sel = el.dataset.v; render(); },
+    chatc(el) { if (!S.get().msgs.some(m => m.thread === el.dataset.v)) S.act.send(el.dataset.v, 'admin', 'Hello from Shital support.'); ui.stack = ui.tab === 'inbox' ? [] : ui.stack.filter(x => x.s !== 'chat'); ui.stack.push({ s: 'chat', id: el.dataset.v }); render(); },
+    send() { const v = ui.msg.trim(); if (!v) return; const id = ui.stack[ui.stack.length - 1].id; ui.msg = ''; S.act.send(id, 'admin', v); },
+    assign(el) { const t = AC.techById[el.dataset.v]; S.act.assign(el.dataset.id, t.id, 'Admin'); toast(t.name + ' assigned. Customer notified.'); },
+    fwd(el) { const v = AC.vendById[el.dataset.v]; S.act.forward(el.dataset.id, v.id); toast('Forwarded to ' + v.name, 'store'); },
+    xres(el) { S.act.resolveExtra(el.dataset.id, el.dataset.v === 'yes', 'Admin'); toast(el.dataset.v === 'yes' ? 'Approved. Customer and technician notified.' : 'Declined. Technician notified.'); },
+    cancel(el) { S.act.cancel(el.dataset.id, 'Admin'); toast('Booking cancelled', 'info'); }, adv(el) { S.act.advanceOrder(el.dataset.v); toast('Order updated', 'box'); }, dep(el) { S.act.deposit(el.dataset.v); toast('Cash deposit recorded', 'wallet'); }
+  };
+  $app.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el || el.disabled) return; const f = A[el.dataset.a]; if (f) f(el); });
+  $app.addEventListener('input', e => { if (e.target.id === 'f-msg') ui.msg = e.target.value; });
+  $app.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'f-msg') A.send(); });
+  S.subscribe((s, p) => {
+    s.jobs.forEach(j => { const o = p.jobs.find(x => x.id === j.id), t = AC.techById[j.techId]; if (!o) { toast('New booking ' + j.id + ' from ' + j.cust.name, 'bell'); return; } if (o.status === 'forwarded' && j.status === 'requested') toast('Vendor declined ' + j.id + '. Reassign it.', 'alert'); if (o.status !== j.status && t && ['accepted', 'ontheway', 'arrived', 'completed'].includes(j.status)) toast(t.name.split(' ')[0] + ': ' + S.META[j.status].label + ' (' + j.id + ')', 'wrench'); if (o.extra.status !== 'proposed' && j.extra.status === 'proposed') toast('Extra work needs approval on ' + j.id, 'alert'); });
+    const l = s.msgs[s.msgs.length - 1], pl = p.msgs[p.msgs.length - 1]; if (l && (!pl || l.id !== pl.id) && l.from === 'customer') toast('New message from ' + AC.custById[l.thread].name, 'chat');
+    render();
+  });
+  render();
+})();
