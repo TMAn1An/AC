@@ -77,7 +77,7 @@
         const seen = {};
         list.forEach(r => {
           seen[r.key] = 1; let n = routes[r.key];
-          if (!n) { n = routes[r.key] = { base: el('path', { fill: 'none', stroke: '#C4C7EA', 'stroke-width': 7, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-dasharray': '1 11' }, gR), done: el('path', { fill: 'none', stroke: '#2E3192', 'stroke-width': 6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, gR) }; }
+          if (!n) { n = routes[r.key] = { base: el('path', { fill: 'none', stroke: '#A6DDBF', 'stroke-width': 7, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-dasharray': '1 11' }, gR), done: el('path', { fill: 'none', stroke: '#00A74F', 'stroke-width': 6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, gR) }; }
           const pts = r.pts, cur = AC.store.along(pts, r.p);
           n.base.setAttribute('d', 'M' + pts.map(q => q.x + ' ' + q.y).join('L'));
           // Done part: from start to current point

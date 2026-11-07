@@ -124,7 +124,7 @@
     if (S.extraTotal(j)) lines.push(`<div><span>Extra work</span><span>${money(S.extraTotal(j))}</span></div>`);
     const payBox = `<div class="cardx"><div class="sum">${lines.join('')}<div class="tot"><span>Total</span><span>${money(tot)}</span></div></div>
       <div class="row between" style="margin-top:12px"><span class="muted">${AC.payName(j.pay.method)}</span>${j.pay.status === 'paid' ? '<span class="badge b-ok">Paid</span>' : '<span class="badge b-warn">' + (j.pay.method === 'cod' ? 'Pay the technician' : 'Pay after service') + '</span>'}</div>
-      ${j.status === 'completed' && j.pay.status !== 'paid' && j.pay.method !== 'cod' ? `<button class="btn btn-p btn-lg btn-block" style="margin-top:14px" data-a="paynow" data-id="${j.id}">Pay ${money(tot)}</button>` : ''}</div>`;
+      ${j.status === 'completed' && j.pay.status !== 'paid' && j.pay.method !== 'cod' ? `<button class="btn btn-ok btn-lg btn-block" style="margin-top:14px" data-a="paynow" data-id="${j.id}">Pay ${money(tot)}</button>` : ''}</div>`;
     let rate = '';
     const rt = ui.d.rt || {}, pick = (k, label) => `<div class="rt-row"><span>${label}</span><div class="star-in" style="margin:0;gap:2px">${[1, 2, 3, 4, 5].map(n => `<button class="${n <= (rt[k] || 0) ? 'on' : ''}" data-a="star" data-k="${k}" data-v="${n}" aria-label="${label} ${n} star">${icon('star', k === 'overall' ? 32 : 26, 1.6).replace('fill="none"', 'fill="' + (n <= (rt[k] || 0) ? 'currentColor' : 'none') + '"')}</button>`).join('')}</div></div>`;
     if (j.status === 'completed' && !j.rating) {
@@ -277,11 +277,11 @@
     const old = document.getElementById('view'); if (old) ui.scroll[ui.key] = old.scrollTop;
     let body = '', cta = '', tabs = !t, flush = false;
     if (t) {
-      if (t.s === 'book') { body = Book(); cta = `<div class="cta-bar"><div class="grow"><div class="muted" style="font-size:12px">Estimated total</div><b style="font-size:18px">${money(AC.svcById[ui.book.svc].price * ui.book.units - 100)}</b></div><button class="btn btn-p btn-lg" style="flex:1.4" data-a="confirm">Confirm booking</button></div>`; }
+      if (t.s === 'book') { body = Book(); cta = `<div class="cta-bar"><div class="grow"><div class="muted" style="font-size:12px">Estimated total</div><b style="font-size:18px">${money(AC.svcById[ui.book.svc].price * ui.book.units - 100)}</b></div><button class="btn btn-ok btn-lg" style="flex:1.4" data-a="confirm">Confirm booking</button></div>`; }
       else if (t.s === 'track') body = Track(t.p.id);
       else if (t.s === 'prod') { body = Prod(t.p.id); const p = AC.catById[t.p.id], d = ui.pdraft, unit = p.price + (d.install && p.cat === 'ac' ? Math.round(AC.INSTALL_FEE * (1 - AC.config.INSTALL_DISCOUNT)) : 0); cta = `<div class="cta-bar"><button class="btn btn-s btn-lg grow" data-a="addcart">${ui.added ? icon('check', 18, 2.5) + 'Added' : icon('cart', 18) + 'Add to cart'}</button><button class="btn btn-p btn-lg" style="flex:1.25" data-a="buynow2">Buy now . ${money(unit * d.qty)}</button></div>`; }
       else if (t.s === 'cart') { body = Cart(); if (ui.cart.length) cta = `<div class="cta-bar"><div class="grow"><div class="muted" style="font-size:12px">Total</div><b style="font-size:18px">${money(cartCalc().total)}</b></div><button class="btn btn-p btn-lg" style="flex:1.4" data-a="checkout">Checkout</button></div>`; }
-      else if (t.s === 'checkout') { body = Checkout(); cta = `<div class="cta-bar"><div class="grow"><div class="muted" style="font-size:12px">Total</div><b style="font-size:18px">${money(cartCalc().total)}</b></div><button class="btn btn-p btn-lg" style="flex:1.4" data-a="place">Place order</button></div>`; }
+      else if (t.s === 'checkout') { body = Checkout(); cta = `<div class="cta-bar"><div class="grow"><div class="muted" style="font-size:12px">Total</div><b style="font-size:18px">${money(cartCalc().total)}</b></div><button class="btn btn-ok btn-lg" style="flex:1.4" data-a="place">Place order</button></div>`; }
       else if (t.s === 'done') { body = OrderDone(t.p.id); }
       else if (t.s === 'order') body = Order(t.p.id);
       else if (t.s === 'history') body = top('History') + `<div class="pad">${AC.history.html('cust:' + ME)}</div>`;

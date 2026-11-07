@@ -62,3 +62,43 @@ header.nav { background: rgba(245,246,250,.88); }
 
 /* Rating stars stay gold for instant recognition */
 .stars, .rate .i, .prate .i { color: #F2A20C; }
+
+/* ---- Device frame: lighter graphite bezel so the dark header never merges with it, and a hard clip so glass bars stay inside the corners */
+@media (min-width: 560px) { .device { border-color: #262A44; clip-path: inset(0 round 48px); isolation: isolate; transform: translateZ(0); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 30px 60px rgba(16,20,38,.22); } }
+.screen { isolation: isolate; }
+/* Headers use the brand blue, brighter than the bezel and the admin sidebar; the hero card takes the deep blue */
+.band, .statusbar.dk { background: var(--brand); }
+.screen .hero { background: var(--deep); }
+.band::before { opacity: .09; }
+
+/* ---- Logo green, used for progress, success, live and commit actions */
+.sw.on { background: var(--green); box-shadow: inset 0 1px 2px rgba(0,0,0,.25), 0 0 0 3px rgba(0,167,79,.16); }
+.tl-i.done::before { background: var(--green); } .tl-i.done .tl-dot { background: var(--green); border-color: var(--green); }
+.tl-i.now .tl-dot { border-color: var(--green); box-shadow: 0 0 0 5px var(--green-l); } .tl-i.now .tl-dot::after { background: var(--green); }
+.prog i.on { background: var(--green); }
+.online .dotg { background: var(--green); box-shadow: 0 0 0 4px rgba(0,167,79,.2); }
+.w-col .btn-a { background: var(--green); box-shadow: inset 0 1px 0 rgba(255,255,255,.34), inset 0 -2px 0 rgba(0,60,30,.25), 0 6px 14px rgba(0,167,79,.3); color: #fff; }
+.nav a[data-v=map]::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #3DD68C; margin-left: auto; box-shadow: 0 0 0 3px rgba(61,214,140,.25); }
+.nav a[data-v=map] .cnt { display: none; }
+.kyc-dot.done i, .kyc-row.ok .kyc-st { background: var(--green); border-color: var(--green); }
+.okc { box-shadow: 0 0 0 10px var(--green-l); }
+.live-banner .pulse-dot { background: #3DD68C; }
+
+/* ---- Button and control sizing. Touch targets follow Android (48 dp) and iOS (44 pt) guidance on phones; compact sizes on desktop. */
+.screen .btn { height: 48px; padding: 0 20px; border-radius: 14px; font-size: 15px; }
+.screen .btn-sm { height: 40px; padding: 0 14px; border-radius: 12px; font-size: 13.5px; position: relative; }
+.screen .btn-sm::after { content: ''; position: absolute; inset: -4px; }
+.screen .btn-lg, .screen .btn-big { height: 56px; border-radius: 16px; font-size: 16px; }
+.screen .icon-btn { width: 44px; height: 44px; border-radius: 14px; }
+.screen .chip { height: 40px; padding: 0 16px; font-size: 13.5px; } .screen .chip.sm { height: 36px; }
+.screen .tab { min-height: 56px; justify-content: center; }
+.screen .step { height: 44px; } .screen .step button { width: 44px; min-width: 44px; height: 42px; }
+.screen .seg button { height: 40px; } .screen .opt, .screen .chk { min-height: 56px; } .screen .slot { height: 48px; }
+.screen .input, .screen .select { height: 48px; border-radius: 12px; }
+.screen .pact .pbtn { height: 44px; border-radius: 12px; }
+.screen .cline .rm { width: 44px; height: 44px; }
+.btn { border-radius: 10px; } .btn-sm { height: 34px; } .btn-lg { height: 48px; }
+/* Green commit buttons: logo green on large buttons, a slightly deeper shade on small ones for text contrast */
+.btn-ok { background: var(--green); } .btn-ok:hover { background: #009644; } .btn-sm.btn-ok { background: #008A40; }
+.screen .sec-h button { position: relative; color: var(--brand); font-weight: 600; }
+.screen .sec-h button::after { content: ''; position: absolute; inset: -14px -10px; }
