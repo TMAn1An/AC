@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Shital Design Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="shared/base.css">
+<style>
+/* Showcase hub: presents the three connected prototypes on one calm page. */
+html, body { height: auto; } body { overflow-x: hidden; }
+.w { max-width: 1320px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(242,246,246,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.nav .w { display: flex; align-items: center; gap: 24px; height: 60px; }
+.logo { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: 19px; letter-spacing: -.02em; }
+.mk { width: 32px; height: 32px; border-radius: 9px; background: var(--brand); color: #fff; display: grid; place-items: center; }
+.nav nav { display: flex; gap: 4px; margin-left: auto; overflow-x: auto; } .nav nav a { padding: 8px 12px; border-radius: 8px; font-weight: 600; color: var(--ink-2); white-space: nowrap; } .nav nav a:hover { background: var(--surface); }
+.hero { padding-block: 64px 36px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 48px; align-items: end; }
+.hero h1 { font-size: clamp(38px, 5.4vw, 68px); letter-spacing: -.035em; line-height: 1.02; margin: 14px 0 18px; }
+.hero p.lead { font-size: 18px; color: var(--ink-2); max-width: 54ch; }
+.roles { display: grid; gap: 10px; }
+.role { display: flex; gap: 14px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; text-align: left; width: 100%; }
+.role:hover { border-color: var(--brand-m); }
+.role .ico { width: 42px; height: 42px; border-radius: 12px; background: var(--brand-l); color: var(--brand); display: grid; place-items: center; flex: none; }
+.role b { display: block; } .role span.s { color: var(--ink-3); font-size: 13px; }
+.sec { padding-block: 56px 8px; } .sec h2 { font-size: clamp(26px, 3.2vw, 38px); letter-spacing: -.025em; margin: 8px 0 10px; } .sec .intro { color: var(--ink-2); max-width: 62ch; font-size: 16px; }
+.demo { display: block; margin-top: 24px; }
+.bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+.seg { display: inline-grid; grid-auto-flow: column; background: #E4ECEC; border-radius: 12px; padding: 3px; } .seg button { height: 36px; padding: 0 14px; border-radius: 9px; font-weight: 700; font-size: 13px; color: var(--ink-3); } .seg button.on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-1); }
+.stagebox { background: #DDE6E7; border-radius: 20px; padding: 24px; display: flex; justify-content: center; align-items: flex-start; gap: 24px; overflow: hidden; }
+.dev { flex: none; position: relative; } .dev .scaler { transform-origin: top left; position: absolute; top: 0; left: 0; }
+.dev-cap { position: absolute; left: 50%; transform: translateX(-50%); top: 100%; margin-top: 10px; white-space: nowrap; font-size: 11.5px; font-weight: 700; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
+.browser { width: 1140px; height: 760px; background: var(--surface); border-radius: 14px; overflow: hidden; box-shadow: 0 20px 50px rgba(16,34,43,.18); display: flex; flex-direction: column; }
+.browser .chrome { height: 38px; background: #F4F7F7; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 8px; padding: 0 14px; flex: none; } .browser .chrome i { width: 10px; height: 10px; border-radius: 50%; background: #CCD7DA; } .browser .chrome span { margin: 0 auto; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 3px 40px; font-size: 12px; color: var(--ink-3); }
+.browser iframe { flex: 1; border: 0; width: 100%; }
+.phone { width: 390px; height: 800px; border: 10px solid var(--ink); border-radius: 48px; overflow: hidden; background: var(--bg); box-shadow: 0 20px 50px rgba(16,34,43,.22); } .phone iframe { border: 0; width: 100%; height: 100%; }
+.guide { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin-top: 18px; }
+.guide h3 { font-size: 17px; } .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+.st { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 12px; border: 1px solid var(--line); } .st .n { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--line-2); display: grid; place-items: center; font-size: 12px; font-weight: 700; color: var(--ink-3); }
+.st.done .n { background: var(--brand); border-color: var(--brand); color: #fff; } .st.now { background: var(--brand-l); border-color: var(--brand); } .st.now .n { border-color: var(--brand); color: var(--brand-d); background: #fff; }
+.st b { font-size: 13.5px; display: block; } .st small { color: var(--ink-3); font-size: 12.5px; display: block; margin-top: 6px; }
+.who { display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand-d); background: #fff; border: 1px solid var(--brand-m); border-radius: 99px; padding: 1px 7px; margin-right: 6px; }
+.g { display: grid; gap: 16px; } .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card { padding: 20px; } .card h3 { font-size: 17px; margin-bottom: 6px; } .card p { color: var(--ink-2); font-size: 14px; } .card .tag { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--brand); margin-bottom: 10px; display: block; }
+.take { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.flow { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 20px; margin-top: 24px; overflow-x: auto; } .flow svg { min-width: 860px; width: 100%; height: auto; display: block; }
+.sw-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.swatch { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff; } .swatch i { display: block; height: 64px; } .swatch div { padding: 10px 12px; font-size: 12.5px; } .swatch b { display: block; font-size: 13.5px; } .swatch code { color: var(--ink-3); font-family: var(--f-mono); font-size: 11.5px; }
+.type-s { display: grid; gap: 4px; } .type-s .big { font-size: 34px; line-height: 1.1; }
+.persona { display: grid; gap: 10px; align-content: start; } .persona .top { display: flex; gap: 12px; align-items: center; } .persona dl { display: grid; gap: 8px; margin: 0; font-size: 13.5px; } .persona dt { font-weight: 700; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); } .persona dd { margin: 2px 0 0; color: var(--ink-2); }
+.code { background: var(--ink); color: #D8E7EB; border-radius: 12px; padding: 14px 16px; font-family: var(--f-mono); font-size: 13px; display: flex; justify-content: space-between; gap: 12px; align-items: center; overflow-x: auto; white-space: nowrap; } .code button { color: #8FD3DE; font-weight: 700; font-family: var(--f-body); font-size: 12px; }
+.stack-t { width: 100%; border-collapse: collapse; } .stack-t td { padding: 12px 0; border-bottom: 1px solid var(--line); vertical-align: top; } .stack-t td:first-child { width: 34%; font-weight: 700; padding-right: 16px; } .stack-t td:last-child { color: var(--ink-2); }
+.foot { margin-top: 64px; padding-block: 28px 40px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 13px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.link { color: var(--brand); font-weight: 700; display: inline-flex; gap: 6px; align-items: center; }
+@media (max-width: 1100px) { .demo { grid-template-columns: 1fr; } .guide { position: static; } .hero { grid-template-columns: 1fr; gap: 28px; } .g4 { grid-template-columns: repeat(2, 1fr); } .g3 { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .g4, .g2 { grid-template-columns: 1fr; } .hero { padding-block: 40px 20px; } .stagebox { padding: 14px 8px; } .nav nav a:nth-child(n+4) { display: none; } }
+</style>
+</head>
+<body>
+<header class="nav"><div class="w"><div class="logo"><span class="mk" id="mk"></span>Shital</div><nav><a href="#demo">Live demo</a><a href="#flow">Dispatch flow</a><a href="#sprint">Design sprint</a><a href="#system">System</a><a href="#run">Run locally</a></nav></div></header>
+
+<section class="w hero">
+  <div>
+    <span class="eyebrow">Design prototype . v0.1</span>
+    <h1>Cooling, serviced and delivered.</h1>
+    <p class="lead">One platform that sells air conditioners, bags and local cosmetics, and dispatches the nearest technician in minutes. Three connected apps share one live system, so every action shows up everywhere at once.</p>
+    <div class="row" style="margin-top:26px;gap:12px"><a class="btn btn-p btn-lg" href="#demo">Try the live demo</a><a class="btn btn-s btn-lg" href="#sprint">Read the design sprint</a></div>
+  </div>
+  <div class="roles">
+    <button class="role" data-view="customer"><span class="ico" data-i="user"></span><span><b>Customer app</b><span class="s">Shop, book a service, track the technician live.</span></span></button>
+    <button class="role" data-view="technician"><span class="ico" data-i="wrench"></span><span><b>Technician app</b><span class="s">Accept jobs, navigate, request extra work, collect payment.</span></span></button>
+    <button class="role" data-view="admin"><span class="ico" data-i="dash"></span><span><b>Admin and vendor panel</b><span class="s">Dispatch, catalog, orders, finance. Vendors see only their jobs.</span></span></button>
+  </div>
+</section>
+
+<section class="w sec" id="demo">
+  <span class="eyebrow">Interactive</span><h2>Run the whole workflow in one screen</h2>
+  <p class="intro">These are the real prototype apps, not images. Book a service as the customer and watch the request arrive in the admin panel, move to a technician and come back to the customer as live updates.</p>
+  <div class="demo">
+    <div>
+      <div class="bar"><div class="seg" id="views"><button data-view="all" class="on">Together</button><button data-view="admin">Admin</button><button data-view="vendor">Vendor</button><button data-view="customer">Customer</button><button data-view="technician">Technician</button></div>
+        <span style="flex:1"></span><button class="btn btn-s btn-sm" id="quick"></button><button class="btn btn-s btn-sm" id="auto"></button><button class="btn btn-g btn-sm" id="reset"></button></div>
+      <div class="stagebox" id="stage"></div>
+      <p class="muted" style="font-size:13px;margin-top:12px">Tip: on a phone or narrow window, pick one app at a time. Each app also opens full screen: <a class="link" href="customer/index.html" target="_blank" rel="noopener">Customer</a> <a class="link" href="technician/index.html" target="_blank" rel="noopener">Technician</a> <a class="link" href="admin/index.html" target="_blank" rel="noopener">Admin</a> <a class="link" href="admin/index.html#vendor-V1" target="_blank" rel="noopener">Vendor</a></p>
+    </div>
+    <aside class="guide"><div class="row between wrap"><div><h3>Guided demo</h3><p class="muted" style="font-size:13px;margin-top:4px">Follows the live state. The highlighted step is what to do next.</p></div></div><div class="steps" id="steps"></div>
+      <div class="note" style="display:flex;gap:10px;padding:12px;border-radius:12px;background:var(--info-l);color:#1E4E80;font-size:13px"><span data-i="info"></span><span>No real payments, maps or messages are used. Payments show a demo gateway.</span></div></aside>
+  </div>
+</section>
+
+<section class="w sec" id="flow">
+  <span class="eyebrow">The core idea</span><h2>Nearest technician first, vendor second</h2>
+  <p class="intro">Admin keeps control of every job. If a Shital technician is within the service radius, the job goes straight to them. If not, it is forwarded to the closest vendor, who assigns one of their own technicians. Everyone sees each step.</p>
+  <div class="flow" id="flowsvg"></div>
+</section>
+
+<section class="w sec" id="sprint">
+  <span class="eyebrow">Design sprint</span><h2>What we learned before drawing a single screen</h2>
+  <p class="intro">Desk research on the products our users already know, distilled into five rules that every screen in these prototypes follows.</p>
+  <div class="g g3" style="margin-top:24px">
+    <div class="panel card"><span class="tag">Service booking</span><h3>Urban Company</h3><p>Upfront price, a time slot picker and a clear professional card before anything is confirmed.</p><div class="take">Adopted: fixed prices and slots in the booking form.</div></div>
+    <div class="panel card"><span class="tag">Live tracking</span><h3>Uber and Pathao</h3><p>ETA is the headline. Map and contact shortcuts sit directly under it.</p><div class="take">Adopted: ETA-first status card, call and WhatsApp buttons.</div></div>
+    <div class="panel card"><span class="tag">Order progress</span><h3>foodpanda</h3><p>A short vertical timeline that always shows what is done, what is happening and what is next.</p><div class="take">Adopted: one timeline for bookings and orders.</div></div>
+    <div class="panel card"><span class="tag">Field operations</span><h3>ServiceTitan and Jobber</h3><p>Dispatchers work from a board plus a detail drawer, never from a wall of forms.</p><div class="take">Adopted: bookings table with a dispatch drawer and live map.</div></div>
+    <div class="panel card"><span class="tag">Commerce</span><h3>Daraz</h3><p>Powerful but dense. The client wants a calmer store with only three sections.</p><div class="take">Adopted: three sections, large product art, no clutter.</div></div>
+    <div class="panel card"><span class="tag">Dashboards</span><h3>Stripe and Linear</h3><p>Quiet neutrals, hairline borders and one brand color that is saved for actions.</p><div class="take">Adopted: restrained palette, table-first admin.</div></div>
+  </div>
+  <div class="g g4" style="margin-top:16px" id="principles"></div>
+  <h3 style="font-size:22px;margin:40px 0 16px">Who we designed for</h3>
+  <div class="g g4" id="personas"></div>
+  <h3 style="font-size:22px;margin:40px 0 16px">Visual language</h3>
+  <div class="g g2" style="align-items:start"><div class="panel card"><span class="tag">Color</span><div class="sw-row" id="swatches"></div></div>
+  <div class="panel card"><span class="tag">Type</span><div class="type-s"><div class="big" style="font-family:var(--f-display);font-weight:600">Bricolage Grotesque</div><span class="muted">Display. Used for headlines and key numbers only.</span><div style="font-size:22px;margin-top:14px;font-weight:600">Hanken Grotesk</div><span class="muted">Interface and body text. Tabular figures for prices and times.</span><div class="bn" style="font-size:22px;margin-top:14px;font-weight:600">এসি রিপেয়ার . ১০০০</div><span class="muted">Hind Siliguri. Bangla names appear next to every service.</span></div></div></div>
+</section>
+
+<section class="w sec" id="system">
+  <span class="eyebrow">Build plan</span><h2>One Flutter codebase family, one realtime backend</h2>
+  <p class="intro">The prototypes are static HTML so they can be reviewed anywhere. The product build follows the decisions below, and the repository includes Flutter skills so Claude can scaffold it to a consistent standard.</p>
+  <div class="panel card" style="margin-top:24px"><table class="stack-t">
+    <tr><td>Customer app</td><td>Flutter for Android and iOS. Shop, service booking, live tracking, orders, chat shortcuts.</td></tr>
+    <tr><td>Technician app</td><td>Flutter for Android and iOS. Separate app, shares the core package with the customer app.</td></tr>
+    <tr><td>Admin and vendor panel</td><td>Flutter Web, optionally packaged as a desktop app. One codebase, vendor role sees scoped data only.</td></tr>
+    <tr><td>Backend</td><td>PostgreSQL with PostGIS for nearest-technician queries, row level security for vendor scoping, realtime channels for status and location.</td></tr>
+    <tr><td>Maps</td><td>OpenStreetMap tiles through flutter_map. No Google APIs. Technician location is shared only while a job is on the way.</td></tr>
+    <tr><td>Payments</td><td>Cash on delivery first. SSLCommerz (bKash, Nagad, cards) behind a gateway interface, with provider offers added later.</td></tr>
+    <tr><td>Delivery</td><td>Third-party couriers (Pathao, RedX). Tracking id stored on the order and shown to the customer.</td></tr>
+    <tr><td>Messaging</td><td>Customer to Shital support in the app. Customer to technician by phone call or WhatsApp deep link.</td></tr>
+  </table></div>
+</section>
+
+<section class="w sec" id="run">
+  <span class="eyebrow">Repository</span><h2>Clone it and run it again any time</h2>
+  <p class="intro">Everything is plain HTML, CSS and JavaScript. No build step. Claude Code can pick the project up from the repository and continue from the same context.</p>
+  <div class="g" style="margin-top:20px;max-width:760px">
+    <div class="code"><span>git clone https://github.com/TMAn1An/AC && cd AC</span><button data-copy="git clone https://github.com/TMAn1An/AC && cd AC">Copy</button></div>
+    <div class="code"><span>python3 -m http.server 8080 --directory prototype</span><button data-copy="python3 -m http.server 8080 --directory prototype">Copy</button></div>
+    <div class="code"><span>claude   # then: read CLAUDE.md and continue from docs/ROADMAP.md</span><button data-copy="claude">Copy</button></div>
+  </div>
+</section>
+<footer class="w foot"><span>Shital is a working name for the client brand. All people, shops and numbers in this prototype are fictional.</span><span>Prototype v0.1</span></footer>
+
+<script src="shared/icons.js"></script>
+<script src="shared/art.js"></script>
+<script src="shared/data.js"></script>
+<script src="shared/store.js"></script>
+<script>
+(function () {
+  const S = AC.store, $ = s => document.querySelector(s);
+  document.getElementById('mk').innerHTML = icon('snow', 18, 2);
+  document.querySelectorAll('[data-i]').forEach(e => e.innerHTML = icon(e.dataset.i, e.parentElement.classList.contains('role') ? 22 : 18));
+  $('#quick').innerHTML = icon('plus', 16) + 'Send a booking'; $('#auto').innerHTML = icon('zap', 16) + 'Autopilot'; $('#reset').innerHTML = icon('repeat', 16) + 'Reset';
+
+  /* Relay: forward messages between iframes so apps stay in sync even without shared storage */
+  addEventListener('message', e => { if (!(e.data && e.data.shital)) return; document.querySelectorAll('iframe').forEach(f => { if (f.contentWindow && f.contentWindow !== e.source) f.contentWindow.postMessage(e.data, '*'); }); });
+
+  /* Stage */
+  const stage = $('#stage'); let view = 'all', mounted = {};
+  const AW = 1140, AH = 760, PW = 410, PH = 820;
+  function mk(kind) {
+    const w = document.createElement('div'); w.className = 'dev'; const sc = document.createElement('div'); sc.className = 'scaler'; w.appendChild(sc);
+    if (kind === 'admin' || kind === 'vendor') sc.innerHTML = '<div class="browser"><div class="chrome"><i></i><i></i><i></i><span>' + (kind === 'vendor' ? 'vendor.shital.app' : 'admin.shital.app') + '</span></div><iframe title="' + kind + '" src="admin/index.html' + (kind === 'vendor' ? '#vendor-V1' : '') + '"></iframe></div>';
+    else sc.innerHTML = '<div class="phone"><iframe title="' + kind + '" src="' + kind + '/index.html"></iframe></div>';
+    const cap = document.createElement('div'); cap.className = 'dev-cap'; cap.textContent = { admin: 'Admin panel . Web', vendor: 'Vendor portal . Web', customer: 'Customer . iOS and Android', technician: 'Technician . iOS and Android' }[kind]; w.appendChild(cap);
+    w._sc = sc; w._k = kind; return w;
+  }
+  function layout() {
+    const W = stage.clientWidth - (innerWidth < 640 ? 16 : 48), kinds = view === 'all' ? ['admin', 'customer', 'technician'] : [view];
+    const gap = 24, dims = k => (k === 'admin' || k === 'vendor') ? [AW, AH + 2] : [PW - 20, PH - 20 + 0];
+    const raw = kinds.reduce((a, k) => a + dims(k)[0], 0) + gap * (kinds.length - 1);
+    const s = Math.min(1, W / raw);
+    stage.innerHTML = ''; let hh = 0;
+    kinds.forEach(k => { const w = mounted[k] || (mounted[k] = mk(k)); const d = dims(k); w.style.width = d[0] * s + 'px'; w.style.height = d[1] * s + 'px'; w._sc.style.transform = 'scale(' + s + ')'; hh = Math.max(hh, d[1] * s); stage.appendChild(w); });
+    stage.style.height = hh + 24 + 56 + 'px'; stage.style.paddingBottom = '56px'; stage.style.alignItems = 'flex-start';
+  }
+  function setView(v) { view = v; document.querySelectorAll('#views button').forEach(b => b.classList.toggle('on', b.dataset.view === v)); layout(); }
+  document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', e => { if (b.closest('#views')) setView(b.dataset.view); else { setView(b.dataset.view); location.hash = 'demo'; $('#demo').scrollIntoView({ behavior: 'smooth' }); } }));
+  addEventListener('resize', layout);
+  if (innerWidth < 900) view = 'customer'; setView(view);
+
+  /* Controls */
+  const mine = () => S.get().jobs.filter(j => j.cust.id === 'C1');
+  const act = () => mine().find(S.isActive);
+  $('#quick').onclick = () => S.act.createJob({ cust: 'C1', svc: 'ac-cooling', slot: 'Today, 4-6 PM', method: 'cod', note: 'AC is not cooling well.', discount: 100 });
+  $('#auto').onclick = () => { const j = act() || S.job(S.act.createJob({ cust: 'C1', svc: 'ac-repair', slot: 'Today, 4-6 PM', method: 'cod', discount: 100 })); S.auto(j.id); };
+  $('#reset').onclick = () => S.act.reset();
+
+  /* Guided steps follow live state */
+  const STEPS = [['Customer', 'Book a service', 'Services tab, pick AC Cooling Problem, confirm.'], ['Admin', 'Dispatch the request', 'Open the booking and assign the nearest technician.'], ['Technician', 'Accept the job', 'Accept the offer, then start the trip.'], ['Customer', 'Watch live tracking', 'ETA and technician move on the map.'], ['Technician', 'Do the work', 'Arrive, start work, optionally request extra parts.'], ['Customer', 'Pay and review', 'Approve extras, pay, rate the technician.'], ['Customer', 'Try the shop', 'Add an AC with installation and check out. Admin advances the order.']];
+  function stepIdx() {
+    const J = mine(), a = J.find(S.isActive); if (!a) { const d = J[0]; if (d && d.status === 'completed' && !d.rating && d.createdAt > Date.now() - 36e5) return 5; return J.some(j => j.createdAt > Date.now() - 36e5 && j.status === 'completed') ? 6 : 0; }
+    return { requested: 1, forwarded: 1, assigned: 2, accepted: 2, ontheway: 3, arrived: 4, working: 4 }[a.status] || 0;
+  }
+  function steps() { const i = stepIdx(); $('#steps').innerHTML = STEPS.map((s, k) => `<div class="st ${k < i ? 'done' : k === i ? 'now' : ''}"><span class="n">${k < i ? icon('check', 13, 3) : k + 1}</span><span><b>${s[1]}</b><small><span class="who">${s[0]}</span>${s[2]}</small></span></div>`).join(''); }
+  S.subscribe(steps); steps();
+
+  /* Flow diagram */
+  const box = (x, y, w, h, t1, t2, fill, stroke, col) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="${fill}" stroke="${stroke}"/><text x="${x + w / 2}" y="${y + (t2 ? h / 2 - 3 : h / 2 + 5)}" text-anchor="middle" font-size="15" font-weight="700" fill="${col || '#10222B'}" font-family="Hanken Grotesk, sans-serif">${t1}</text>${t2 ? `<text x="${x + w / 2}" y="${y + h / 2 + 17}" text-anchor="middle" font-size="12.5" fill="${col === '#fff' ? '#BFE3E8' : '#66787F'}" font-family="Hanken Grotesk, sans-serif">${t2}</text>` : ''}`;
+  const arrow = (d, label, lx, ly) => `<path d="${d}" fill="none" stroke="#0E6B78" stroke-width="2" marker-end="url(#ah)"/>${label ? `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="12" font-weight="700" fill="#0A5560" font-family="Hanken Grotesk, sans-serif">${label}</text>` : ''}`;
+  $('#flowsvg').innerHTML = `<svg viewBox="0 0 1100 330" role="img" aria-label="Dispatch flow from customer to admin to technician or vendor"><defs><marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M1 1 9 5 1 9z" fill="#0E6B78"/></marker></defs>
+    ${box(20, 120, 170, 80, 'Customer app', 'Books a service', '#fff', '#CCD7DA')}
+    ${box(260, 120, 170, 80, 'Admin panel', 'Receives the request', '#E3F1F3', '#B9DCE1', '#0A5560')}
+    <path d="M520 160 575 125 630 160 575 195z" fill="#FDF2E0" stroke="#E5C48A"/><text x="575" y="157" text-anchor="middle" font-size="13" font-weight="700" fill="#7A4B08" font-family="Hanken Grotesk, sans-serif">Technician</text><text x="575" y="174" text-anchor="middle" font-size="12" fill="#7A4B08" font-family="Hanken Grotesk, sans-serif">within 4 km?</text>
+    ${box(740, 72, 190, 80, 'Shital technician', 'Gets the job offer', '#fff', '#CCD7DA')}
+    ${box(740, 214, 190, 80, 'Vendor portal', 'Assigns own technician', '#fff', '#E5C48A')}
+    ${box(960, 123, 130, 74, 'Technician app', 'Accept, travel, work', '#0E6B78', '#0E6B78', '#fff')}
+    ${arrow('M190 160H258', '', 0, 0)}${arrow('M430 160H518', '', 0, 0)}
+    ${arrow('M600 135C650 110 690 108 738 112', 'Yes', 676, 98)}${arrow('M600 185C650 230 690 252 738 254', 'No, forward to vendor', 676, 282)}
+    ${arrow('M930 112C960 114 990 116 1010 121', '', 0, 0)}${arrow('M930 254C970 244 1010 220 1022 199', '', 0, 0)}
+    <path d="M1025 121C1025 8 130 8 130 118" fill="none" stroke="#98A7AD" stroke-width="2" stroke-dasharray="3 7" marker-end="url(#ah)"/>
+    <text x="580" y="28" text-anchor="middle" font-size="12.5" font-weight="700" fill="#66787F" font-family="Hanken Grotesk, sans-serif">Live status and location return to the customer and admin at every step</text>
+    <text x="548" y="322" text-anchor="middle" font-size="12.5" fill="#66787F" font-family="Hanken Grotesk, sans-serif">Vendor name, address and phone stay in the admin panel. Vendors keep a fixed map location.</text></svg>`;
+
+  /* Principles, personas, swatches */
+  $('#principles').innerHTML = [['Calm over loud', 'Neutral surfaces, one teal for actions, amber only for savings. No gradients.'], ['Status is the product', 'Every screen answers what is happening and what comes next.'], ['One primary action', 'Large, obvious buttons. Technicians use the app one-handed.'], ['Local by default', 'Bangla names, taka, cash on delivery, bKash and Nagad from day one.']].map(p => `<div class="panel card"><h3>${p[0]}</h3><p>${p[1]}</p></div>`).join('');
+  const P = [['Nadia', 'Customer, Banani', 'Wants a trusted technician today without calling around.', 'Cannot tell who is coming or when.', 'Fixed prices, ETA-first tracking, extra work needs her approval.'], ['Rafi', 'Operations admin', 'Dispatch every request in under two minutes.', 'No view of who is nearby or free.', 'Nearest technicians ranked by distance, one-click vendor forward.'], ['Mizan', 'Vendor, CoolTech', 'Receive jobs and assign his own technicians.', 'Needs access without seeing other vendors.', 'Scoped portal with only his jobs, team and settlement.'], ['Rakib', 'Technician', 'Do the job, get paid, move on.', 'Wasted calls and unclear scope.', 'One next action per screen, clear rules on extra work.']];
+  $('#personas').innerHTML = P.map(p => `<div class="panel card persona"><div class="top"><span class="avatar lg">${p[0][0]}</span><div><h3 style="margin:0">${p[0]}</h3><span class="muted" style="font-size:13px">${p[1]}</span></div></div><dl><div><dt>Goal</dt><dd>${p[2]}</dd></div><div><dt>Friction</dt><dd>${p[3]}</dd></div><div><dt>Design response</dt><dd>${p[4]}</dd></div></dl></div>`).join('');
+  const C = [['Ink', '#10222B'], ['Glacier', '#0E6B78'], ['Frost', '#E3F1F3'], ['Amber', '#E59A2B'], ['Success', '#1C8A56'], ['Warning', '#B7700D'], ['Alert', '#C23D2E'], ['Canvas', '#F2F6F6']];
+  $('#swatches').innerHTML = C.map(c => `<div class="swatch"><i style="background:${c[1]}"></i><div><b>${c[0]}</b><code>${c[1]}</code></div></div>`).join('');
+  document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => { const t = b.dataset.copy; const done = () => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1500); }; try { navigator.clipboard.writeText(t).then(done, done); } catch (e) { done(); } }));
+})();
+</script>
+</body>
+</html>

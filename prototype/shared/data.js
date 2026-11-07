@@ -1,0 +1,112 @@
+/* Static reference data. Brand name "Shital" is a working name (Bangla: cool). Replace in one place: AC.brand. */
+window.AC = window.AC || {};
+(function () {
+  AC.brand = { name: 'Shital', tagline: 'Cooling, serviced and delivered.' };
+
+  AC.fmt = {
+    money: n => '৳' + Math.round(n).toLocaleString('en-IN'),
+    ago(t) {
+      const s = Math.max(0, (Date.now() - t) / 1000);
+      if (s < 45) return 'just now';
+      const m = Math.round(s / 60); if (m < 60) return m + ' min ago';
+      const h = Math.round(m / 60); if (h < 24) return h + ' h ago';
+      return Math.round(h / 24) + ' d ago';
+    },
+    time: t => new Date(t).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+    ini: n => n.split(' ').map(s => s[0]).slice(0, 2).join('').toUpperCase(),
+    km: d => (d * 0.025).toFixed(1) + ' km'
+  };
+
+  // Schematic city coordinates on a 1000 x 640 board (1 unit = 25 m). Not geographic; real build uses OpenStreetMap tiles.
+  AC.areas = {
+    uttara: { n: 'Uttara', x: 720, y: 60 }, bashundhara: { n: 'Bashundhara', x: 905, y: 185 }, mirpur: { n: 'Mirpur', x: 230, y: 170 },
+    mohakhali: { n: 'Mohakhali', x: 480, y: 270 }, banani: { n: 'Banani', x: 600, y: 225 }, gulshan: { n: 'Gulshan', x: 790, y: 270 },
+    badda: { n: 'Badda', x: 905, y: 355 }, farmgate: { n: 'Farmgate', x: 440, y: 345 }, mohammadpur: { n: 'Mohammadpur', x: 235, y: 365 },
+    dhanmondi: { n: 'Dhanmondi', x: 355, y: 420 }, motijheel: { n: 'Motijheel', x: 650, y: 490 }, olddhaka: { n: 'Old Dhaka', x: 450, y: 548 }
+  };
+  AC.SERVICE_RADIUS = 160; // map units, about 4 km
+
+  AC.services = [
+    { id: 'ac-repair', name: 'AC Repair', bn: 'এসি রিপেয়ার', price: 1000, dur: '60-90 min', icon: 'wrench', desc: 'Diagnosis and repair of any fault: noise, water leak, tripping, remote or board issues.' },
+    { id: 'ac-cooling', name: 'AC Cooling Problem', bn: 'এসি ঠান্ডা প্রবলেম', price: 1000, dur: '60-90 min', icon: 'snow', desc: 'Weak or no cooling. Gas pressure, filter and compressor check.' },
+    { id: 'ac-service', name: 'General Servicing', bn: 'জেনারেল সার্ভিসিং', price: 1200, dur: '75 min', icon: 'sparkle', desc: 'Indoor and outdoor wash, filter clean, drain flush and a performance report.' },
+    { id: 'ac-gas', name: 'Gas Refill', bn: 'গ্যাস রিফিল', price: 2200, dur: '60 min', icon: 'drop', desc: 'Leak test, vacuum and refill to the manufacturer pressure.' },
+    { id: 'ac-install', name: 'AC Installation', bn: 'এসি ইন্সটলেশন', price: 1800, dur: '2-3 h', icon: 'box', desc: 'Wall mounting, copper piping up to 10 ft, drain line and test run.' },
+    { id: 'ac-reloc', name: 'Uninstall and Relocate', bn: 'খুলে পুনঃস্থাপন', price: 2500, dur: '3-4 h', icon: 'truck', desc: 'Safe removal, gas recovery and re-installation at the new location.' }
+  ];
+  AC.slots = ['Today, 2-4 PM', 'Today, 4-6 PM', 'Tomorrow, 10 AM-12 PM', 'Tomorrow, 2-4 PM'];
+  AC.parts = [
+    { label: 'Compressor capacitor', price: 650 }, { label: 'Gas top-up (R32)', price: 2500 },
+    { label: 'Control board repair', price: 3200 }, { label: 'Fan motor', price: 1800 }
+  ];
+  AC.INSTALL_FEE = 1800;
+
+  AC.catalog = [
+    { id: 'ac1', cat: 'ac', brand: 'Arctica', name: 'Inverter Split AC 1.5 Ton', price: 68500, was: 72000, rating: 4.8, kind: 'split', tint: 0, tag: 'Inverter', variants: ['1 Ton', '1.5 Ton', '2 Ton'], stock: 14, sold: 63 },
+    { id: 'ac2', cat: 'ac', brand: 'Hima', name: 'Non-Inverter Split AC 1 Ton', price: 42900, was: 45500, rating: 4.5, kind: 'split', tint: 2, tag: 'Best value', variants: ['1 Ton', '1.5 Ton'], stock: 22, sold: 91 },
+    { id: 'ac3', cat: 'ac', brand: 'Zephyr', name: 'Window AC 1.5 Ton', price: 39500, was: 0, rating: 4.3, kind: 'window', tint: 1, tag: 'Window', variants: ['1 Ton', '1.5 Ton'], stock: 9, sold: 24 },
+    { id: 'ac4', cat: 'ac', brand: 'Arctica', name: 'Ceiling Cassette AC 3 Ton', price: 148000, was: 0, rating: 4.6, kind: 'cassette', tint: 5, tag: 'Commercial', variants: ['2 Ton', '3 Ton', '4 Ton'], stock: 4, sold: 7 },
+    { id: 'bg1', cat: 'bag', brand: 'Tanti Crafts', name: 'Mohua Leather Tote', price: 3450, was: 4200, rating: 4.7, kind: 'tote', tint: 1, tag: 'Handmade', variants: ['Tan', 'Black'], stock: 40, sold: 118 },
+    { id: 'bg2', cat: 'bag', brand: 'Urban Kit', name: 'City Daypack 22L', price: 2650, was: 0, rating: 4.4, kind: 'pack', tint: 2, tag: 'Water resistant', variants: ['Navy', 'Slate'], stock: 62, sold: 207 },
+    { id: 'bg3', cat: 'bag', brand: 'Urban Kit', name: 'Weekender Duffel 40L', price: 3900, was: 4500, rating: 4.5, kind: 'duffel', tint: 0, tag: 'Travel', variants: ['Olive', 'Black'], stock: 28, sold: 66 },
+    { id: 'bg4', cat: 'bag', brand: 'Tanti Crafts', name: 'Jamdani Evening Clutch', price: 1850, was: 0, rating: 4.9, kind: 'clutch', tint: 3, tag: 'Local weave', variants: ['Rose', 'Ivory'], stock: 33, sold: 54 },
+    { id: 'cs1', cat: 'cos', brand: 'Nodi', name: 'Neem and Tulsi Face Wash', price: 320, was: 0, rating: 4.6, kind: 'tube', tint: 4, tag: 'Local', variants: ['100 ml'], stock: 210, sold: 640 },
+    { id: 'cs2', cat: 'cos', brand: 'Kesh', name: 'Amla and Hibiscus Hair Oil', price: 450, was: 520, rating: 4.7, kind: 'bottle', tint: 4, tag: 'Local', variants: ['200 ml'], stock: 150, sold: 512 },
+    { id: 'cs3', cat: 'cos', brand: 'Golap', name: 'Rose Water Mist', price: 380, was: 0, rating: 4.5, kind: 'spray', tint: 3, tag: 'Local', variants: ['100 ml'], stock: 120, sold: 301 },
+    { id: 'cs4', cat: 'cos', brand: 'Haldi', name: 'Turmeric Glow Cream', price: 540, was: 600, rating: 4.4, kind: 'jar', tint: 1, tag: 'Local', variants: ['50 g'], stock: 88, sold: 233 },
+    { id: 'cs5', cat: 'cos', brand: 'Kajol', name: 'Pure Kohl Pencil', price: 260, was: 0, rating: 4.8, kind: 'stick', tint: 5, tag: 'Local', variants: ['Black'], stock: 300, sold: 880 }
+  ];
+  AC.catById = Object.fromEntries(AC.catalog.map(p => [p.id, p]));
+  AC.svcById = Object.fromEntries(AC.services.map(s => [s.id, s]));
+
+  AC.vendors = [
+    { id: 'V1', name: 'CoolTech Services', owner: 'Mizanur Rahman', area: 'mirpur', x: 250, y: 190, addr: 'Plot 12, Section 10, Mirpur, Dhaka', phone: '01700-000311', commission: 12, since: 'Mar 2025' },
+    { id: 'V2', name: 'Zenith Air Care', owner: 'Shafiqul Alam', area: 'uttara', x: 700, y: 85, addr: 'House 8, Sector 7, Uttara, Dhaka', phone: '01700-000312', commission: 12, since: 'Jun 2025' },
+    { id: 'V3', name: 'Metro Cooling Solutions', owner: 'Kamrul Hasan', area: 'motijheel', x: 630, y: 510, addr: 'Shapla Tower, Motijheel C/A, Dhaka', phone: '01700-000313', commission: 10, since: 'Aug 2025' }
+  ];
+  AC.vendById = Object.fromEntries(AC.vendors.map(v => [v.id, v]));
+
+  AC.techs = [
+    { id: 'T1', name: 'Rakib Hasan', vendor: null, area: 'mohakhali', x: 515, y: 298, phone: '01700-000201', rating: 4.9, jobs: 312 },
+    { id: 'T2', name: 'Sumon Mia', vendor: null, area: 'mirpur', x: 215, y: 195, phone: '01700-000202', rating: 4.7, jobs: 268 },
+    { id: 'T3', name: 'Imran Hossain', vendor: null, area: 'dhanmondi', x: 340, y: 430, phone: '01700-000203', rating: 4.8, jobs: 290 },
+    { id: 'T4', name: 'Jahid Karim', vendor: null, area: 'gulshan', x: 775, y: 285, phone: '01700-000204', rating: 4.6, jobs: 201 },
+    { id: 'T5', name: 'Alamin Sheikh', vendor: 'V1', area: 'mirpur', x: 270, y: 150, phone: '01700-000205', rating: 4.5, jobs: 144 },
+    { id: 'T6', name: 'Faruk Ahmed', vendor: 'V1', area: 'mohammadpur', x: 250, y: 350, phone: '01700-000206', rating: 4.4, jobs: 118 },
+    { id: 'T7', name: 'Shohag Rana', vendor: 'V2', area: 'uttara', x: 740, y: 75, phone: '01700-000207', rating: 4.6, jobs: 96 },
+    { id: 'T8', name: 'Nasir Uddin', vendor: 'V2', area: 'uttara', x: 690, y: 45, phone: '01700-000208', rating: 4.3, jobs: 71 },
+    { id: 'T9', name: 'Babul Mia', vendor: 'V3', area: 'motijheel', x: 670, y: 505, phone: '01700-000209', rating: 4.5, jobs: 133 }
+  ];
+  AC.techById = Object.fromEntries(AC.techs.map(t => [t.id, t]));
+
+  AC.customers = [
+    { id: 'C1', name: 'Nadia Rahman', phone: '01700-000101', area: 'banani', addr: 'House 14, Road 5, Banani', x: 612, y: 217, joined: 'Sep 2026' },
+    { id: 'C2', name: 'Tanvir Ahmed', phone: '01700-000102', area: 'mirpur', addr: 'Block C, Road 3, Mirpur 10', x: 238, y: 178, joined: 'Jan 2026' },
+    { id: 'C3', name: 'Farhana Akter', phone: '01700-000103', area: 'uttara', addr: 'House 22, Sector 11, Uttara', x: 700, y: 40, joined: 'Mar 2026' },
+    { id: 'C4', name: 'Mahmudul Hasan', phone: '01700-000104', area: 'dhanmondi', addr: 'Road 9A, Dhanmondi', x: 362, y: 414, joined: 'Nov 2025' },
+    { id: 'C5', name: 'Sadia Islam', phone: '01700-000105', area: 'gulshan', addr: 'Road 41, Gulshan 2', x: 798, y: 262, joined: 'Feb 2026' },
+    { id: 'C6', name: 'Arif Chowdhury', phone: '01700-000106', area: 'motijheel', addr: 'Dilkusha C/A, Motijheel', x: 658, y: 478, joined: 'Apr 2026' },
+    { id: 'C7', name: 'Mitu Begum', phone: '01700-000107', area: 'mohammadpur', addr: 'Tajmahal Road, Mohammadpur', x: 228, y: 372, joined: 'May 2026' },
+    { id: 'C8', name: 'Rafiq Uddin', phone: '01700-000108', area: 'badda', addr: 'Middle Badda, Link Road', x: 900, y: 345, joined: 'Jul 2026' },
+    { id: 'C9', name: 'Imtiaz Kabir', phone: '01700-000109', area: 'mohakhali', addr: 'DOHS, Mohakhali', x: 488, y: 262, joined: 'Jun 2026' },
+    { id: 'C10', name: 'Lubna Yasmin', phone: '01700-000110', area: 'banani', addr: 'Road 11, Block D, Banani', x: 590, y: 212, joined: 'Aug 2026' },
+    { id: 'C11', name: 'Nusrat Jahan', phone: '01700-000111', area: 'mirpur', addr: 'Pallabi, Mirpur 12', x: 215, y: 150, joined: 'Oct 2026' }
+  ];
+  AC.custById = Object.fromEntries(AC.customers.map(c => [c.id, c]));
+
+  AC.promos = [
+    { code: 'FIRST15', title: 'First purchase discount', desc: '15% off your first shop order, up to ৳500.', status: 'Active', used: 148, kind: 'Percent' },
+    { code: 'ACINSTALL', title: 'AC and installation bundle', desc: '20% off installation when you buy an AC from us. Includes 1 year warranty on repair.', status: 'Active', used: 37, kind: 'Bundle' },
+    { code: 'CONFIRM100', title: 'Confirmation call discount', desc: '৳100 off a service when the booking is confirmed by our support call.', status: 'Active', used: 212, kind: 'Flat' },
+    { code: 'BKASH10', title: 'bKash payment offer', desc: '10% cashback up to ৳200. Terms pending with the provider.', status: 'Draft', used: 0, kind: 'Payment' },
+    { code: 'NAGAD05', title: 'Nagad payment offer', desc: '5% instant discount. Terms pending with the provider.', status: 'Draft', used: 0, kind: 'Payment' }
+  ];
+  AC.couriers = ['Pathao Courier', 'RedX'];
+  AC.payMethods = [
+    { id: 'cod', name: 'Cash on delivery', note: 'Pay the technician or courier in cash', icon: 'wallet' },
+    { id: 'bkash', name: 'bKash', note: 'Pay with your bKash wallet', icon: 'phone' },
+    { id: 'nagad', name: 'Nagad', note: 'Pay with your Nagad wallet', icon: 'phone' },
+    { id: 'card', name: 'Card or net banking', note: 'Visa, Mastercard, DBBL via SSLCommerz', icon: 'card' }
+  ];
+  AC.payName = id => (AC.payMethods.find(m => m.id === id) || {}).name || id;
+})();
