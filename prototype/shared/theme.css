@@ -10,16 +10,16 @@
 .kgrid .kcard:nth-child(3), .statrow .stat:nth-child(2) { background: var(--green-l); } .kgrid .kcard:nth-child(3) small .i { color: var(--green-d); }
 .statrow .stat:nth-child(3), .trust div:nth-child(3) { background: var(--brand-l); } .trust div:nth-child(3) .i { color: var(--brand); }
 .kpi:nth-child(3) small .i { color: var(--green-d); }
-.badge.b-acc { background: var(--red-l); color: var(--red-d); }
+.badge.b-acc { background: var(--brand-l); color: var(--brand); }
 .screen .hero { background: var(--brand); color: #fff; } .screen .hero h2 { color: #fff; } .screen .hero .eyebrow { color: #B9BDE8; }
-.screen .hero .code { background: var(--red); color: #fff; border: 0; } .screen .hero .art { background: #fff; }
+.screen .hero .code { background: #fff; color: var(--deep); border: 0; } .screen .hero .art { background: #fff; }
 .tab .dot, .nav a .cnt, .badge-n { background: var(--red); color: #fff;  }
 
 
 /* Flat controls */
 .btn-p, .btn-a, .btn-ok, .btn-s, .btn-d, .chip.on, .badge, .avatar { box-shadow: none; }
 .btn-s { box-shadow: none; }
-.btn-a { background: var(--red); color: #fff; } .btn-a:hover { background: #D8151D; }
+.btn-a { background: var(--brand); color: #fff; } .btn-a:hover { background: var(--brand-d); }
 .btn:active { transform: scale(.985); }
 .sw.on { box-shadow: none; }
 .input:focus, .select:focus, .textarea:focus { box-shadow: 0 0 0 3px rgba(46,49,146,.16); }
@@ -27,13 +27,24 @@
 /* Surfaces: white, hairline border, no shadow */
 .card, .panel, .cardx, .svc-row, .jcard, .pc, .kpis, .stat, .kcard { box-shadow: none; }
 
-/* Header band: flat brand blue, no ornaments, square bottom edge */
-.band { background: var(--brand); border-radius: 0; box-shadow: none; padding-bottom: 38px; }
-.band:has(.search) { padding-bottom: 18px; }
+/* Header band: white, ink text, hairline under it. Same colour as the status bar so nothing competes with the bezel. */
+.band { background: var(--surface); color: var(--ink); border-radius: 0; box-shadow: none; padding-bottom: 38px; border-bottom: 1px solid var(--line); }
+.band:has(.search) { padding-bottom: 14px; }
 .band::before, .band::after, .screen .hero::after { display: none; }
 .band.sm { border-radius: 0; padding-bottom: 14px; }
-.statusbar.dk { background: var(--brand); box-shadow: none; }
-.search.float { box-shadow: none; border: 1px solid var(--line); margin-top: 14px; }
+.band .top h1, .band .greet, .band .loc { color: var(--ink); }
+.band .greet-s, .band .loc small, .band small.muted { color: var(--ink-3) !important; }
+.band .icon-btn, .band .back { color: var(--ink); } .band .icon-btn:hover { background: var(--bg); }
+.band .online { background: var(--bg); border-color: var(--line); color: var(--ink); } .band .online .muted { color: var(--ink-3); }
+.statusbar.dk { background: var(--surface); color: var(--ink); box-shadow: none; }
+.search { background: var(--bg); border-color: transparent; }
+.search.float { box-shadow: none; border: 1px solid var(--line); margin-top: 14px; background: var(--surface); }
+.band .search { background: var(--bg); }
+.shop-bar { display: flex; gap: 8px; align-items: center; padding: 14px 20px 0; } .shop-bar .search { padding-right: 12px; }
+.sq-btn { width: 48px; height: 48px; flex: none; border-radius: 14px; background: var(--bg); color: var(--ink); display: grid; place-items: center; border: 1px solid transparent; }
+.sq-btn.on { background: var(--brand); color: #fff; }
+.sheet-opt { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 56px; border-bottom: 1px solid var(--line); font-weight: 600; font-size: 15.5px; text-align: left; } .sheet-opt span { flex: 1; } .sheet-opt small { color: var(--ink-3); font-weight: 500; } .sheet-opt.on { color: var(--brand); } .sheet-opt:last-child { border-bottom: 0; }
+.chip.on { background: var(--brand); border-color: var(--brand); }
 .screen .hero { background: var(--deep); }
 
 /* Bars: opaque */
@@ -87,7 +98,8 @@ header.nav { background: var(--bg); }
 .btn-ok { background: var(--green); } .btn-ok:hover { background: #009644; } .btn-sm.btn-ok { background: #008A40; }
 .screen .sec-h button { position: relative; color: var(--brand); font-weight: 600; }
 .screen .sec-h button::after { content: ''; position: absolute; inset: -14px -10px; }
-.band .search { border-color: transparent; }
-.band .search.float, .band .search { margin-bottom: 0; }
 .cat:not(:first-child) .art { padding: 6px 14px 58px; } .cat:not(:first-child) .art svg { height: auto; width: 62%; }
 .cat span { background: var(--surface); }
+
+.pdisc { background: var(--green); color: #fff; }
+.sec-h h2::before { background: var(--brand); }

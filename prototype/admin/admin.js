@@ -38,7 +38,7 @@
     for (let i = 0; i <= 4; i++) { const y = t + (H - t - b) * (1 - i / 4); s += `<line x1="${l}" x2="${W - r}" y1="${y}" y2="${y}" stroke="#E3E6F0"/><text x="${l - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#6A7190">${Math.round(max * i / 4)}</text>`; }
     vals.forEach((v, i) => {
       const x = l + i * bw + bw * 0.18, w = bw * 0.64, bh = (H - t - b) * v / max, y = H - b - bh, last = i === vals.length - 1, dt = new Date(d - (vals.length - 1 - i) * 864e5);
-      s += `<rect x="${x}" y="${y}" width="${w}" height="${bh}" rx="5" fill="${last ? '#00A74F' : '#C4C7EA'}"><title>${dt.toDateString()}: ${v}k</title></rect>`;
+      s += `<rect x="${x}" y="${y}" width="${w}" height="${bh}" rx="5" fill="${last ? '#0A8A47' : '#C9CBE0'}"><title>${dt.toDateString()}: ${v}k</title></rect>`;
       if (i % 2 === (vals.length - 1) % 2) s += `<text x="${x + w / 2}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#6A7190">${dt.getDate()} ${dt.toLocaleString('en', { month: 'short' })}</text>`;
       if (last) s += `<text x="${x + w / 2}" y="${y - 6}" text-anchor="middle" font-size="12" font-weight="700" fill="#00793A">${v}k</text>`;
     });

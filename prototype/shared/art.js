@@ -1,14 +1,14 @@
 /* Flat product illustrations drawn in SVG so every product card has curated visuals without photo licensing. */
 (function () {
   const T = [
-    { bg: '#E9EAF7', fg: '#2E3192', lt: '#C4C7EA' },
-    { bg: '#FDE9EA', fg: '#D8151D', lt: '#F8B9BD' },
-    { bg: '#E0F5EA', fg: '#00873F', lt: '#A6DDBF' },
-    { bg: '#EEF0F7', fg: '#4A4F73', lt: '#CDD2E3' },
-    { bg: '#E8EAFA', fg: '#4A55C9', lt: '#BCC4F2' },
-    { bg: '#DCDEF2', fg: '#151858', lt: '#A9AEDB' }
+    { bg: '#E8E8F0', fg: '#272B7A', lt: '#C2C5DE' },
+    { bg: '#F0E6D8', fg: '#7A5230', lt: '#DCC7AB' },
+    { bg: '#E1EEE5', fg: '#0A7A3E', lt: '#A9D0B8' },
+    { bg: '#ECE7DE', fg: '#5A544C', lt: '#D3CDC3' },
+    { bg: '#E6E7F2', fg: '#3E48A8', lt: '#BAC0E6' },
+    { bg: '#DBDCEA', fg: '#181B4B', lt: '#A7ABD2' }
   ];
-  const W = '#FFFFFF', S = '#CDD2E3';
+  const W = '#FFFFFF', S = '#D3CDC3';
   function frame(t, body) {
     return '<svg viewBox="0 0 240 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><rect width="240" height="180" fill="' + t.bg + '"/>' + body + '</svg>';
   }

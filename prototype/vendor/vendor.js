@@ -16,7 +16,7 @@
 
   function Jobs() {
     const J = jobs(), L = J.filter(SEG[ui.seg]), nNew = J.filter(SEG.new).length;
-    return `<div class="band"><div class="top">${AC.logo.tile(40, false)}<div class="grow"><small class="muted" style="font-weight:600">Vendor partner</small><h1 style="font-size:22px">${esc(V().name)}</h1></div><div class="avatar amber" style="background:var(--accent);color:var(--deep)">${AC.fmt.ini(V().name)}</div></div></div>
+    return `<div class="band"><div class="top">${AC.logo.tile(40, false)}<div class="grow"><small class="muted" style="font-weight:600">Vendor partner</small><h1 style="font-size:22px">${esc(V().name)}</h1></div><div class="avatar amber" style="background:var(--brand);color:#fff">${AC.fmt.ini(V().name)}</div></div></div>
     <div class="seg" style="margin-top:-24px;position:relative;z-index:2;box-shadow:var(--shadow-2)">${[['new', 'New' + (nNew ? ' (' + nNew + ')' : '')], ['active', 'Active'], ['done', 'Completed']].map(x => `<button class="${ui.seg === x[0] ? 'on' : ''}" data-a="seg" data-v="${x[0]}">${x[1]}</button>`).join('')}</div>
     <div class="stack">${L.map(j => card(j)).join('') || `<div class="empty"><h3>${ui.seg === 'new' ? 'No new requests' : 'Nothing here yet'}</h3><span>${ui.seg === 'new' ? 'Jobs forwarded by NEW appear here.' : ''}</span></div>`}</div>`;
   }

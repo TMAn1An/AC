@@ -14,7 +14,7 @@
 
   function spark(vals) {
     const W = 300, H = 64, mx = Math.max(...vals), pts = vals.map((v, i) => [i * W / (vals.length - 1), H - 6 - (H - 14) * v / mx]), d = 'M' + pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('L'), last = pts[pts.length - 1];
-    return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Revenue trend"><path d="${d}L${W} ${H}L0 ${H}Z" fill="#E9EAF7"/><path d="${d}" fill="none" stroke="#2E3192" stroke-width="2.5" stroke-linejoin="round"/><circle cx="${last[0]}" cy="${last[1]}" r="4.5" fill="#2E3192" stroke="#fff" stroke-width="2"/></svg>`;
+    return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Revenue trend"><path d="${d}L${W} ${H}L0 ${H}Z" fill="#ECECF3"/><path d="${d}" fill="none" stroke="#272B7A" stroke-width="2.5" stroke-linejoin="round"/><circle cx="${last[0]}" cy="${last[1]}" r="4.5" fill="#272B7A" stroke="#fff" stroke-width="2"/></svg>`;
   }
 
   function Home() {

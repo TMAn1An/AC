@@ -58,9 +58,9 @@
     ${banner}
     <div class="hero"><div><div class="eyebrow">First purchase</div><h2>15% off your first order</h2><span class="code">${icon('tag', 14)} FIRST15</span></div><div class="art">${Art.draw('split', 1)}</div></div>
     <div class="sec"><div class="sec-h"><h2>Shop by category</h2></div>
-      <div class="cats"><button class="cat cat-ac" style="background:#E9EAF7" data-a="shopcat" data-v="ac"><div class="art">${Art.draw('split', 0)}</div><span><div>Air conditioners<small>Buy and get serviced</small></div>${icon('right', 16)}</span></button>
-      <button class="cat" style="background:#E0F5EA" data-a="shopcat" data-v="bag"><div class="art">${Art.draw('tote', 2)}</div><span><div>Bags</div>${icon('right', 16)}</span></button>
-      <button class="cat" style="background:#FDE9EA" data-a="shopcat" data-v="cos"><div class="art">${Art.draw('bottle', 1)}</div><span><div>Cosmetics<small>Made locally</small></div>${icon('right', 16)}</span></button></div></div>
+      <div class="cats"><button class="cat cat-ac" style="background:#ECECF3" data-a="shopcat" data-v="ac"><div class="art">${Art.draw('split', 0)}</div><span><div>Air conditioners<small>Buy and get serviced</small></div>${icon('right', 16)}</span></button>
+      <button class="cat" style="background:#E1EEE5" data-a="shopcat" data-v="bag"><div class="art">${Art.draw('tote', 2)}</div><span><div>Bags</div>${icon('right', 16)}</span></button>
+      <button class="cat" style="background:#F0E6D8" data-a="shopcat" data-v="cos"><div class="art">${Art.draw('bottle', 1)}</div><span><div>Cosmetics<small>Made locally</small></div>${icon('right', 16)}</span></button></div></div>
     <div class="sec"><div class="sec-h"><h2>Book a service</h2><button data-a="tab" data-v="services">See all</button></div>
       <div class="hscroll">${AC.services.map(s => `<button class="svc-chip" style="background:${Art.tints[s.tone || 0].bg}" data-a="book" data-v="${s.id}"><span class="svc-ic" style="color:${Art.tints[s.tone || 0].fg}">${icon(s.icon, 22)}</span><b>${s.name}</b><small>From ${money(s.price)}</small></button>`).join('')}</div></div>
     <div class="sec"><div class="sec-h"><h2>Air conditioners</h2><button data-a="shopcat" data-v="ac">See all</button></div><div class="hscroll">${P('ac').map(pcard).join('')}</div></div>
@@ -149,10 +149,12 @@
     const q = (ui.d.q || '').trim().toLowerCase(), SORT = { popular: (a, b) => b.sold - a.sold, low: (a, b) => a.price - b.price, high: (a, b) => b.price - a.price, rating: (a, b) => b.rating - a.rating };
     const list = AC.catalog.filter(p => (ui.cat === 'all' || p.cat === ui.cat) && (!q || (p.name + ' ' + p.brand + ' ' + p.tag).toLowerCase().includes(q))).sort(SORT[ui.sort]);
     const cats = [['all', 'All'], ['ac', 'Air conditioners'], ['bag', 'Bags'], ['cos', 'Cosmetics']], sorts = [['popular', 'Popular'], ['low', 'Price: low to high'], ['high', 'Price: high to low'], ['rating', 'Top rated']];
-    return `<div class="band sm" style="padding-bottom:40px"><div class="top"><h1>Shop</h1>${cartBtn()}</div></div>
-    <label class="search float" style="cursor:text;margin-bottom:0">${icon('search', 18)}<input id="f-q" data-b="q" placeholder="Search ACs, bags, cosmetics" value="${esc(ui.d.q || '')}" autocomplete="off" style="border:0;background:none;outline:none;flex:1;min-width:0;font:inherit">${q ? `<button data-a="qclear" aria-label="Clear search">${icon('x', 16)}</button>` : ''}</label>
-    <div class="hscroll" style="padding-top:12px">${cats.map(x => `<button class="chip ${ui.cat === x[0] ? 'on' : ''}" data-a="shopcat" data-v="${x[0]}">${x[1]}</button>`).join('')}</div>
-    <div class="hscroll" style="padding-top:2px;padding-bottom:10px"><span class="muted" style="font-size:12px;font-weight:700;align-self:center;white-space:nowrap">Sort</span>${sorts.map(x => `<button class="chip sm ${ui.sort === x[0] ? 'on' : ''}" data-a="sort" data-v="${x[0]}">${x[1]}</button>`).join('')}</div>
+    const catName = cats.find(x => x[0] === ui.cat)[1], sortName = sorts.find(x => x[0] === ui.sort)[1], nf = (ui.cat !== 'all' ? 1 : 0) + (ui.sort !== 'popular' ? 1 : 0);
+    return `<div class="band sm"><div class="top"><h1>Shop</h1>${cartBtn()}</div>
+    <div class="shop-bar"><label class="search" style="cursor:text;margin:0;flex:1;width:auto">${icon('search', 18)}<input id="f-q" data-b="q" placeholder="Search ACs, bags, cosmetics" value="${esc(ui.d.q || '')}" autocomplete="off" style="border:0;background:none;outline:none;flex:1;min-width:0;font:inherit">${q ? `<button data-a="qclear" aria-label="Clear search">${icon('x', 16)}</button>` : ''}</label>
+    <button class="sq-btn ${ui.cat !== 'all' ? 'on' : ''}" data-a="opencats" aria-label="Categories">${icon('menu', 20)}</button>
+    <button class="sq-btn ${ui.sort !== 'popular' ? 'on' : ''}" data-a="opensort" aria-label="Filter and sort">${icon('sliders', 20)}</button></div></div>
+    ${nf ? `<div class="hscroll" style="padding-top:12px;padding-bottom:2px">${ui.cat !== 'all' ? `<button class="chip sm on" data-a="shopcat" data-v="all">${catName} ${icon('x', 12)}</button>` : ''}${ui.sort !== 'popular' ? `<button class="chip sm on" data-a="sort" data-v="popular">${sortName} ${icon('x', 12)}</button>` : ''}</div>` : ''}
     ${ui.cat === 'ac' ? `<div class="pad" style="margin-bottom:14px"><div class="note acc">${icon('gift', 18)}<span>Buy an AC and get 20% off installation plus a 1 year repair warranty.</span></div></div>` : ''}
     <div class="muted" style="padding:0 20px 10px;font-size:13px">${list.length} product${list.length === 1 ? '' : 's'}</div>
     ${list.length ? `<div class="pgrid">${list.map(pcard).join('')}</div>` : `<div class="empty"><h3>No matches</h3><span>Try a different word or clear the search.</span><button class="btn btn-p" data-a="qclear">Clear search</button></div>`}`;
@@ -262,8 +264,14 @@
         <input class="input otp-in" id="f-otp" data-b="otp" inputmode="numeric" maxlength="4" autocomplete="one-time-code" placeholder="0000" value="${esc(ui.d.otp || '')}">${sh.err ? `<span style="color:var(--bad);font-weight:600;font-size:13px">That code is not correct. Try again.</span>` : ''}
         <button class="btn btn-p btn-lg btn-block" data-a="otpverify">Verify and continue</button><div class="row" style="gap:4px"><button class="btn btn-g btn-sm" data-a="otpresend">Resend code</button><button class="btn btn-g btn-sm" data-a="otpclose">Change number</button></div><span class="faint" style="font-size:12px">Demo code: ${DEMO_OTP}. No SMS is sent in this prototype.</span></div></div>`;
     }
+    if (sh.t === 'cats' || sh.t === 'sort') {
+      const cc = { all: AC.catalog.length, ac: 0, bag: 0, cos: 0 }; AC.catalog.forEach(p => cc[p.cat]++);
+      const rows = sh.t === 'cats' ? [['all', 'All products'], ['ac', 'Air conditioners'], ['bag', 'Bags'], ['cos', 'Cosmetics']].map(x => `<button class="sheet-opt ${ui.cat === x[0] ? 'on' : ''}" data-a="shopcat" data-v="${x[0]}"><span>${x[1]}</span><small>${cc[x[0]]}</small>${ui.cat === x[0] ? icon('check', 18, 2.5) : ''}</button>`).join('')
+        : [['popular', 'Popular'], ['low', 'Price: low to high'], ['high', 'Price: high to low'], ['rating', 'Top rated']].map(x => `<button class="sheet-opt ${ui.sort === x[0] ? 'on' : ''}" data-a="sort" data-v="${x[0]}"><span>${x[1]}</span>${ui.sort === x[0] ? icon('check', 18, 2.5) : ''}</button>`).join('');
+      return `<div class="scrim" data-a="closesheet"></div><div class="sheet"><div class="grab"></div><h3 style="font-size:18px;margin-bottom:6px">${sh.t === 'cats' ? 'Categories' : 'Sort by'}</h3>${rows}</div>`;
+    }
     if (sh.t === 'gate') {
-      const m = AC.payMethods.find(x => x.id === sh.m), col = { bkash: '#D12053', nagad: '#ED1B24', card: '#2E3192' }[sh.m] || '#2E3192';
+      const m = AC.payMethods.find(x => x.id === sh.m), col = { bkash: '#D12053', nagad: '#C9232B', card: '#272B7A' }[sh.m] || '#272B7A';
       return `<div class="scrim"></div><div class="sheet"><div class="grab"></div><div class="gate">${sh.stage === 'ok' ? `<div class="okc">${icon('check', 36, 2.5)}</div><h3 style="font-size:20px">Payment received</h3><span class="muted">${money(sh.amount)} paid with ${m.name}</span>` : `<div class="logo" style="background:${col}">${sh.m === 'card' ? icon('card', 30) : m.name[0]}</div><h3 style="font-size:20px">${sh.m === 'card' ? 'Secure checkout (SSLCommerz)' : 'Confirming with ' + m.name}</h3><span class="muted">${money(sh.amount)}. Do not close this screen.</span><span class="ring"></span><span class="faint" style="font-size:12px">Demo gateway. No real payment is made.</span>`}</div></div>`;
     }
     return '';
@@ -324,7 +332,7 @@
     back() { const t = ui.stack[ui.stack.length - 1]; ui.stack.pop(); if (t && t.s === 'checkout') ui.buyMode = false; ui.promoErr = ''; render(); if (t && t.s === 'notifs') S.act.markNotifs('cust:' + ME); },
     notifs() { push('notifs'); }, history() { push('history'); }, hf(el) { AC.history.filter = el.dataset.v; render(); }, hclear() { AC.history.clear('cust:' + ME); render(); },
     toast(el) { toast(el.dataset.v, 'info'); },
-    shopcat(el) { ui.cat = el.dataset.v; ui.tab = 'shop'; ui.stack = []; render(); },
+    shopcat(el) { ui.cat = el.dataset.v; ui.tab = 'shop'; ui.stack = []; ui.sheet = null; render(); }, opencats() { ui.sheet = { t: 'cats' }; render(); }, opensort() { ui.sheet = { t: 'sort' }; render(); }, closesheet() { ui.sheet = null; render(); },
     prod(el) { const p = AC.catById[el.dataset.v]; ui.pdraft = { variant: p.variants[0], qty: 1, install: false }; push('prod', { id: p.id }); },
     pvar(el) { ui.pdraft.variant = el.dataset.v; render(); },
     pqty(el) { ui.pdraft.qty = Math.max(1, ui.pdraft.qty + +el.dataset.v); render(); },
@@ -332,7 +340,7 @@
     quick(el) { const p = AC.catById[el.dataset.v]; addLine(p, p.variants[0], 1, false); render(); },
     pq(el) { const i = ui.cart.findIndex(l => l.pid === el.dataset.v); if (i < 0) return; ui.cart[i].qty += +el.dataset.d; if (ui.cart[i].qty < 1) ui.cart.splice(i, 1); render(); },
     wish(el) { ui.wish[el.dataset.v] = !ui.wish[el.dataset.v]; render(); },
-    sort(el) { ui.sort = el.dataset.v; render(); }, qclear() { ui.d.q = ''; render(); },
+    sort(el) { ui.sort = el.dataset.v; ui.sheet = null; render(); }, qclear() { ui.d.q = ''; render(); },
     buynow(el) { const p = AC.catById[el.dataset.v]; ui.buy = [{ pid: p.id, variant: p.variants[0], qty: 1, install: false }]; ui.buyMode = true; ui.d.pm = ui.d.pm || 'cod'; push('checkout'); },
     buynow2() { const p = AC.catById[ui.stack[ui.stack.length - 1].p.id], d = ui.pdraft; ui.buy = [{ pid: p.id, variant: d.variant, qty: d.qty, install: d.install }]; ui.buyMode = true; ui.d.pm = ui.d.pm || 'cod'; push('checkout'); },
     addcart() { const p = AC.catById[ui.stack[ui.stack.length - 1].p.id], d = ui.pdraft; addLine(p, d.variant, d.qty, d.install); ui.added = true; render(); setTimeout(() => { ui.added = false; render(); }, 1400); },

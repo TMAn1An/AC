@@ -3,35 +3,35 @@
   color-scheme: light;
   /* NEW brand, from the client logo: blue #2E3192, red #ED1B24, green #00A74F.
      Colour ratio 60 / 30 / 10: neutrals 60, brand blue 30, red and green accents 10. */
-  --ink: #101426;
-  --ink-2: #3A4160;
-  --ink-3: #6A7190;
-  --ink-4: #9AA0B8;
-  --bg: #F5F6FA;
+  --ink: #1E1B18;
+  --ink-2: #46413B;
+  --ink-3: #756F68;
+  --ink-4: #A29C93;
+  --bg: #F4F1EC;
   --surface: #FFFFFF;
-  --line: #E3E6F0;
-  --line-2: #CDD2E3;
+  --line: #E6E1D9;
+  --line-2: #D3CDC3;
   /* Primary: logo blue (30%) */
-  --brand: #2E3192;
-  --brand-d: #1F2270;
-  --brand-l: #E9EAF7;
-  --brand-m: #C4C7EA;
-  --deep: #151858;
+  --brand: #272B7A;
+  --brand-d: #1B1E5A;
+  --brand-l: #ECECF3;
+  --brand-m: #C9CBE0;
+  --deep: #181B4B;
   /* Accents (10%): logo red for promotions, alerts and unread; logo green for success and live */
-  --red: #ED1B24; --red-d: #B5121A; --red-l: #FDE9EA;
-  --green: #00A74F; --green-d: #00793A; --green-l: #E0F5EA;
-  --accent: var(--red); --accent-d: var(--red-d); --accent-l: var(--red-l);
+  --red: #C9232B; --red-d: #9E1A20; --red-l: #F8E7E4;
+  --green: #0A8A47; --green-d: #086B38; --green-l: #E3F1E7;
+  --accent: var(--brand); --accent-d: var(--brand-d); --accent-l: var(--brand-l);
   /* Supporting tints for tiles and icons, all drawn from the three logo colours */
-  --coral: var(--red); --coral-l: var(--red-l);
-  --sky: #4A55C9; --sky-l: #E8EAFA;
+  --coral: var(--red); --coral-l: var(--red-l); /* red is reserved for flags and warnings: unread counts, errors, cancel */
+  --sky: #3E48A8; --sky-l: #E9EAF4;
   --sage: var(--green-d); --sage-l: var(--green-l);
   --plum: var(--brand); --plum-l: var(--brand-l);
-  --sand: #ECEEF6;
+  --sand: #EFEAE2;
   /* Semantic */
-  --ok: #00873F;  --ok-l: #E0F5EA;
-  --warn: #9A5B00; --warn-l: #FCF0DA;
-  --bad: #D8151D;  --bad-l: #FDE9EA;
-  --info: #2E3192; --info-l: #E9EAF7;
+  --ok: #0A7A3E;  --ok-l: #E3F1E7;
+  --warn: #8F5200; --warn-l: #FAEFD9;
+  --bad: #B8181F;  --bad-l: #F8E7E4;
+  --info: #272B7A; --info-l: #ECECF3;
   /* Type */
   --f-display: 'Bricolage Grotesque', system-ui, sans-serif;
   --f-body: 'Hanken Grotesk', system-ui, sans-serif;
@@ -70,7 +70,7 @@ h1, h2, h3, h4 { font-family: var(--f-display); font-weight: 600; letter-spacing
 .btn-p { background: var(--brand); color: #fff; } .btn-p:hover { background: var(--brand-d); }
 .btn-s { background: var(--surface); border-color: var(--line-2); } .btn-s:hover { background: var(--bg); }
 .btn-g { color: var(--ink-2); } .btn-g:hover { background: var(--bg); }
-.btn-a { background: var(--accent); color: var(--ink); } .btn-a:hover { background: #B5121A; }
+.btn-a { background: var(--accent); color: var(--ink); } .btn-a:hover { background: var(--brand-d); }
 .btn-d { background: var(--bad-l); color: var(--bad); } .btn-d:hover { background: #F8C9CC; }
 .btn-ok { background: var(--ok); color: #fff; }
 .btn-sm { height: 32px; padding: 0 12px; font-size: 13px; border-radius: 8px; }
