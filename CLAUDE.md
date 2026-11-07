@@ -34,7 +34,7 @@ Phase 0 is done: a clickable design prototype in `prototype/` (plain HTML, CSS, 
 - All color, type and spacing come from tokens in `prototype/shared/base.css` (and the Flutter theme that mirrors them). Do not hardcode new colors.
 - One primary action per screen. Status first. Large touch targets in the technician app.
 - Copy: plain, active voice. The prototype is English only. Bangla is a language option for the Flutter build (phase 4), not mixed into screens.
-- Brand: the client logo (NEW). Palette sampled from it: blue #2E3192, red #ED1B24, green #00A74F, in a 60/30/10 ratio (neutrals, blue, red and green accents). Tokens in `prototype/shared/base.css`, glossy finish in `prototype/shared/theme.css`. See `docs/BRAND.md`. Gloss comes from flat highlights, inner edges and glass blur, never gradients. Rebuild the logo with `python3 scripts/build-logo.py`.
+- Brand: the client logo (NEW). Palette sampled from it: blue #2E3192, red #ED1B24, green #00A74F, in a 60/30/10 ratio (neutrals, blue, red and green accents). Tokens in `prototype/shared/base.css`, flat theme in `prototype/shared/theme.css`. See `docs/BRAND.md`. No gloss: flat surfaces, hairline borders, one soft shadow on floating layers. Rebuild the logo with `python3 scripts/build-logo.py`.
 - Quality bar: Y Combinator demo. Clean, minimal, alive (live updates, motion with purpose, reduced-motion respected).
 
 ## Working on the prototype

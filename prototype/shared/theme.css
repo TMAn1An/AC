@@ -1,5 +1,5 @@
-/* NEW theme layer: logo-colour assignments and the glossy finish. Loaded after every other stylesheet.
-   Gloss is built from flat translucent highlights, inner edges, coloured shadows and glass blur. No gradients. */
+/* NEW theme layer: logo-colour assignments on a flat, clean surface system. Loaded after every other stylesheet.
+   No gradients, no glossy highlights, no glass blur. Depth comes from hairline borders and one soft shadow on floating layers. */
 
 /* Colour roles (60 / 30 / 10): neutrals, blue, then red and green accents */
 .offer-row { border-color: var(--green); background: var(--green-l); } .offer-row b { color: var(--green-d); }
@@ -12,76 +12,61 @@
 .kpi:nth-child(3) small .i { color: var(--green-d); }
 .badge.b-acc { background: var(--red-l); color: var(--red-d); }
 .screen .hero { background: var(--brand); color: #fff; } .screen .hero h2 { color: #fff; } .screen .hero .eyebrow { color: #B9BDE8; }
-.screen .hero .code { background: var(--red); color: #fff; border: 0; box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 4px 10px rgba(237,27,36,.35); } .screen .hero .art { background: #fff; }
-.screen .hero::after { content: ''; position: absolute; left: -10%; right: -10%; top: -45%; height: 85%; background: rgba(255,255,255,.06); border-radius: 50%; transform: none; }
-.tab .dot, .nav a .cnt, .badge-n { background: var(--red); color: #fff; box-shadow: 0 2px 6px rgba(237,27,36,.4); }
+.screen .hero .code { background: var(--red); color: #fff; border: 0; } .screen .hero .art { background: #fff; }
+.tab .dot, .nav a .cnt, .badge-n { background: var(--red); color: #fff;  }
 
-/* Buttons: lit top edge, shaded bottom edge, coloured shadow */
-.btn-p { box-shadow: inset 0 1px 0 rgba(255,255,255,.32), inset 0 -2px 0 rgba(10,12,60,.25), 0 6px 14px rgba(46,49,146,.28); }
-.btn-p:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,.32), inset 0 -2px 0 rgba(10,12,60,.25), 0 8px 18px rgba(46,49,146,.36); }
-.btn-a { background: var(--red); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.34), inset 0 -2px 0 rgba(90,0,6,.22), 0 6px 14px rgba(237,27,36,.28); } .btn-a:hover { background: #D8151D; }
-.btn-ok { box-shadow: inset 0 1px 0 rgba(255,255,255,.32), inset 0 -2px 0 rgba(0,60,30,.25), 0 6px 14px rgba(0,167,79,.28); }
-.btn-s { box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(16,20,38,.10); }
-.btn-d { box-shadow: inset 0 1px 0 rgba(255,255,255,.6); }
-.btn:active { transform: translateY(1px) scale(.99); }
 
-/* Surfaces: soft glassy cards with a bright top edge */
-.card, .panel, .cardx, .svc-row, .jcard, .pc, .kpis, .stat, .kcard { box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(16,20,38,.05), 0 8px 20px rgba(21,24,88,.05); }
-.badge { box-shadow: inset 0 1px 0 rgba(255,255,255,.7); }
-.avatar { box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 1px 2px rgba(16,20,38,.12); }
-.sw.on { box-shadow: inset 0 1px 2px rgba(0,0,0,.25), 0 0 0 3px rgba(46,49,146,.12); }
-.input:focus, .select:focus, .textarea:focus { box-shadow: 0 0 0 3px rgba(46,49,146,.18); }
-.chip.on, .seg button.on { box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 4px 10px rgba(16,20,38,.22); }
-.seg button.on { box-shadow: inset 0 1px 0 #fff, 0 2px 6px rgba(16,20,38,.14); }
+/* Flat controls */
+.btn-p, .btn-a, .btn-ok, .btn-s, .btn-d, .chip.on, .badge, .avatar { box-shadow: none; }
+.btn-s { box-shadow: none; }
+.btn-a { background: var(--red); color: #fff; } .btn-a:hover { background: #D8151D; }
+.btn:active { transform: scale(.985); }
+.sw.on { box-shadow: none; }
+.input:focus, .select:focus, .textarea:focus { box-shadow: 0 0 0 3px rgba(46,49,146,.16); }
 
-/* Header bands: a lit sheen across the top and a highlight on the lower edge */
-.band { box-shadow: inset 0 -1px 0 rgba(255,255,255,.14), 0 10px 24px rgba(21,24,88,.18); }
-.band::after { content: ''; position: absolute; left: -12%; right: -12%; top: -55%; height: 95%; background: rgba(255,255,255,.05); border-radius: 50%; transform: none; }
-.search.float { box-shadow: inset 0 1px 0 #fff, 0 10px 24px rgba(21,24,88,.16); }
-.statusbar.dk { box-shadow: none; }
+/* Surfaces: white, hairline border, no shadow */
+.card, .panel, .cardx, .svc-row, .jcard, .pc, .kpis, .stat, .kcard { box-shadow: none; }
 
-/* Glass: translucent bars with blur */
-.tabbar { background: rgba(255,255,255,.84); backdrop-filter: blur(16px) saturate(1.5); -webkit-backdrop-filter: blur(16px) saturate(1.5); box-shadow: 0 -6px 20px rgba(21,24,88,.06); }
-.topbar { background: rgba(255,255,255,.82); backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4); }
-.toast, .snack { background: rgba(16,20,38,.88); backdrop-filter: blur(10px); box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 12px 28px rgba(16,20,38,.35); }
-.cta-bar { background: rgba(255,255,255,.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-header.nav { background: rgba(245,246,250,.88); }
-.tab.on svg { box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 2px 6px rgba(46,49,146,.18); }
+/* Header band: flat brand blue, no ornaments, square bottom edge */
+.band { background: var(--brand); border-radius: 0; box-shadow: none; padding-bottom: 38px; }
+.band:has(.search) { padding-bottom: 18px; }
+.band::before, .band::after, .screen .hero::after { display: none; }
+.band.sm { border-radius: 0; padding-bottom: 14px; }
+.statusbar.dk { background: var(--brand); box-shadow: none; }
+.search.float { box-shadow: none; border: 1px solid var(--line); margin-top: 14px; }
+.screen .hero { background: var(--deep); }
+
+/* Bars: opaque */
+.tabbar { background: var(--surface); box-shadow: none; border-top: 1px solid var(--line); }
+.topbar, .cta-bar { background: var(--surface); }
+header.nav { background: var(--bg); }
+.toast, .snack { background: var(--ink); box-shadow: 0 8px 24px rgba(16,20,38,.28); }
+.tab.on svg { box-shadow: none; }
+.logo-tile { box-shadow: none; }
+.brand .logo-tile { box-shadow: none; }
 
 /* Admin sidebar */
-.side { box-shadow: inset -1px 0 0 rgba(255,255,255,.07); }
-.nav a.on { background: rgba(255,255,255,.14); box-shadow: inset 3px 0 0 var(--red), inset 0 1px 0 rgba(255,255,255,.14); }
-.brand { gap: 12px; } .brand .logo-tile { box-shadow: inset 0 1px 0 #fff, 0 4px 12px rgba(0,0,0,.28); }
-.drawer { box-shadow: -16px 0 44px rgba(21,24,88,.18); }
-.wallet { box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 12px 28px rgba(21,24,88,.22); }
-.offer { box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 12px 28px rgba(46,49,146,.22); }
-.navbar { box-shadow: inset 0 -1px 0 rgba(255,255,255,.12); }
-.code-card { box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 10px 24px rgba(46,49,146,.18); }
-.otp-show span { box-shadow: inset 0 1px 0 #fff, 0 4px 10px rgba(46,49,146,.18); }
-@media (prefers-reduced-motion: reduce) { .btn:active { transform: none; } }
+.nav a.on { background: rgba(255,255,255,.12); box-shadow: inset 3px 0 0 var(--green); }
+.drawer { box-shadow: -12px 0 32px rgba(21,24,88,.14); }
+.wallet, .offer, .code-card, .navbar, .otp-show span { box-shadow: none; }
 
 /* Rating stars stay gold for instant recognition */
 .stars, .rate .i, .prate .i { color: #F2A20C; }
 
-/* ---- Device frame: lighter graphite bezel so the dark header never merges with it, and a hard clip so glass bars stay inside the corners */
-@media (min-width: 560px) { .device { border-color: #0A0B10; clip-path: inset(0 round 48px); isolation: isolate; transform: translateZ(0); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 30px 60px rgba(16,20,38,.22); } }
-.screen { isolation: isolate; }
-/* Headers use the brand blue, brighter than the bezel and the admin sidebar; the hero card takes the deep blue */
-.band, .statusbar.dk { background: var(--brand); }
-.screen .hero { background: var(--deep); }
-.band::before { opacity: .09; }
+/* Device frame: black bezel, plain overflow clip (no blur layers, so nothing can poke out of the corners) */
+@media (min-width: 560px) { .device { border-color: #0A0B10; box-shadow: 0 24px 48px rgba(16,20,38,.2); } }
 
-/* ---- Logo green, used for progress, success, live and commit actions */
-.sw.on { background: var(--green); box-shadow: inset 0 1px 2px rgba(0,0,0,.25), 0 0 0 3px rgba(0,167,79,.16); }
+/* Logo green: progress, success, live, commit actions */
 .tl-i.done::before { background: var(--green); } .tl-i.done .tl-dot { background: var(--green); border-color: var(--green); }
-.tl-i.now .tl-dot { border-color: var(--green); box-shadow: 0 0 0 5px var(--green-l); } .tl-i.now .tl-dot::after { background: var(--green); }
+.tl-i.now .tl-dot { border-color: var(--green); box-shadow: 0 0 0 4px var(--green-l); } .tl-i.now .tl-dot::after { background: var(--green); }
 .prog i.on { background: var(--green); }
-.online .dotg { background: var(--green); box-shadow: 0 0 0 4px rgba(0,167,79,.2); }
-.w-col .btn-a { background: var(--green); box-shadow: inset 0 1px 0 rgba(255,255,255,.34), inset 0 -2px 0 rgba(0,60,30,.25), 0 6px 14px rgba(0,167,79,.3); color: #fff; }
-.nav a[data-v=map]::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #3DD68C; margin-left: auto; box-shadow: 0 0 0 3px rgba(61,214,140,.25); }
+.sw.on { background: var(--green); }
+.online .dotg { background: var(--green); box-shadow: none; }
+.w-col .btn-a { background: var(--green); color: #fff; }
+.nav a[data-v=map]::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #3DD68C; margin-left: auto; }
 .nav a[data-v=map] .cnt { display: none; }
 .kyc-dot.done i, .kyc-row.ok .kyc-st { background: var(--green); border-color: var(--green); }
-.okc { box-shadow: 0 0 0 10px var(--green-l); }
+.okc { box-shadow: 0 0 0 8px var(--green-l); }
 .live-banner .pulse-dot { background: #3DD68C; }
 
 /* ---- Button and control sizing. Touch targets follow Android (48 dp) and iOS (44 pt) guidance on phones; compact sizes on desktop. */
@@ -102,3 +87,7 @@ header.nav { background: rgba(245,246,250,.88); }
 .btn-ok { background: var(--green); } .btn-ok:hover { background: #009644; } .btn-sm.btn-ok { background: #008A40; }
 .screen .sec-h button { position: relative; color: var(--brand); font-weight: 600; }
 .screen .sec-h button::after { content: ''; position: absolute; inset: -14px -10px; }
+.band .search { border-color: transparent; }
+.band .search.float, .band .search { margin-bottom: 0; }
+.cat:not(:first-child) .art { padding: 6px 14px 58px; } .cat:not(:first-child) .art svg { height: auto; width: 62%; }
+.cat span { background: var(--surface); }

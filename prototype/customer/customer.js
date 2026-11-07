@@ -53,8 +53,8 @@
       banner = `<button class="live-banner fade" data-a="track" data-v="${aj.id}"><span class="pulse-dot"></span><span class="grow"><b>${esc(aj.svcName)}</b><small>${S.META[aj.status].cust}${t && aj.status === 'ontheway' ? ' . ' + S.etaMin(aj) + ' min away' : ''}</small></span>${icon('right', 18)}</button>`;
     }
     return `<div class="band"><div class="top">${AC.logo.tile(40, false)}<div class="loc" style="margin-left:2px">${icon('pin', 20)}<div><small>Service and delivery</small>Banani, Dhaka</div></div>${cartBtn()}<button class="icon-btn" data-a="notifs" aria-label="Notifications">${icon('bell', 22)}${S.notifUnread('cust:' + ME) ? `<span class="badge-n">${S.notifUnread('cust:' + ME)}</span>` : ''}</button></div>
-    <div class="pad"><h1 class="greet">Hello, ${esc(firstName)}</h1><p class="greet-s">Cool air, fixed fast. Shop or book a technician.</p></div></div>
-    <button class="search float" data-a="tab" data-v="shop">${icon('search', 18)}<span>Search ACs, bags, cosmetics</span></button>
+    <div class="pad"><h1 class="greet">Hello, ${esc(firstName)}</h1><p class="greet-s">Cool air, fixed fast. Shop or book a technician.</p></div>
+    <button class="search" style="margin-top:16px" data-a="tab" data-v="shop">${icon('search', 18)}<span>Search ACs, bags, cosmetics</span></button></div>
     ${banner}
     <div class="hero"><div><div class="eyebrow">First purchase</div><h2>15% off your first order</h2><span class="code">${icon('tag', 14)} FIRST15</span></div><div class="art">${Art.draw('split', 1)}</div></div>
     <div class="sec"><div class="sec-h"><h2>Shop by category</h2></div>
