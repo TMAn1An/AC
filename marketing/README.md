@@ -4,7 +4,9 @@
 | --- | --- |
 | `shital-ad-vertical.mp4` | Vertical ad, 1080x1920, 66 seconds, no sound. For Facebook, Instagram, TikTok and YouTube Shorts. Add the voice-over from `AUDIO_SCRIPT.md` |
 | `shital-client-walkthrough.mp4` | Client presentation, 1920x1080, about 4 minutes, no sound. Shows the full workflow across all five apps |
-| `AUDIO_SCRIPT.md` | Timed voice-over scripts for ElevenLabs (English and Bangla) and narration for the client video |
+| `AUDIO_SCRIPT.md` | Which script goes with which video, plus ElevenLabs settings |
+| `audio/1-ad-vertical-english.md`, `audio/2-ad-vertical-bangla.md` | Voice-over for the ad, English or Bangla |
+| `audio/3-client-walkthrough-english.md` | Narration for the client walkthrough video |
 
 Both videos are generated from the real prototype, so they can be remade after any change:
 
