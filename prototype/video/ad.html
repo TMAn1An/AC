@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=1080">
-<title>Shital Ad</title>
+<title>NEW Ad</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="../shared/base.css">
 <style>
 /* Vertical ad, 1080 x 1920. Scenes are timed in JS (window.AD) so the same page can be recorded or previewed. */
 html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--deep); }
 .sc { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .5s; overflow: hidden; } .sc.on { opacity: 1; visibility: visible; }
-.sc.deep { background: var(--deep); color: #fff; } .sc.ivory { background: var(--bg); color: var(--ink); } .sc.gold { background: var(--accent); color: var(--deep); } .sc.sky { background: #D4EAF6; color: var(--deep); }
+.sc.deep { background: var(--deep); color: #fff; } .sc.ivory { background: var(--bg); color: var(--ink); } .sc.gold { background: var(--accent); color: var(--deep); } .sc.sky { background: #E9EAF7; color: var(--deep); }
 .hd { position: absolute; left: 80px; right: 80px; top: 140px; font-family: var(--f-display); font-size: 108px; line-height: 1.02; letter-spacing: -.035em; font-weight: 600; text-wrap: balance; }
 .sub { position: absolute; left: 80px; right: 80px; font-size: 40px; line-height: 1.3; font-weight: 500; opacity: .85; }
 .hl { color: var(--accent); } .gold .hl, .sky .hl, .ivory .hl { color: var(--brand); }
@@ -19,10 +19,10 @@ html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; backgro
 @keyframes rise { from { transform: translateY(420px) rotate(2deg); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes pop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.06); } 100% { transform: scale(1); opacity: 1; } }
 @keyframes ripple { from { transform: scale(.3); opacity: .5; } to { transform: scale(3.2); opacity: 0; } }
-.ph { position: absolute; left: 240px; top: 560px; width: 600px; height: 1300px; border: 16px solid #0C3A47; border-radius: 90px; overflow: hidden; background: #fff; box-shadow: 0 40px 80px rgba(0,0,0,.35); }
-.gold .ph, .sky .ph, .ivory .ph { box-shadow: 0 40px 80px rgba(12,58,71,.28); }
+.ph { position: absolute; left: 240px; top: 560px; width: 600px; height: 1300px; border: 16px solid #151858; border-radius: 90px; overflow: hidden; background: #fff; box-shadow: 0 40px 80px rgba(0,0,0,.35); }
+.gold .ph, .sky .ph, .ivory .ph { box-shadow: 0 40px 80px rgba(21,24,88,.28); }
 .ph img { width: 100%; display: block; } .sc.on .ph { animation: rise 1s .3s both cubic-bezier(.2,.8,.2,1); }
-.chip { position: absolute; background: #fff; color: var(--ink); border-radius: 28px; padding: 22px 32px; font-size: 38px; font-weight: 700; box-shadow: 0 20px 50px rgba(12,58,71,.25); display: flex; gap: 14px; align-items: center; }
+.chip { position: absolute; background: #fff; color: var(--ink); border-radius: 28px; padding: 22px 32px; font-size: 38px; font-weight: 700; box-shadow: 0 20px 50px rgba(21,24,88,.25); display: flex; gap: 14px; align-items: center; }
 .sc.on .chip { animation: pop .6s both cubic-bezier(.2,1.3,.4,1); } .chip i { width: 18px; height: 18px; border-radius: 50%; background: var(--ok); flex: none; }
 .big { position: absolute; left: 0; right: 0; text-align: center; font-family: var(--f-display); font-weight: 600; letter-spacing: -.03em; }
 .ring { position: absolute; border-radius: 50%; border: 6px solid var(--accent); width: 360px; height: 360px; left: 360px; top: 980px; opacity: 0; } .sc.on .ring { animation: ripple 2.6s infinite; } .sc.on .ring:nth-of-type(2) { animation-delay: .9s; } .sc.on .ring:nth-of-type(3) { animation-delay: 1.8s; }
@@ -44,14 +44,14 @@ const scenes = [
   { d: 8000, cls: 'sky', html: `<div class="hd">Book a technician in <span class="hl">under a minute.</span></div><div class="ph"><img src="shots/customer-booking.png" alt=""></div><div class="chip" style="left:560px;top:1380px"><i></i>Phone verified</div>` },
   { d: 8000, cls: 'gold', html: `<div class="hd">Fixed prices. <span class="hl">No surprises.</span></div><div class="ph"><img src="shots/customer-services.png" alt=""></div><div class="chip" style="left:90px;top:1500px">AC repair ৳1,000</div><div class="chip" style="left:520px;top:1240px">Extra work? You decide.</div>` },
   { d: 9000, cls: 'ivory', html: `<div class="hd">Watch your technician <span class="hl">arrive, live.</span></div><div class="ph"><img src="shots/customer-tracking.png" alt=""></div><div class="chip" style="left:110px;top:1290px"><i></i>Arriving in 11 min</div>` },
-  { d: 7000, cls: 'deep', html: `<div class="hd">Every technician is <span class="hl">ID verified.</span></div><div class="checks"><div>${I('checkc')}NID checked</div><div>${I('checkc')}Live selfie matched</div><div>${I('checkc')}Verified by Shital or your vendor</div><div>${I('checkc')}Reviewed by admin only</div></div>` },
+  { d: 7000, cls: 'deep', html: `<div class="hd">Every technician is <span class="hl">ID verified.</span></div><div class="checks"><div>${I('checkc')}NID checked</div><div>${I('checkc')}Live selfie matched</div><div>${I('checkc')}Verified by NEW or your vendor</div><div>${I('checkc')}Reviewed by admin only</div></div>` },
   { d: 7500, cls: 'sky', html: `<div class="hd">The job closes only with <span class="hl">your code.</span></div><div class="ph"><img src="shots/customer-code.png" alt=""></div><div class="chip" style="left:100px;top:1500px">${icon('lock', 40, 2.4)} You stay in control</div>` },
   { d: 6000, cls: 'gold', html: `<div class="hd">Pay <span class="hl">your way.</span></div><div class="pay"><div>Cash</div><div>bKash</div><div>Nagad</div><div>Card</div></div><div class="sub" style="top:1180px;font-size:52px;font-weight:600">Pay after the job is done.</div>` },
   { d: 8500, cls: 'ivory', html: `<div class="hd">Shop ACs, bags and <span class="hl">local cosmetics.</span></div><div class="ph"><img src="shots/customer-shop.png" alt=""></div><div class="chip" style="left:80px;top:1230px">20% off installation</div><div class="chip" style="left:470px;top:1480px">1 year repair warranty</div>` },
-  { d: 7000, cls: 'deep', html: `<div class="logo"><span class="mk">${icon('snow', 110, 2)}</span><br>Shital</div><div class="sub" style="top:1130px;text-align:center;font-size:60px;font-weight:600">Cooling, serviced and delivered.</div><div class="pill" style="top:1400px">Coming soon on Android</div>` }
+  { d: 7000, cls: 'deep', html: `<div class="logo"><span class="mk">${icon('snow', 110, 2)}</span><br>NEW</div><div class="sub" style="top:1130px;text-align:center;font-size:60px;font-weight:600">Cooling, serviced and delivered.</div><div class="pill" style="top:1400px">Coming soon on Android</div>` }
 ];
 const stage = document.getElementById('stage'), prog = document.getElementById('prog'), total = scenes.reduce((a, s) => a + s.d, 0);
-scenes.forEach((s, i) => { const e = document.createElement('div'); e.className = 'sc ' + s.cls; e.id = 'sc' + i; e.innerHTML = s.html + (i && i < scenes.length - 1 ? `<div class="brand"><span>${icon('snow', 30, 2.2)}</span>Shital</div>` : ''); stage.appendChild(e); });
+scenes.forEach((s, i) => { const e = document.createElement('div'); e.className = 'sc ' + s.cls; e.id = 'sc' + i; e.innerHTML = s.html + (i && i < scenes.length - 1 ? `<div class="brand"><span>${icon('snow', 30, 2.2)}</span>NEW</div>` : ''); stage.appendChild(e); });
 window.AD = { total, start() { let t = 0; const t0 = performance.now(); scenes.forEach((s, i) => { setTimeout(() => { document.querySelectorAll('.sc').forEach(x => x.classList.remove('on')); document.getElementById('sc' + i).classList.add('on'); }, t); t += s.d; }); const tick = () => { const p = Math.min(1, (performance.now() - t0) / total); prog.style.width = p * 100 + '%'; if (p < 1) requestAnimationFrame(tick); else window.AD.done = true; }; tick(); } };
 if (!location.hash.includes('manual')) window.addEventListener('load', () => setTimeout(window.AD.start, 600));
 </script>

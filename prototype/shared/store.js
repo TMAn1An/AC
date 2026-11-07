@@ -130,7 +130,7 @@
     ];
     const M = (id, thread, from, text, m) => ({ id, thread, from, text, at: ago(m) });
     const msgs = [
-      M('m1', 'C1', 'admin', 'Welcome to Shital, Nadia. Ask us anything about servicing or orders.', 60 * 24 * 2),
+      M('m1', 'C1', 'admin', 'Welcome to NEW, Nadia. Ask us anything about servicing or orders.', 60 * 24 * 2),
       M('m2', 'C2', 'customer', 'The technician says extra parts are needed. Can someone call me before he starts?', 11),
       M('m3', 'C3', 'customer', 'I booked a repair in Uttara. When will a technician reach me?', 5),
       M('m4', 'C3', 'admin', 'Thanks Farhana. We are matching you with a partner technician near Uttara.', 3),
@@ -347,7 +347,7 @@
       return commit(s => {
         const id = 'T' + (s.seq2.tech++), a = AC.areas[d.area], t = { id, name: d.name, vendor: d.vendor || null, area: d.area, x: a.x + (Math.random() * 30 - 15), y: a.y + 20 + Math.random() * 20, phone: d.phone, rating: 0, jobs: 0, dyn: true, by: d.vendor || 'admin', kyc: d.kyc };
         s.newTechs.push(t); s.online[id] = true; AC.techs.push(t); AC.techById[id] = t;
-        const who = d.vendor ? AC.vendById[d.vendor].name : 'Shital Admin';
+        const who = d.vendor ? AC.vendById[d.vendor].name : 'NEW Admin';
         s.notifs.push({ id: 'tech:' + id, at: Date.now(), aud: 'admin', job: '', kind: 'tech', text: 'New technician ' + t.name + ' added by ' + who + '. Identity verified.' });
         if (d.vendor) s.notifs.push({ id: 'techv:' + id, at: Date.now(), aud: 'vendor:' + d.vendor, job: '', kind: 'tech', text: t.name + ' was added to your team. Identity verified.' });
         return id;
@@ -363,7 +363,7 @@
       });
     },
     cancelOrder(id, reason) { commit(s => { const o = s.orders.find(x => x.id === id); o.status = 'cancelled'; o.tl.push({ k: 'cancelled', at: Date.now(), by: 'Admin', label: reason || '' }); }); },
-    /* Wallet. Cash the technician collected stays on their balance until the receiver (Shital, or the vendor for vendor technicians) accepts a deposit. */
+    /* Wallet. Cash the technician collected stays on their balance until the receiver (NEW, or the vendor for vendor technicians) accepts a deposit. */
     requestDeposit(techId, amount, method, ref) {
       return commit(s => {
         const t = AC.techById[techId], w = wal(s, techId), amt = Math.min(+amount, w.cash), id = 'D' + (s.deposits.length + 1) + '-' + Date.now().toString(36);

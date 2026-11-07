@@ -1,4 +1,4 @@
-/* Shital customer app prototype. Signed in as Nadia Rahman (C1). */
+/* NEW customer app prototype. Signed in as Nadia Rahman (C1). */
 (function () {
   const S = AC.store, ME = 'C1', me = AC.custById[ME], money = AC.fmt.money, $app = document.getElementById('app');
   const ui = { tab: 'home', stack: [], sheet: null, cat: 'all', cart: [], d: {}, ot: 'book', key: '', pdraft: null, buy: [], buyMode: false, promo: null, promoOff: false, promoOpen: false, promoErr: '', undo: null, wish: {}, sort: 'popular', added: false, book: null, map: null, scroll: {} };
@@ -52,15 +52,15 @@
       const t = AC.techById[aj.techId];
       banner = `<button class="live-banner fade" data-a="track" data-v="${aj.id}"><span class="pulse-dot"></span><span class="grow"><b>${esc(aj.svcName)}</b><small>${S.META[aj.status].cust}${t && aj.status === 'ontheway' ? ' . ' + S.etaMin(aj) + ' min away' : ''}</small></span>${icon('right', 18)}</button>`;
     }
-    return `<div class="band"><div class="top"><div class="loc">${icon('pin', 20)}<div><small>Service and delivery</small>Banani, Dhaka</div></div>${cartBtn()}<button class="icon-btn" data-a="notifs" aria-label="Notifications">${icon('bell', 22)}${S.notifUnread('cust:' + ME) ? `<span class="badge-n">${S.notifUnread('cust:' + ME)}</span>` : ''}</button></div>
+    return `<div class="band"><div class="top">${AC.logo.tile(40, false)}<div class="loc" style="margin-left:2px">${icon('pin', 20)}<div><small>Service and delivery</small>Banani, Dhaka</div></div>${cartBtn()}<button class="icon-btn" data-a="notifs" aria-label="Notifications">${icon('bell', 22)}${S.notifUnread('cust:' + ME) ? `<span class="badge-n">${S.notifUnread('cust:' + ME)}</span>` : ''}</button></div>
     <div class="pad"><h1 class="greet">Hello, ${esc(firstName)}</h1><p class="greet-s">Cool air, fixed fast. Shop or book a technician.</p></div></div>
     <button class="search float" data-a="tab" data-v="shop">${icon('search', 18)}<span>Search ACs, bags, cosmetics</span></button>
     ${banner}
     <div class="hero"><div><div class="eyebrow">First purchase</div><h2>15% off your first order</h2><span class="code">${icon('tag', 14)} FIRST15</span></div><div class="art">${Art.draw('split', 1)}</div></div>
     <div class="sec"><div class="sec-h"><h2>Shop by category</h2></div>
-      <div class="cats"><button class="cat cat-ac" style="background:#DDEFF8" data-a="shopcat" data-v="ac"><div class="art">${Art.draw('split', 0)}</div><span><div>Air conditioners<small>Buy and get serviced</small></div>${icon('right', 16)}</span></button>
-      <button class="cat" style="background:#FCEFD6" data-a="shopcat" data-v="bag"><div class="art">${Art.draw('tote', 1)}</div><span><div>Bags</div>${icon('right', 16)}</span></button>
-      <button class="cat" style="background:#F9E4DE" data-a="shopcat" data-v="cos"><div class="art">${Art.draw('bottle', 3)}</div><span><div>Cosmetics<small>Made locally</small></div>${icon('right', 16)}</span></button></div></div>
+      <div class="cats"><button class="cat cat-ac" style="background:#E9EAF7" data-a="shopcat" data-v="ac"><div class="art">${Art.draw('split', 0)}</div><span><div>Air conditioners<small>Buy and get serviced</small></div>${icon('right', 16)}</span></button>
+      <button class="cat" style="background:#E0F5EA" data-a="shopcat" data-v="bag"><div class="art">${Art.draw('tote', 2)}</div><span><div>Bags</div>${icon('right', 16)}</span></button>
+      <button class="cat" style="background:#FDE9EA" data-a="shopcat" data-v="cos"><div class="art">${Art.draw('bottle', 1)}</div><span><div>Cosmetics<small>Made locally</small></div>${icon('right', 16)}</span></button></div></div>
     <div class="sec"><div class="sec-h"><h2>Book a service</h2><button data-a="tab" data-v="services">See all</button></div>
       <div class="hscroll">${AC.services.map(s => `<button class="svc-chip" style="background:${Art.tints[s.tone || 0].bg}" data-a="book" data-v="${s.id}"><span class="svc-ic" style="color:${Art.tints[s.tone || 0].fg}">${icon(s.icon, 22)}</span><b>${s.name}</b><small>From ${money(s.price)}</small></button>`).join('')}</div></div>
     <div class="sec"><div class="sec-h"><h2>Air conditioners</h2><button data-a="shopcat" data-v="ac">See all</button></div><div class="hscroll">${P('ac').map(pcard).join('')}</div></div>
@@ -102,14 +102,14 @@
       requested: ['Request received', 'Our team is finding the closest technician.'], forwarded: ['Assigning your technician', 'A partner team near you is confirming.'],
       assigned: ['Technician assigned', (t ? t.name : 'Your technician') + ' will confirm shortly.'], accepted: ['Technician confirmed', 'Getting ready to leave.'],
       ontheway: ['Arriving in <span id="eta">' + S.etaMin(j) + '</span> min', (t ? t.name : 'Technician') + ' is on the way.'], arrived: ['Technician has arrived', 'Please let them in.'],
-      working: ['Work in progress', 'We will tell you if extra parts are needed.'], completed: ['Job completed', 'Thank you for choosing Shital.'], cancelled: ['Booking cancelled', 'You can book again any time.']
+      working: ['Work in progress', 'We will tell you if extra parts are needed.'], completed: ['Job completed', 'Thank you for choosing NEW.'], cancelled: ['Booking cancelled', 'You can book again any time.']
     }[j.status];
     const tlHtml = STAGES.map((st, i) => {
       const e = j.tl.find(x => st[1].includes(x.k)); const cls = i < idx || (j.status === 'completed' && i === 5) ? 'done' : i === idx ? 'now' : '';
       return `<div class="tl-i ${cls}"><div class="tl-dot">${cls === 'done' ? icon('check', 13, 3) : ''}</div><div><div class="tl-t">${st[0]}</div><div class="muted" style="font-size:12.5px">${e ? AC.fmt.time(e.at) + (e.note && i === 0 ? '' : '') : (i === idx ? 'In progress' : 'Pending')}</div></div></div>`;
     }).join('');
     const vend = t && t.vendor ? AC.vendById[t.vendor].name : '';
-    const techCard = t && j.status !== 'cancelled' ? `<div class="cardx"><div class="techcard"><div class="avatar lg">${AC.fmt.ini(t.name)}</div><div class="grow"><b>${esc(t.name)}</b><div class="muted" style="font-size:13px">${vend ? 'Partner: ' + esc(vend) : 'Shital technician'}</div><div class="rate" style="font-weight:600;color:var(--ink-3)">${t.jobs} jobs completed</div></div></div>
+    const techCard = t && j.status !== 'cancelled' ? `<div class="cardx"><div class="techcard"><div class="avatar lg">${AC.fmt.ini(t.name)}</div><div class="grow"><b>${esc(t.name)}</b><div class="muted" style="font-size:13px">${vend ? 'Partner: ' + esc(vend) : 'NEW technician'}</div><div class="rate" style="font-weight:600;color:var(--ink-3)">${t.jobs} jobs completed</div></div></div>
       <div class="actions"><button class="btn btn-s" data-a="toast" data-v="Calling ${esc(t.name)} (opens the phone dialer in the real app)">${icon('phone', 18)}Call</button><button class="btn btn-s" data-a="toast" data-v="Opening WhatsApp chat with ${esc(t.name)}">${icon('chat', 18)}WhatsApp</button><button class="btn btn-s" data-a="chat">${icon('send', 18)}Support</button></div></div>` : '';
     let extra = '';
     if (j.extra.status === 'proposed') {
@@ -128,7 +128,7 @@
     let rate = '';
     const rt = ui.d.rt || {}, pick = (k, label) => `<div class="rt-row"><span>${label}</span><div class="star-in" style="margin:0;gap:2px">${[1, 2, 3, 4, 5].map(n => `<button class="${n <= (rt[k] || 0) ? 'on' : ''}" data-a="star" data-k="${k}" data-v="${n}" aria-label="${label} ${n} star">${icon('star', k === 'overall' ? 32 : 26, 1.6).replace('fill="none"', 'fill="' + (n <= (rt[k] || 0) ? 'currentColor' : 'none') + '"')}</button>`).join('')}</div></div>`;
     if (j.status === 'completed' && !j.rating) {
-      rate = `<div class="cardx"><b style="font-size:16px">How was ${esc(t ? t.name.split(' ')[0] : 'the technician')}?</b><div class="muted" style="font-size:13px;margin:2px 0 8px">Your review goes to Shital only. The technician does not see it.</div>${pick('overall', 'Overall')}<hr class="divider" style="margin:6px 0">${pick('work', 'Quality of work')}${pick('behavior', 'Behaviour')}${pick('punctuality', 'Punctuality')}
+      rate = `<div class="cardx"><b style="font-size:16px">How was ${esc(t ? t.name.split(' ')[0] : 'the technician')}?</b><div class="muted" style="font-size:13px;margin:2px 0 8px">Your review goes to NEW only. The technician does not see it.</div>${pick('overall', 'Overall')}<hr class="divider" style="margin:6px 0">${pick('work', 'Quality of work')}${pick('behavior', 'Behaviour')}${pick('punctuality', 'Punctuality')}
         <textarea class="textarea" id="f-rev" data-b="rev" placeholder="Anything else you would like us to know? (optional)" style="margin-top:10px">${esc(ui.d.rev || '')}</textarea><button class="btn btn-p btn-block" style="margin-top:10px" data-a="rate" data-id="${j.id}" ${rt.overall ? '' : 'disabled'}>Submit review</button></div>`;
     } else if (j.rating) rate = `<div class="cardx row">${starRow(S.ratingOf(j), 16)}<span class="muted grow">Thanks for your review</span></div>`;
     const codeCard = ['arrived', 'working'].includes(j.status) ? `<div class="cardx code-card"><div class="row" style="gap:10px;align-items:flex-start">${icon('lock', 20)}<div class="grow"><b>Completion code</b><div class="muted" style="font-size:13px;margin-top:2px">When you are happy with the work, tell this code to the technician. The job closes only after they enter it.</div></div></div><div class="otp-show" aria-label="Completion code ${j.otp.split('').join(' ')}">${j.otp.split('').map(x => `<span>${x}</span>`).join('')}</div></div>` : '';
@@ -149,7 +149,7 @@
     const q = (ui.d.q || '').trim().toLowerCase(), SORT = { popular: (a, b) => b.sold - a.sold, low: (a, b) => a.price - b.price, high: (a, b) => b.price - a.price, rating: (a, b) => b.rating - a.rating };
     const list = AC.catalog.filter(p => (ui.cat === 'all' || p.cat === ui.cat) && (!q || (p.name + ' ' + p.brand + ' ' + p.tag).toLowerCase().includes(q))).sort(SORT[ui.sort]);
     const cats = [['all', 'All'], ['ac', 'Air conditioners'], ['bag', 'Bags'], ['cos', 'Cosmetics']], sorts = [['popular', 'Popular'], ['low', 'Price: low to high'], ['high', 'Price: high to low'], ['rating', 'Top rated']];
-    return `<div class="band sm"><div class="top"><h1>Shop</h1>${cartBtn()}</div></div>
+    return `<div class="band sm" style="padding-bottom:40px"><div class="top"><h1>Shop</h1>${cartBtn()}</div></div>
     <label class="search float" style="cursor:text;margin-bottom:0">${icon('search', 18)}<input id="f-q" data-b="q" placeholder="Search ACs, bags, cosmetics" value="${esc(ui.d.q || '')}" autocomplete="off" style="border:0;background:none;outline:none;flex:1;min-width:0;font:inherit">${q ? `<button data-a="qclear" aria-label="Clear search">${icon('x', 16)}</button>` : ''}</label>
     <div class="hscroll" style="padding-top:12px">${cats.map(x => `<button class="chip ${ui.cat === x[0] ? 'on' : ''}" data-a="shopcat" data-v="${x[0]}">${x[1]}</button>`).join('')}</div>
     <div class="hscroll" style="padding-top:2px;padding-bottom:10px"><span class="muted" style="font-size:12px;font-weight:700;align-self:center;white-space:nowrap">Sort</span>${sorts.map(x => `<button class="chip sm ${ui.sort === x[0] ? 'on' : ''}" data-a="sort" data-v="${x[0]}">${x[1]}</button>`).join('')}</div>
@@ -167,7 +167,7 @@
       <label class="lab">${isAC ? 'Capacity' : 'Option'}</label><div class="row wrap" style="gap:8px">${p.variants.map(v => `<button class="chip ${d.variant === v ? 'on' : ''}" data-a="pvar" data-v="${esc(v)}">${esc(v)}</button>`).join('')}</div>
       <div class="row between" style="margin-top:18px"><b>Quantity</b><div class="step" role="group" aria-label="Quantity"><button data-a="pqty" data-v="-1" aria-label="Less">${icon('minus', 16)}</button><b>${d.qty}</b><button data-a="pqty" data-v="1" aria-label="More">${icon('plus', 16)}</button></div></div>
       ${isAC ? `<label class="lab">Add installation</label><button class="addon ${d.install ? 'on' : ''}" data-a="pinst"><span class="ck">${d.install ? icon('check', 14, 3) : ''}</span><span class="grow"><b>Professional installation</b><div class="muted" style="font-size:13px"><s>${money(AC.INSTALL_FEE)}</s> <b style="color:var(--accent-d)">${money(ins)}</b> with AC purchase</div></span>${icon('wrench', 20)}</button>` : ''}
-      <div class="bullets cardx" style="margin-top:20px">${isAC ? `<div>${icon('shield', 20)}<span><b>1 year warranty</b><br><span class="muted">Free repair labour after installation by Shital.</span></span></div>` : ''}
+      <div class="bullets cardx" style="margin-top:20px">${isAC ? `<div>${icon('shield', 20)}<span><b>1 year warranty</b><br><span class="muted">Free repair labour after installation by NEW.</span></span></div>` : ''}
         <div>${icon('truck', 20)}<span><b>Delivery by courier partner</b><br><span class="muted">${isAC ? 'Safe handling for large items. 3-5 days.' : 'Pathao or RedX. 2-4 days.'} Track every step in the app.</span></span></div>
         <div>${icon('wallet', 20)}<span><b>Cash, bKash, Nagad or card</b><br><span class="muted">Choose how to pay at checkout.</span></span></div></div></div>`;
   }
@@ -211,7 +211,7 @@
     const ev = o.tl.filter(e => e.k === 'courier'), link = AC.courierLinks[o.courier] ? AC.courierLinks[o.courier](o.tracking) : '#';
     return `<div class="cardx"><div class="row"><span class="svc-ic">${icon('truck', 20)}</span><div class="grow"><b>${esc(o.courier)}</b><div class="muted" style="font-size:13px">Tracking <span class="mono">${esc(o.tracking)}</span></div></div>${bd(o.courierStatus || 'Handed over', 'b-brand')}</div>
       ${ev.length ? `<div class="tl" style="margin-top:14px">${ev.slice().reverse().map((e, i) => `<div class="tl-i ${i === 0 ? 'now' : 'done'}"><div class="tl-dot">${i === 0 ? '' : icon('check', 13, 3)}</div><div><div class="tl-t">${esc(e.label)}</div><div class="muted" style="font-size:12.5px">${AC.fmt.time(e.at)}</div></div></div>`).join('')}</div>` : ''}
-      <a class="btn btn-s btn-block" style="margin-top:14px" href="${link}" target="_blank" rel="noopener">${icon('arrowur', 16)}Open ${esc(o.courier)} tracking</a><div class="muted" style="font-size:12.5px;margin-top:10px">Updates come from Shital and the courier. You can also paste the tracking id on the courier's own site.</div></div>`;
+      <a class="btn btn-s btn-block" style="margin-top:14px" href="${link}" target="_blank" rel="noopener">${icon('arrowur', 16)}Open ${esc(o.courier)} tracking</a><div class="muted" style="font-size:12.5px;margin-top:10px">Updates come from NEW and the courier. You can also paste the tracking id on the courier's own site.</div></div>`;
   }
   const bd = (t, c) => `<span class="badge ${c}">${t}</span>`;
   const OSTEPS = [['placed', 'Order placed'], ['packed', 'Packed'], ['shipped', 'Handed to courier'], ['delivered', 'Delivered']];
@@ -250,7 +250,7 @@
 
   function Chat() {
     const ms = S.threadMsgs(ME).sort((a, b) => a.at - b.at);
-    return { body: `${top('Shital Support', { right: '<span class="badge b-ok">Online</span>' })}<div class="chat">${ms.map(m => `<div class="bub ${m.from === 'customer' ? 'me' : 'them'}">${esc(m.text)}<small>${AC.fmt.time(m.at)}</small></div>`).join('')}</div>`,
+    return { body: `${top('NEW Support', { right: '<span class="badge b-ok">Online</span>' })}<div class="chat">${ms.map(m => `<div class="bub ${m.from === 'customer' ? 'me' : 'them'}">${esc(m.text)}<small>${AC.fmt.time(m.at)}</small></div>`).join('')}</div>`,
       cta: `<div class="qr" style="background:var(--surface);padding-top:10px">${['Where is my technician?', 'Please call me', 'Change my time slot'].map(q => `<button class="chip" data-a="quickmsg" data-v="${q}">${q}</button>`).join('')}</div><div class="chat-in"><input class="input" id="f-chat" data-b="chat" placeholder="Write a message" value="${esc(ui.d.chat || '')}" autocomplete="off"><button class="send" data-a="send" aria-label="Send">${icon('send', 20)}</button></div>`, flush: true };
   }
 
@@ -263,7 +263,7 @@
         <button class="btn btn-p btn-lg btn-block" data-a="otpverify">Verify and continue</button><div class="row" style="gap:4px"><button class="btn btn-g btn-sm" data-a="otpresend">Resend code</button><button class="btn btn-g btn-sm" data-a="otpclose">Change number</button></div><span class="faint" style="font-size:12px">Demo code: ${DEMO_OTP}. No SMS is sent in this prototype.</span></div></div>`;
     }
     if (sh.t === 'gate') {
-      const m = AC.payMethods.find(x => x.id === sh.m), col = { bkash: '#D12053', nagad: '#E2552B', card: '#0E6B78' }[sh.m] || '#0E6B78';
+      const m = AC.payMethods.find(x => x.id === sh.m), col = { bkash: '#D12053', nagad: '#ED1B24', card: '#2E3192' }[sh.m] || '#2E3192';
       return `<div class="scrim"></div><div class="sheet"><div class="grab"></div><div class="gate">${sh.stage === 'ok' ? `<div class="okc">${icon('check', 36, 2.5)}</div><h3 style="font-size:20px">Payment received</h3><span class="muted">${money(sh.amount)} paid with ${m.name}</span>` : `<div class="logo" style="background:${col}">${sh.m === 'card' ? icon('card', 30) : m.name[0]}</div><h3 style="font-size:20px">${sh.m === 'card' ? 'Secure checkout (SSLCommerz)' : 'Confirming with ' + m.name}</h3><span class="muted">${money(sh.amount)}. Do not close this screen.</span><span class="ring"></span><span class="faint" style="font-size:12px">Demo gateway. No real payment is made.</span>`}</div></div>`;
     }
     return '';
@@ -372,7 +372,7 @@
     confirm() { requireOtp(ui.book.phone, () => A.doConfirm()); },
     doConfirm() {
       const b = ui.book, id = S.act.createJob({ verified: true, cust: ME, svc: b.svc, units: b.units, ac: b.ac, slot: b.slot, note: b.note, addr: b.addr, phone: b.phone, method: b.method, discount: 100 });
-      ui.stack = [{ s: 'track', p: { id } }]; ui.tab = 'orders'; ui.ot = 'book'; toast('Booking ' + id + ' sent to Shital', 'checkc'); render();
+      ui.stack = [{ s: 'track', p: { id } }]; ui.tab = 'orders'; ui.ot = 'book'; toast('Booking ' + id + ' sent to NEW', 'checkc'); render();
     },
     track(el) { ui.d.rt = {}; ui.d.rev = ''; push('track', { id: el.dataset.v }); S.act.markSeen('cust:' + ME, 'j:' + el.dataset.v); },
     extra(el) { S.act.resolveExtra(el.dataset.id, el.dataset.v === 'yes', 'Customer'); toast(el.dataset.v === 'yes' ? 'Extra work approved' : 'Extra work declined'); },
@@ -414,7 +414,7 @@
   S.subscribe((s, prev) => {
     s.orders.filter(x => x.cust === ME).forEach(x => { const o = prev.orders.find(y => y.id === x.id); if (o && o.status !== x.status) toast('Order ' + x.id + ': ' + x.status, 'box'); });
     const last = s.msgs[s.msgs.length - 1], pl = prev.msgs[prev.msgs.length - 1];
-    if (last && (!pl || last.id !== pl.id) && last.thread === ME && last.from === 'admin') toast('New message from Shital Support', 'chat');
+    if (last && (!pl || last.id !== pl.id) && last.thread === ME && last.from === 'admin') toast('New message from NEW Support', 'chat');
     render();
   });
   AC.history.track('cust:' + ME);

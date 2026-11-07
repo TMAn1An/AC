@@ -16,12 +16,12 @@ Same timing as above. Numbers are written in words to help the voice.
 | 6 | কাজ শেষ হয় শুধু আপনার দেওয়া কোড দিলেই। <break time="0.3s" /> নিয়ন্ত্রণ সব সময় আপনার হাতে। |
 | 7 | কাজ শেষে নিজের পছন্দমতো পেমেন্ট করুন। <break time="0.3s" /> ক্যাশ, বিকাশ, নগদ বা কার্ড। |
 | 8 | এসি, ব্যাগ আর দেশি কসমেটিকস, সব এক জায়গায়। <break time="0.3s" /> ইনস্টলেশনে বিশ শতাংশ ছাড়, আর এক বছরের রিপেয়ার ওয়ারেন্টি। |
-| 9 | শীতল। <break time="0.4s" /> ঠান্ডা সেবা, ঘরে পৌঁছে। <break time="0.4s" /> খুব শিগগিরই অ্যান্ড্রয়েডে। |
+| 9 | নিউ। <break time="0.4s" /> ঠান্ডা সেবা, ঘরে পৌঁছে। <break time="0.4s" /> খুব শিগগিরই অ্যান্ড্রয়েডে। |
 
 ## Short versions
 
-15 second teaser (scenes 1, 4, 9): "AC not cooling? Watch your verified technician arrive, live. Shital. Cooling, serviced and delivered."
+15 second teaser (scenes 1, 4, 9): "AC not cooling? Watch your verified technician arrive, live. NEW. Cooling, serviced and delivered."
 
-Bangla: "এসি ঠান্ডা হচ্ছে না? যাচাই করা টেকনিশিয়ানকে লাইভ আসতে দেখুন। শীতল। ঠান্ডা সেবা, ঘরে পৌঁছে।"
+Bangla: "এসি ঠান্ডা হচ্ছে না? যাচাই করা টেকনিশিয়ানকে লাইভ আসতে দেখুন। নিউ। ঠান্ডা সেবা, ঘরে পৌঁছে।"
 
 Generation steps and ElevenLabs settings: see `../AUDIO_SCRIPT.md`.

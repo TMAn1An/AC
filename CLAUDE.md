@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Project: Shital, an AC service, AC sales, bag and local cosmetics platform for Bangladesh. Read `README.md` first, then `docs/DESIGN_SPRINT.md` (decisions) and `docs/ARCHITECTURE.md` (production plan).
+Project: NEW, an AC service, AC sales, bag and local cosmetics platform for Bangladesh. Read `README.md` first, then `docs/DESIGN_SPRINT.md` (decisions) and `docs/ARCHITECTURE.md` (production plan).
 
 ## Current state
 
@@ -9,8 +9,8 @@ Phase 0 is done: a clickable design prototype in `prototype/` (plain HTML, CSS, 
 ## Non-negotiable product decisions (from the client)
 
 - Five apps, Android first: customer, technician, vendor, admin (mobile), admin web. Flutter for all. iOS later from the same code. See `docs/PRODUCTION_PLAN.md`.
-- Single seller for goods. Shital buys from vendors and sells itself. Vendors are only for field service in areas without a Shital technician.
-- Job routing: customer request goes to admin. Admin assigns a Shital technician if one is near. Otherwise admin forwards to a vendor, and the vendor assigns their own technician. Vendor details (name, address, phone) live in the admin panel. Vendors use their own Vendor app (scoped to their jobs, team and earnings).
+- Single seller for goods. NEW buys from vendors and sells itself. Vendors are only for field service in areas without a NEW technician.
+- Job routing: customer request goes to admin. Admin assigns a NEW technician if one is near. Otherwise admin forwards to a vendor, and the vendor assigns their own technician. Vendor details (name, address, phone) live in the admin panel. Vendors use their own Vendor app (scoped to their jobs, team and earnings).
 - Tracking: the technician location moves live on a map while on the way. Vendors have a fixed location. No Google APIs. Use OpenStreetMap with flutter_map.
 - Customer app is an e-commerce app, not Daraz. Three sections: AC (sale plus service), bags, local cosmetics.
 - Services: AC Repair 1000, AC Cooling Problem 1000, others are placeholders. Extra work found on site must be approved by the customer or admin before it starts. Work outside the order is not covered by the company.
@@ -34,7 +34,7 @@ Phase 0 is done: a clickable design prototype in `prototype/` (plain HTML, CSS, 
 - All color, type and spacing come from tokens in `prototype/shared/base.css` (and the Flutter theme that mirrors them). Do not hardcode new colors.
 - One primary action per screen. Status first. Large touch targets in the technician app.
 - Copy: plain, active voice. The prototype is English only. Bangla is a language option for the Flutter build (phase 4), not mixed into screens.
-- Palette: warm ivory neutrals, ocean teal brand, deep ocean chrome, gold for savings, coral, sky, sage and plum as supporting hues for tiles and icons. Defined in `prototype/shared/base.css`.
+- Brand: the client logo (NEW). Palette sampled from it: blue #2E3192, red #ED1B24, green #00A74F, in a 60/30/10 ratio (neutrals, blue, red and green accents). Tokens in `prototype/shared/base.css`, glossy finish in `prototype/shared/theme.css`. See `docs/BRAND.md`. Gloss comes from flat highlights, inner edges and glass blur, never gradients. Rebuild the logo with `python3 scripts/build-logo.py`.
 - Quality bar: Y Combinator demo. Clean, minimal, alive (live updates, motion with purpose, reduced-motion respected).
 
 ## Working on the prototype

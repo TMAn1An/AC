@@ -1,4 +1,4 @@
-# Shital: AC service, AC sales, bags and local cosmetics
+# NEW: AC service, AC sales, bags and local cosmetics
 
 Design prototype and production plan for a Bangladesh marketplace and field-service platform. Five connected apps share one live system:
 
@@ -7,10 +7,10 @@ Design prototype and production plan for a Bangladesh marketplace and field-serv
 | Customer app | Shoppers and service customers | Flutter (Android, iOS) | `prototype/customer` |
 | Technician app | Field technicians (direct and vendor) | Flutter (Android, iOS) | `prototype/technician` |
 | Vendor app | Vendor owners and dispatchers | Flutter (Android) | `prototype/vendor` |
-| Admin app | Shital operations on the go | Flutter (Android phone and tablet) | `prototype/admin-app` |
-| Admin web app | Shital staff, finance, catalog | Flutter Web | `prototype/admin` |
+| Admin app | NEW operations on the go | Flutter (Android phone and tablet) | `prototype/admin-app` |
+| Admin web app | NEW staff, finance, catalog | Flutter Web | `prototype/admin` |
 
-"Shital" (Bangla for cool) is a working name. Change it in one place: `AC.brand` in `prototype/shared/data.js`.
+"NEW" is the client brand, taken from their logo. The name is set in one place, `AC.brand` in `prototype/shared/data.js`. See `docs/BRAND.md` for the logo and colours.
 
 ## Run the prototype
 
@@ -31,7 +31,7 @@ Open `http://localhost:8080` for the showcase hub, which runs all three apps sid
 ## The workflow it demonstrates
 
 1. Customer books an AC service (fixed price, slot, address, phone) or buys from the shop.
-2. Admin sees the request. If a Shital technician is within the service radius, admin assigns them. If not, admin forwards it to the nearest vendor, who assigns one of their own technicians.
+2. Admin sees the request. If a NEW technician is within the service radius, admin assigns them. If not, admin forwards it to the nearest vendor, who assigns one of their own technicians.
 3. The technician accepts, travels (customer and admin see a live moving marker), arrives, works, optionally requests extra work, and completes.
 4. Extra work needs approval from the customer (or admin on their behalf) before it starts.
 5. The job closes only when the customer gives the technician a completion code. Admin can override and it is logged.

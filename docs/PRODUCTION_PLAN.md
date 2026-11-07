@@ -1,20 +1,20 @@
-# Production plan: Shital Android platform
+# Production plan: NEW Android platform
 
 Status: draft for client review. Built from the client brief and the developer Q&A, then completed with what a production Android launch needs. Items marked (assumption) need a client decision. See section 20.
 
 ## 1. Product in one paragraph
 
-Shital sells air conditioners, bags and local cosmetics, and runs a field-service operation for AC repair, servicing and installation in Bangladesh. Customers shop and book services in one app. Admin dispatches every job: to a nearby Shital technician, or to a vendor partner who assigns their own technician. Everyone sees live status, and the technician is tracked on a map while travelling.
+NEW sells air conditioners, bags and local cosmetics, and runs a field-service operation for AC repair, servicing and installation in Bangladesh. Customers shop and book services in one app. Admin dispatches every job: to a nearby NEW technician, or to a vendor partner who assigns their own technician. Everyone sees live status, and the technician is tracked on a map while travelling.
 
 ## 2. Applications (all Flutter, Android first)
 
 | # | App | Users | Form factor | Release |
 | --- | --- | --- | --- | --- |
 | 1 | Customer app | Shoppers, service customers | Android phone (iOS later from the same code) | Play Store, public |
-| 2 | Technician app | Shital technicians and vendor technicians | Android phone | Play Store, closed or unlisted track |
+| 2 | Technician app | NEW technicians and vendor technicians | Android phone | Play Store, closed or unlisted track |
 | 3 | Vendor app | Vendor owners and dispatchers | Android phone | Play Store, closed track |
-| 4 | Admin app | Shital operations, owner | Android phone and tablet | Play Store, closed track |
-| 5 | Admin web app | Shital operations, finance, catalog staff | Desktop browser | Web, behind login |
+| 4 | Admin app | NEW operations, owner | Android phone and tablet | Play Store, closed track |
+| 5 | Admin web app | NEW operations, finance, catalog staff | Desktop browser | Web, behind login |
 
 Why five and not one: different permissions (only the technician app shares location), different release speed, safer role isolation, smaller downloads, store listings that match each audience. They share packages so the cost is far below five separate builds.
 
@@ -26,7 +26,7 @@ Division of work between the two admin surfaces. Admin app: on-the-go control (d
 | --- | --- | --- |
 | Customer | Browse, order, book, track, pay, rate, chat with support, call or WhatsApp assigned technician | See other customers or any internal data |
 | Technician (direct) | Accept or decline offered jobs, travel, work, request extra work, complete, collect cash | See jobs not assigned to them, change prices |
-| Technician (vendor) | Same as above, for jobs assigned by their vendor | See Shital internal data or other vendors |
+| Technician (vendor) | Same as above, for jobs assigned by their vendor | See NEW internal data or other vendors |
 | Vendor owner | See jobs forwarded to them, assign own technicians, manage team and availability, view settlement | See other vendors, customer lists, shop data |
 | Admin | Everything operational: dispatch, approve, orders, catalog, finance | Change system security settings (super admin only) |
 | Super admin | Roles, settings, audit log | |
@@ -84,9 +84,9 @@ Priority: P0 launch-blocking, P1 launch if time allows, P2 after launch.
 | Assignment | Own technicians ranked by distance and availability | P0 |
 | Active jobs | Status and live map for own technicians | P0 |
 | Team | Add and edit technicians, availability, view performance | P0 |
-| Earnings | Gross, Shital commission, net, per job statement, settlement history | P0 |
+| Earnings | Gross, NEW commission, net, per job statement, settlement history | P0 |
 | Profile | Company details (name, address, phone), fixed map location, service areas | P0 |
-| Messages | Chat with Shital operations | P1 |
+| Messages | Chat with NEW operations | P1 |
 
 ### 4.4 Admin app (mobile)
 
@@ -128,7 +128,7 @@ Priority: P0 launch-blocking, P1 launch if time allows, P2 after launch.
 7. Cancellation is free before the technician starts the trip. After that a cancellation fee applies (assumption: 100).
 8. Cash on delivery: the technician or courier collects. Cash held by technicians is recorded and must be deposited. Admin marks deposits.
 9. Online payment is confirmed only by the gateway webhook, never by the app.
-10. Buying an AC from Shital with installation gives the installation discount and a 1 year repair warranty from the installation date. Installation creates a linked job.
+10. Buying an AC from NEW with installation gives the installation discount and a 1 year repair warranty from the installation date. Installation creates a linked job.
 11. First purchase discount applies once per customer, to shop orders.
 12. Vendor commission is a percentage of completed job value, set per vendor. Settlement is weekly (assumption).
 13. Goods are delivered by third-party couriers. The tracking id is stored on the order and shown to the customer.
@@ -138,10 +138,10 @@ Priority: P0 launch-blocking, P1 launch if time allows, P2 after launch.
 
 ## 5b. Rules added after client review
 
-17. No response handling. A technician offer expires after 60 seconds (setting). The job returns to the assigner's queue, the technician is marked "did not respond", and admin is alerted. Admin can assign another technician or forward to a different vendor at any time, including while an offer is still open. A vendor that does not assign a technician within 15 minutes (setting) is flagged and admin can forward to another vendor. Vendors can reassign their own technician or return the job to Shital.
+17. No response handling. A technician offer expires after 60 seconds (setting). The job returns to the assigner's queue, the technician is marked "did not respond", and admin is alerted. Admin can assign another technician or forward to a different vendor at any time, including while an offer is still open. A vendor that does not assign a technician within 15 minutes (setting) is flagged and admin can forward to another vendor. Vendors can reassign their own technician or return the job to NEW.
 18. Completion code. When the technician arrives, the customer app shows a 4 digit completion code generated by our backend (not an SMS). The technician can mark the job complete only by entering it. Admin can complete, cancel or move any job step from the admin panel when something technical goes wrong. Every override records who did it, from which app (Admin panel or Technician app) and the reason.
 19. Reviews. After completion the customer rates overall, quality of work, behaviour and punctuality, and can add feedback. Reviews and ratings are visible only in the admin panel. Technicians, vendors and other customers do not see them.
-20. Technician identity. A technician is added only with NID photos, a live NID check and a live selfie. The person who onboards them (admin or vendor) is responsible for the verification and it is logged under their name. Vendor-onboarded technicians are visible to Shital admin and that vendor only. Admin-onboarded technicians are visible to admin only. A vendor never sees another vendor's technicians. Admin sees everyone and is told whenever a technician is assigned.
+20. Technician identity. A technician is added only with NID photos, a live NID check and a live selfie. The person who onboards them (admin or vendor) is responsible for the verification and it is logged under their name. Vendor-onboarded technicians are visible to NEW admin and that vendor only. Admin-onboarded technicians are visible to admin only. A vendor never sees another vendor's technicians. Admin sees everyone and is told whenever a technician is assigned.
 21. Staff roles. Admin staff are assigned roles with custom permissions (dispatch, override, price extra work, orders, catalog, promotions, people, technician onboarding, finance, reviews, messages, roles). Permissions are enforced by the server and can be changed without a release.
 22. Read and unread. Every request or update shows a count on its section (bookings, messages, orders) and an unread marker on the item until someone opens it. Your own actions do not mark an item unread for you. Items that need action are labelled.
 23. History. Every person has a personal history of the updates they received, stored only on their own device. Clearing it does not affect the account or any booking.
@@ -207,7 +207,7 @@ No Google API is needed anywhere. The workflow runs on these:
 
 Two separate balances per technician.
 
-1. Cash to deposit. When a technician collects cash on a job, the amount is added to this balance (ledger entry `cash_in`). It stays until the receiver confirms a deposit. The receiver is Shital for direct technicians and the vendor for vendor technicians.
+1. Cash to deposit. When a technician collects cash on a job, the amount is added to this balance (ledger entry `cash_in`). It stays until the receiver confirms a deposit. The receiver is NEW for direct technicians and the vendor for vendor technicians.
 2. Incentive balance (direct technicians). Earned when a job is completed and paid: 12% of the job total (setting). Vendor technicians are paid by their vendor, so this balance is not used for them.
 
 Deposit flow. The technician taps Deposit cash, enters the amount and how they paid (office handover, bKash, Nagad or bank, with the transaction id for transfers). This creates a pending request and the cash balance does not change yet. Admin (or the vendor) checks that the money arrived and taps Accept. Only then does the cash balance go down by that amount, and it reaches zero when everything is deposited. Reject leaves the balance as it was and tells the technician why. Partial deposits are allowed. Admin can also record cash received directly.
@@ -327,7 +327,7 @@ Critical path: payment merchant onboarding (weeks of paperwork, start in phase 1
 
 ## 20. Open decisions for the client
 
-1. Brand name, logo, colors.
+1. Full brand name and approval of the refined logo and colours.
 2. Final service list, prices, cancellation fee, warranty wording.
 3. Vendor commission model and settlement cycle. Technician pay model.
 4. Payment providers and which offers at launch. Merchant documents ready?

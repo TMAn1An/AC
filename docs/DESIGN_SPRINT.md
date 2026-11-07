@@ -10,15 +10,15 @@ Source: `Client_Requirements.pdf` (client notes plus developer Q&A). Where the b
 | --- | --- | --- |
 | Apps | Customer, technician, vendor, admin (mobile) and admin web. Vendors get their own app, scoped to their jobs. Production plan: `docs/PRODUCTION_PLAN.md`. | Client reply 1 and later decision |
 | Platforms | Flutter. Android and iOS for the two mobile apps. Web for admin. Desktop possible later. | Client |
-| Selling model | Single seller. Shital buys from vendors and sells. No marketplace of third-party sellers. | Client reply 2 |
-| Vendor role | Field service only, in areas without a Shital technician. Admin stores name, address and phone. Commission amount decided later. | Client reply 2 |
-| Routing | Admin assigns a nearby Shital technician. Otherwise forwards to a vendor who assigns their own technician. | Client reply 1 (second round) |
+| Selling model | Single seller. NEW buys from vendors and sells. No marketplace of third-party sellers. | Client reply 2 |
+| Vendor role | Field service only, in areas without a NEW technician. Admin stores name, address and phone. Commission amount decided later. | Client reply 2 |
+| Routing | Admin assigns a nearby NEW technician. Otherwise forwards to a vendor who assigns their own technician. | Client reply 1 (second round) |
 | Extra work | Technician picks a priced item and the customer decides. Admin is informed only, no approval. Missing items are priced by admin or the vendor. | Client review round 3 |
 | Completion | Customer gives the technician a 4 digit code from the app. Admin can override and it is logged. | Client review round 3 |
 | Technician identity | NID photos, live NID check, live selfie. The onboarder (admin or vendor) is responsible. Strict visibility between vendors. | Client review round 3 |
 | Wallet | Cash deposit accepted by admin or vendor zeroes the balance. Incentive can be withdrawn after cash is cleared. | Client review round 4 |
 | Liability | Company covers extra work only if approved. Work outside the order is the technician's responsibility, not the company's. | Client reply 3 |
-| Cart | AC can be added to cart. Installation is an optional add-on. AC bought from Shital gets an installation discount and a 1 year repair warranty. | Client reply 3 |
+| Cart | AC can be added to cart. Installation is an optional add-on. AC bought from NEW gets an installation discount and a 1 year repair warranty. | Client reply 3 |
 | Tracking | Timeline status. Live map with a moving technician. Vendor location fixed. No Google APIs. | Client reply 4 and brief |
 | Payments | Cash on delivery plus bKash, Nagad and cards. Offers with providers later. | Client reply 5 |
 | Messaging | Customer to admin in the app. After confirmation, customer to technician by call or WhatsApp. Admin and technician stay in contact. | Client reply 6 and round 2 |
@@ -27,7 +27,7 @@ Source: `Client_Requirements.pdf` (client notes plus developer Q&A). Where the b
 
 ### Assumptions to confirm with the client
 
-1. Brand name. "Shital" is a placeholder.
+1. Brand name. We use "NEW" from the client logo. Confirm the full legal and trading name.
 2. Service radius for direct technicians: 4 km. Vendors cover the rest.
 3. Prices beyond the two given: servicing 1200, gas refill 2200, installation 1800, relocation 2500.
 4. Discounts: first purchase 15% up to 500, installation 20% off with an AC, 100 off services when the confirmation call happens.
@@ -51,7 +51,7 @@ Desk research on products our users already know. No copying: we took mechanics,
 
 ## 3. Principles
 
-1. Calm over loud. Neutral surfaces, one teal for actions, amber only for savings and attention.
+1. Calm over loud. Neutral surfaces, logo blue for actions, red and green only as accents.
 2. Status is the product. Every screen says what is happening and what comes next.
 3. One primary action per screen. Technicians work one-handed outdoors.
 4. Local by default. Bangla names, taka, cash on delivery, bKash and Nagad.
@@ -102,7 +102,7 @@ Customer chooses a method at booking or checkout. Cash on delivery is collected 
 
 ## 7. Visual language
 
-- Color: warm ivory canvas #F8F4EC, navy ink #14253A, ocean teal #0E6B78 (brand), deep ocean #0C3A47 (admin sidebar, hero), gold #E59A2B (savings and attention), supporting coral #E0654A, sky #2E86B5, sage #4F8F63, plum #85508C for tiles and icons. Semantic green, amber, red, blue. No gradients.
+- Color: taken from the client logo and applied in a 60/30/10 ratio. Neutrals (cool white #F5F6FA, surfaces #FFFFFF, ink #101426) 60 percent, logo blue #2E3192 and deep blue #151858 30 percent, red #ED1B24 and green #00A74F as accents for the last 10. Amber only for warnings. No gradients. Glossy finish from inner highlights, coloured shadows and glass blur. Full guide: `docs/BRAND.md`.
 - Type: Bricolage Grotesque (display, restrained), Hanken Grotesk (interface), Hind Siliguri (Bangla), IBM Plex Mono (ids, codes). Tabular figures for money and time.
 - Shape: 8, 12, 18 px radii. Hairline borders over shadows. Shadows only for floating layers.
 - Imagery: flat SVG product illustrations on tinted tiles, so every card is visual without photo licensing. Replace with product photography in production.
@@ -117,7 +117,7 @@ Not included on purpose: real authentication and SMS (the OTP demo code is 4829)
 
 ## 9. Open questions for the client
 
-1. Brand name, logo and colors if they have any.
+1. Full brand name, and approval of the refined logo and colours (see `docs/BRAND.md`).
 2. Final service list and prices. Warranty terms in writing.
 3. Commission model for vendors and incentive for technicians.
 4. Which wallet or gateway offers will be live at launch.

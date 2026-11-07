@@ -1,31 +1,31 @@
 /* Flat product illustrations drawn in SVG so every product card has curated visuals without photo licensing. */
 (function () {
   const T = [
-    { bg: '#DDEFF8', fg: '#2E86B5', lt: '#AFD6EA' },
-    { bg: '#FCEFD6', fg: '#D98A1F', lt: '#F4D79B' },
-    { bg: '#E2F0E5', fg: '#4F8F63', lt: '#B6D8BF' },
-    { bg: '#F9E4DE', fg: '#D8583F', lt: '#F2B8A8' },
-    { bg: '#F0E4F2', fg: '#85508C', lt: '#D9BDDF' },
-    { bg: '#DFF0F2', fg: '#0E6B78', lt: '#B9DCE1' }
+    { bg: '#E9EAF7', fg: '#2E3192', lt: '#C4C7EA' },
+    { bg: '#FDE9EA', fg: '#D8151D', lt: '#F8B9BD' },
+    { bg: '#E0F5EA', fg: '#00873F', lt: '#A6DDBF' },
+    { bg: '#EEF0F7', fg: '#4A4F73', lt: '#CDD2E3' },
+    { bg: '#E8EAFA', fg: '#4A55C9', lt: '#BCC4F2' },
+    { bg: '#DCDEF2', fg: '#151858', lt: '#A9AEDB' }
   ];
-  const W = '#FFFFFF', S = '#D8CDB9';
+  const W = '#FFFFFF', S = '#CDD2E3';
   function frame(t, body) {
     return '<svg viewBox="0 0 240 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><rect width="240" height="180" fill="' + t.bg + '"/>' + body + '</svg>';
   }
   const kinds = {
     split(t) {
       return '<rect x="26" y="46" width="188" height="62" rx="14" fill="' + W + '" stroke="' + S + '" stroke-width="2"/>' +
-        '<rect x="26" y="46" width="188" height="26" rx="14" fill="#FAF6EE"/><path d="M40 72h160" stroke="' + S + '" stroke-width="2"/>' +
+        '<rect x="26" y="46" width="188" height="26" rx="14" fill="#F7F8FC"/><path d="M40 72h160" stroke="' + S + '" stroke-width="2"/>' +
         '<rect x="44" y="94" width="152" height="7" rx="3.5" fill="' + t.fg + '" opacity=".22"/>' +
         '<circle cx="190" cy="58" r="3.5" fill="' + t.fg + '"/><rect x="44" y="55" width="34" height="5" rx="2.5" fill="' + t.lt + '"/>' +
         '<g fill="none" stroke="' + t.fg + '" stroke-width="3" stroke-linecap="round" opacity=".55"><path d="M64 122q10 9 0 19"/><path d="M100 122q10 9 0 19"/><path d="M136 122q10 9 0 19"/><path d="M172 122q10 9 0 19"/></g>';
     },
     window(t) {
       let g = ''; for (let i = 0; i < 6; i++) g += '<rect x="52" y="' + (74 + i * 9) + '" width="136" height="4" rx="2" fill="' + t.fg + '" opacity=".28"/>';
-      return '<rect x="38" y="38" width="164" height="104" rx="12" fill="' + W + '" stroke="' + S + '" stroke-width="2"/><rect x="50" y="50" width="140" height="18" rx="6" fill="#FAF6EE"/><circle cx="176" cy="59" r="3.5" fill="' + t.fg + '"/>' + g;
+      return '<rect x="38" y="38" width="164" height="104" rx="12" fill="' + W + '" stroke="' + S + '" stroke-width="2"/><rect x="50" y="50" width="140" height="18" rx="6" fill="#F7F8FC"/><circle cx="176" cy="59" r="3.5" fill="' + t.fg + '"/>' + g;
     },
     cassette(t) {
-      return '<rect x="52" y="34" width="136" height="14" rx="4" fill="' + S + '"/><rect x="40" y="48" width="160" height="96" rx="16" fill="' + W + '" stroke="' + S + '" stroke-width="2"/><rect x="62" y="68" width="116" height="56" rx="10" fill="#FAF6EE" stroke="' + S + '" stroke-width="2"/><path d="M62 96h116M120 68v56" stroke="' + t.fg + '" stroke-width="3" opacity=".35"/><circle cx="120" cy="96" r="9" fill="' + t.fg + '" opacity=".6"/>';
+      return '<rect x="52" y="34" width="136" height="14" rx="4" fill="' + S + '"/><rect x="40" y="48" width="160" height="96" rx="16" fill="' + W + '" stroke="' + S + '" stroke-width="2"/><rect x="62" y="68" width="116" height="56" rx="10" fill="#F7F8FC" stroke="' + S + '" stroke-width="2"/><path d="M62 96h116M120 68v56" stroke="' + t.fg + '" stroke-width="3" opacity=".35"/><circle cx="120" cy="96" r="9" fill="' + t.fg + '" opacity=".6"/>';
     },
     tote(t) {
       return '<path d="M96 70c0-34 48-34 48 0" fill="none" stroke="' + t.fg + '" stroke-width="7" stroke-linecap="round"/><path d="M62 72h116l10 78H52z" fill="' + t.fg + '"/><path d="M62 72h116l3 22H59z" fill="' + t.lt + '" opacity=".35"/><rect x="104" y="108" width="32" height="8" rx="4" fill="' + W + '" opacity=".8"/>';

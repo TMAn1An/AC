@@ -4,15 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="claude:viewport-fit-sides" content="cover">
-<title>Shital Design Prototype</title>
+<title>NEW Design Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
 <link rel="stylesheet" href="shared/base.css">
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="assets/new-mark.svg">
 <style>
 /* Showcase hub: presents the three connected prototypes on one calm page. */
 html, body { height: auto; } body { overflow-x: hidden; }
 .w { max-width: 1320px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
-.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(248,244,236,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(245,246,250,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 .nav .w { display: flex; align-items: center; gap: 24px; height: 60px; }
 .logo { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: 19px; letter-spacing: -.02em; }
 .mk { width: 32px; height: 32px; border-radius: 9px; background: var(--brand); color: #fff; display: grid; place-items: center; }
@@ -29,14 +31,14 @@ html, body { height: auto; } body { overflow-x: hidden; }
 .sec { padding-block: 56px 8px; } .sec h2 { font-size: clamp(26px, 3.2vw, 38px); letter-spacing: -.025em; margin: 8px 0 10px; } .sec .intro { color: var(--ink-2); max-width: 62ch; font-size: 16px; }
 .demo { display: block; margin-top: 24px; }
 .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
-.seg { display: inline-grid; grid-auto-flow: column; background: #EDE6D8; border-radius: 12px; padding: 3px; } .seg button { height: 36px; padding: 0 14px; border-radius: 9px; font-weight: 700; font-size: 13px; color: var(--ink-3); } .seg button.on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-1); }
-.stagebox { background: #EBE3D3; border-radius: 20px; padding: 24px; display: flex; justify-content: center; align-items: flex-start; gap: 24px; overflow: hidden; }
+.seg { display: inline-grid; grid-auto-flow: column; background: #E8EBF5; border-radius: 12px; padding: 3px; } .seg button { height: 36px; padding: 0 14px; border-radius: 9px; font-weight: 700; font-size: 13px; color: var(--ink-3); } .seg button.on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-1); }
+.stagebox { background: #E4E7F3; border-radius: 20px; padding: 24px; display: flex; justify-content: center; align-items: flex-start; gap: 24px; overflow: hidden; }
 .dev { flex: none; position: relative; } .dev .scaler { transform-origin: top left; position: absolute; top: 0; left: 0; }
 .dev-cap { position: absolute; left: 50%; transform: translateX(-50%); top: 100%; margin-top: 10px; white-space: nowrap; font-size: 11.5px; font-weight: 700; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
 .browser { width: 1140px; height: 760px; background: var(--surface); border-radius: 14px; overflow: hidden; box-shadow: 0 20px 50px rgba(16,34,43,.18); display: flex; flex-direction: column; }
-.browser .chrome { height: 38px; background: #F4F7F7; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 8px; padding: 0 14px; flex: none; } .browser .chrome i { width: 10px; height: 10px; border-radius: 50%; background: #CCD7DA; } .browser .chrome span { margin: 0 auto; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 3px 40px; font-size: 12px; color: var(--ink-3); }
+.browser .chrome { height: 38px; background: #F3F5FA; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 8px; padding: 0 14px; flex: none; } .browser .chrome i { width: 10px; height: 10px; border-radius: 50%; background: #CDD2E3; } .browser .chrome span { margin: 0 auto; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 3px 40px; font-size: 12px; color: var(--ink-3); }
 .browser iframe { flex: 1; border: 0; width: 100%; }
-.phone { width: 390px; height: 800px; border: 10px solid var(--ink); border-radius: 48px; overflow: hidden; background: var(--bg); box-shadow: 0 20px 50px rgba(16,34,43,.22); } .phone iframe { border: 0; width: 100%; height: 100%; }
+.phone { width: 390px; height: 800px; border: 10px solid var(--ink); border-radius: 48px; overflow: hidden; background: var(--bg); box-shadow: 0 20px 50px rgba(16,20,38,.22); } .phone iframe { border: 0; width: 100%; height: 100%; }
 .guide { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin-top: 18px; }
 .guide h3 { font-size: 17px; } .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
 .st { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 12px; border: 1px solid var(--line); } .st .n { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--line-2); display: grid; place-items: center; font-size: 12px; font-weight: 700; color: var(--ink-3); }
@@ -51,8 +53,11 @@ html, body { height: auto; } body { overflow-x: hidden; }
 .swatch { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff; } .swatch i { display: block; height: 64px; } .swatch div { padding: 10px 12px; font-size: 12.5px; } .swatch b { display: block; font-size: 13.5px; } .swatch code { color: var(--ink-3); font-family: var(--f-mono); font-size: 11.5px; }
 .type-s { display: grid; gap: 4px; } .type-s .big { font-size: 34px; line-height: 1.1; }
 .persona { display: grid; gap: 10px; align-content: start; } .persona .top { display: flex; gap: 12px; align-items: center; } .persona dl { display: grid; gap: 8px; margin: 0; font-size: 13.5px; } .persona dt { font-weight: 700; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); } .persona dd { margin: 2px 0 0; color: var(--ink-2); }
-.code { background: var(--ink); color: #D8E7EB; border-radius: 12px; padding: 14px 16px; font-family: var(--f-mono); font-size: 13px; display: flex; justify-content: space-between; gap: 12px; align-items: center; overflow-x: auto; white-space: nowrap; } .code button { color: #8FD3DE; font-weight: 700; font-family: var(--f-body); font-size: 12px; }
+.code { background: var(--ink); color: #D6D9F5; border-radius: 12px; padding: 14px 16px; font-family: var(--f-mono); font-size: 13px; display: flex; justify-content: space-between; gap: 12px; align-items: center; overflow-x: auto; white-space: nowrap; } .code button { color: #B9BDE8; font-weight: 700; font-family: var(--f-body); font-size: 12px; }
 .stack-t { width: 100%; border-collapse: collapse; } .stack-t td { padding: 12px 0; border-bottom: 1px solid var(--line); vertical-align: top; } .stack-t td:first-child { width: 34%; font-weight: 700; padding-right: 16px; } .stack-t td:last-child { color: var(--ink-2); }
+.logo-cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: center; margin-top: 8px; } .logo-cmp figure { margin: 0; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 14px; text-align: center; } .logo-cmp img { height: 200px; max-width: 100%; object-fit: contain; } .logo-cmp #logoNew svg { height: 200px; width: auto; } .logo-cmp figcaption { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-top: 6px; }
+.logo-uses { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-top: 14px; } .logo-uses .u { display: grid; gap: 6px; justify-items: center; font-size: 11px; font-weight: 700; color: var(--ink-3); } .logo-uses .band-s { background: var(--deep); padding: 10px 14px; border-radius: 12px; display: flex; align-items: center; gap: 8px; color: #fff; font-weight: 700; }
+.ratio { display: flex; height: 64px; border-radius: 14px; overflow: hidden; gap: 3px; margin-top: 8px; } .ratio i { display: block; border-radius: 6px; } .ratio-l { display: flex; gap: 18px; margin-top: 10px; font-size: 13px; color: var(--ink-2); flex-wrap: wrap; } .ratio-l b { font-family: var(--f-display); }
 .vids { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 24px; margin-top: 24px; align-items: start; } .vids figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; } .vids video { width: 100%; display: block; background: var(--deep); } .vids .tall video { max-height: 560px; object-fit: contain; } .vids figcaption { padding: 14px 18px 18px; } .vids figcaption b { display: block; font-family: var(--f-display); font-size: 18px; } .vids figcaption span { color: var(--ink-3); font-size: 13.5px; }
 @media (max-width: 800px) { .vids { grid-template-columns: 1fr; } }
 .foot { margin-top: 64px; padding-block: 28px 40px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 13px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
@@ -62,7 +67,7 @@ html, body { height: auto; } body { overflow-x: hidden; }
 </style>
 </head>
 <body>
-<header class="nav"><div class="w"><div class="logo"><span class="mk" id="mk"></span>Shital</div><nav><a href="#demo">Live demo</a><a href="#flow">Dispatch flow</a><a href="#videos">Videos</a><a href="#sprint">Design sprint</a><a href="#system">Plan</a><a href="#run">Run locally</a></nav></div></header>
+<header class="nav"><div class="w"><div class="logo"><span class="mk" id="mk"></span>NEW</div><nav><a href="#demo">Live demo</a><a href="#flow">Dispatch flow</a><a href="#videos">Videos</a><a href="#sprint">Design sprint</a><a href="#system">Plan</a><a href="#run">Run locally</a></nav></div></header>
 
 <section class="w hero">
   <div>
@@ -91,7 +96,7 @@ html, body { height: auto; } body { overflow-x: hidden; }
       <p class="muted" style="font-size:13px;margin-top:12px">Tip: on a phone or narrow window, pick one app at a time. Each app also opens full screen: <a class="link" href="customer/index.html" target="_blank" rel="noopener">Customer</a> <a class="link" href="technician/index.html" target="_blank" rel="noopener">Technician</a> <a class="link" href="vendor/index.html" target="_blank" rel="noopener">Vendor</a> <a class="link" href="admin-app/index.html" target="_blank" rel="noopener">Admin app</a> <a class="link" href="admin/index.html" target="_blank" rel="noopener">Admin web</a></p>
     </div>
     <aside class="guide"><div class="row between wrap"><div><h3>Guided demo</h3><p class="muted" style="font-size:13px;margin-top:4px">Follows the live state. The highlighted step is what to do next.</p></div></div><div class="steps" id="steps"></div>
-      <div class="note" style="display:flex;gap:10px;padding:12px;border-radius:12px;background:var(--info-l);color:#1E4E80;font-size:13px"><span data-i="info"></span><span>No real payments, maps or messages are used. Payments show a demo gateway.</span></div></aside>
+      <div class="note" style="display:flex;gap:10px;padding:12px;border-radius:12px;background:var(--info-l);color:#1F2270;font-size:13px"><span data-i="info"></span><span>No real payments, maps or messages are used. Payments show a demo gateway.</span></div></aside>
   </div>
 </section>
 
@@ -104,7 +109,7 @@ html, body { height: auto; } body { overflow-x: hidden; }
 
 <section class="w sec" id="flow">
   <span class="eyebrow">The core idea</span><h2>Nearest technician first, vendor second</h2>
-  <p class="intro">Admin keeps control of every job. If a Shital technician is within the service radius, the job goes straight to them. If not, it is forwarded to the closest vendor, who assigns one of their own technicians. Everyone sees each step.</p>
+  <p class="intro">Admin keeps control of every job. If a NEW technician is within the service radius, the job goes straight to them. If not, it is forwarded to the closest vendor, who assigns one of their own technicians. Everyone sees each step.</p>
   <div class="flow" id="flowsvg"></div>
 </section>
 
@@ -122,6 +127,9 @@ html, body { height: auto; } body { overflow-x: hidden; }
   <div class="g g4" style="margin-top:16px" id="principles"></div>
   <h3 style="font-size:22px;margin:40px 0 16px">Who we designed for</h3>
   <div class="g g4" id="personas"></div>
+  <h3 style="font-size:22px;margin:40px 0 16px">Brand and logo</h3>
+  <div class="g g2" style="align-items:stretch"><div class="panel card"><span class="tag">From the client logo</span><div class="logo-cmp"><figure><img src="assets/client-logo-original.jpg" alt="Original NEW logo"><figcaption>Original</figcaption></figure><figure><span id="logoNew"></span><figcaption>Refined</figcaption></figure></div><p style="margin-top:14px">Same six blades, same order, same three colours. The refined version has clean vector geometry, even spacing and a crisp wordmark, and it works from 16 px up to print.</p><div class="logo-uses" id="logoUses"></div></div>
+  <div class="panel card"><span class="tag">Colour ratio 60 / 30 / 10</span><div class="ratio"><i style="flex:60;background:#F5F6FA;border:1px solid var(--line-2)"></i><i style="flex:30;background:#2E3192"></i><i style="flex:5;background:#ED1B24"></i><i style="flex:5;background:#00A74F"></i></div><div class="ratio-l"><span><b>60%</b> Neutrals</span><span><b>30%</b> Blue</span><span><b>5%</b> Red</span><span><b>5%</b> Green</span></div><p style="margin-top:14px">White and cool grey carry the screens. Logo blue is for navigation, headers and primary actions. Red is for promotions, alerts and unread. Green is for success and live status. The glossy finish comes from light edges, soft coloured shadows and glass blur, never gradients.</p></div></div>
   <h3 style="font-size:22px;margin:40px 0 16px">Visual language</h3>
   <div class="g g2" style="align-items:start"><div class="panel card"><span class="tag">Color</span><div class="sw-row" id="swatches"></div></div>
   <div class="panel card"><span class="tag">Type</span><div class="type-s"><div class="big" style="font-family:var(--f-display);font-weight:600">Bricolage Grotesque</div><span class="muted">Display. Used for headlines and key numbers only.</span><div style="font-size:22px;margin-top:14px;font-weight:600">Hanken Grotesk</div><span class="muted">Interface and body text. Tabular figures for prices and times.</span><div class="mono" style="font-size:20px;margin-top:14px;font-weight:500">J-2054 . ৳1,000</div><span class="muted">IBM Plex Mono. Booking ids, codes and tracking numbers.</span></div></div></div>
@@ -153,16 +161,17 @@ html, body { height: auto; } body { overflow-x: hidden; }
     <div class="code"><span>claude   # then: read CLAUDE.md and continue from docs/ROADMAP.md</span><button data-copy="claude">Copy</button></div>
   </div>
 </section>
-<footer class="w foot"><span>Shital is a working name for the client brand. All people, shops and numbers in this prototype are fictional.</span><span>Prototype v0.1</span></footer>
+<footer class="w foot"><span>NEW is the client brand. All people, shops and numbers in this prototype are fictional.</span><span>Prototype v0.1</span></footer>
 
 <script src="shared/icons.js"></script>
+<script src="shared/logo.js"></script>
 <script src="shared/art.js"></script>
 <script src="shared/data.js"></script>
 <script src="shared/store.js"></script>
 <script>
 (function () {
   const S = AC.store, $ = s => document.querySelector(s);
-  document.getElementById('mk').innerHTML = icon('snow', 18, 2);
+  const mkEl = document.getElementById('mk'); mkEl.className = ''; mkEl.style.cssText = 'display:inline-flex'; mkEl.innerHTML = AC.logo.tile(38, false);
   document.querySelectorAll('[data-i]').forEach(e => e.innerHTML = icon(e.dataset.i, e.parentElement.classList.contains('role') ? 22 : 18));
   $('#quick').innerHTML = icon('plus', 16) + 'Send a booking'; $('#auto').innerHTML = icon('zap', 16) + 'Autopilot'; $('#reset').innerHTML = icon('repeat', 16) + 'Reset';
 
@@ -175,7 +184,7 @@ html, body { height: auto; } body { overflow-x: hidden; }
   const isWeb = k => k === 'admin';
   function mk(kind) {
     const w = document.createElement('div'); w.className = 'dev'; const sc = document.createElement('div'); sc.className = 'scaler'; w.appendChild(sc);
-    if (isWeb(kind)) sc.innerHTML = '<div class="browser"><div class="chrome"><i></i><i></i><i></i><span>admin.shital.app</span></div><iframe title="Admin web app" src="admin/index.html"></iframe></div>';
+    if (isWeb(kind)) sc.innerHTML = '<div class="browser"><div class="chrome"><i></i><i></i><i></i><span>admin.new.app</span></div><iframe title="Admin web app" src="admin/index.html"></iframe></div>';
     else sc.innerHTML = '<div class="phone"><iframe title="' + CAP[kind] + '" src="' + { adminapp: 'admin-app', vendor: 'vendor', customer: 'customer', technician: 'technician' }[kind] + '/index.html"></iframe></div>';
     const cap = document.createElement('div'); cap.className = 'dev-cap'; cap.textContent = CAP[kind]; w.appendChild(cap); w._sc = sc; return w;
   }
@@ -212,28 +221,30 @@ html, body { height: auto; } body { overflow-x: hidden; }
   S.subscribe(steps); steps();
 
   /* Flow diagram */
-  const box = (x, y, w, h, t1, t2, fill, stroke, col) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="${fill}" stroke="${stroke}"/><text x="${x + w / 2}" y="${y + (t2 ? h / 2 - 3 : h / 2 + 5)}" text-anchor="middle" font-size="15" font-weight="700" fill="${col || '#10222B'}" font-family="Hanken Grotesk, sans-serif">${t1}</text>${t2 ? `<text x="${x + w / 2}" y="${y + h / 2 + 17}" text-anchor="middle" font-size="12.5" fill="${col === '#fff' ? '#BFE3E8' : '#66787F'}" font-family="Hanken Grotesk, sans-serif">${t2}</text>` : ''}`;
-  const arrow = (d, label, lx, ly) => `<path d="${d}" fill="none" stroke="#0E6B78" stroke-width="2" marker-end="url(#ah)"/>${label ? `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="12" font-weight="700" fill="#0A5560" font-family="Hanken Grotesk, sans-serif">${label}</text>` : ''}`;
-  $('#flowsvg').innerHTML = `<svg viewBox="0 0 1100 330" role="img" aria-label="Dispatch flow from customer to admin to technician or vendor"><defs><marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M1 1 9 5 1 9z" fill="#0E6B78"/></marker></defs>
-    ${box(20, 120, 170, 80, 'Customer app', 'Books a service', '#fff', '#CCD7DA')}
-    ${box(260, 120, 170, 80, 'Admin web and app', 'Receives the request', '#DDEFF8', '#B9DCE1', '#0A5560')}
-    <path d="M520 160 575 125 630 160 575 195z" fill="#FCEFD6" stroke="#E5C48A"/><text x="575" y="157" text-anchor="middle" font-size="13" font-weight="700" fill="#7A4B08" font-family="Hanken Grotesk, sans-serif">Technician</text><text x="575" y="174" text-anchor="middle" font-size="12" fill="#7A4B08" font-family="Hanken Grotesk, sans-serif">within 4 km?</text>
-    ${box(740, 72, 190, 80, 'Shital technician', 'Gets the job offer', '#fff', '#CCD7DA')}
-    ${box(740, 214, 190, 80, 'Vendor app', 'Assigns own technician', '#fff', '#E5C48A')}
-    ${box(960, 123, 130, 74, 'Technician app', 'Accept, travel, work', '#0E6B78', '#0E6B78', '#fff')}
+  const box = (x, y, w, h, t1, t2, fill, stroke, col) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="${fill}" stroke="${stroke}"/><text x="${x + w / 2}" y="${y + (t2 ? h / 2 - 3 : h / 2 + 5)}" text-anchor="middle" font-size="15" font-weight="700" fill="${col || '#101426'}" font-family="Hanken Grotesk, sans-serif">${t1}</text>${t2 ? `<text x="${x + w / 2}" y="${y + h / 2 + 17}" text-anchor="middle" font-size="12.5" fill="${col === '#fff' ? '#C4C7EA' : '#6A7190'}" font-family="Hanken Grotesk, sans-serif">${t2}</text>` : ''}`;
+  const arrow = (d, label, lx, ly) => `<path d="${d}" fill="none" stroke="#2E3192" stroke-width="2" marker-end="url(#ah)"/>${label ? `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="12" font-weight="700" fill="#1F2270" font-family="Hanken Grotesk, sans-serif">${label}</text>` : ''}`;
+  $('#flowsvg').innerHTML = `<svg viewBox="0 0 1100 330" role="img" aria-label="Dispatch flow from customer to admin to technician or vendor"><defs><marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M1 1 9 5 1 9z" fill="#2E3192"/></marker></defs>
+    ${box(20, 120, 170, 80, 'Customer app', 'Books a service', '#fff', '#CDD2E3')}
+    ${box(260, 120, 170, 80, 'Admin web and app', 'Receives the request', '#E9EAF7', '#C4C7EA', '#1F2270')}
+    <path d="M520 160 575 125 630 160 575 195z" fill="#E0F5EA" stroke="#C4C7EA"/><text x="575" y="157" text-anchor="middle" font-size="13" font-weight="700" fill="#7A4B08" font-family="Hanken Grotesk, sans-serif">Technician</text><text x="575" y="174" text-anchor="middle" font-size="12" fill="#7A4B08" font-family="Hanken Grotesk, sans-serif">within 4 km?</text>
+    ${box(740, 72, 190, 80, 'NEW technician', 'Gets the job offer', '#fff', '#CDD2E3')}
+    ${box(740, 214, 190, 80, 'Vendor app', 'Assigns own technician', '#fff', '#C4C7EA')}
+    ${box(960, 123, 130, 74, 'Technician app', 'Accept, travel, work', '#2E3192', '#2E3192', '#fff')}
     ${arrow('M190 160H258', '', 0, 0)}${arrow('M430 160H518', '', 0, 0)}
     ${arrow('M600 135C650 110 690 108 738 112', 'Yes', 676, 98)}${arrow('M600 185C650 230 690 252 738 254', 'No, forward to vendor', 676, 282)}
     ${arrow('M930 112C960 114 990 116 1010 121', '', 0, 0)}${arrow('M930 254C970 244 1010 220 1022 199', '', 0, 0)}
-    <path d="M1025 121C1025 8 130 8 130 118" fill="none" stroke="#98A7AD" stroke-width="2" stroke-dasharray="3 7" marker-end="url(#ah)"/>
-    <text x="580" y="28" text-anchor="middle" font-size="12.5" font-weight="700" fill="#66787F" font-family="Hanken Grotesk, sans-serif">Live status and location return to the customer and admin at every step</text>
-    <text x="548" y="322" text-anchor="middle" font-size="12.5" fill="#66787F" font-family="Hanken Grotesk, sans-serif">Vendor name, address and phone stay with admin. Vendors keep a fixed map location.</text></svg>`;
+    <path d="M1025 121C1025 8 130 8 130 118" fill="none" stroke="#9AA0B8" stroke-width="2" stroke-dasharray="3 7" marker-end="url(#ah)"/>
+    <text x="580" y="28" text-anchor="middle" font-size="12.5" font-weight="700" fill="#6A7190" font-family="Hanken Grotesk, sans-serif">Live status and location return to the customer and admin at every step</text>
+    <text x="548" y="322" text-anchor="middle" font-size="12.5" fill="#6A7190" font-family="Hanken Grotesk, sans-serif">Vendor name, address and phone stay with admin. Vendors keep a fixed map location.</text></svg>`;
 
   /* Principles, personas, swatches */
-  $('#principles').innerHTML = [['Calm over loud', 'Warm ivory surfaces, ocean teal for actions, gold for savings, supporting hues for tiles. No gradients.'], ['Status is the product', 'Every screen answers what is happening and what comes next.'], ['One primary action', 'Large, obvious buttons. Technicians use the app one-handed.'], ['Local by default', 'Taka, cash on delivery, bKash and Nagad from day one.']].map(p => `<div class="panel card"><h3>${p[0]}</h3><p>${p[1]}</p></div>`).join('');
+  $('#principles').innerHTML = [['Calm over loud', 'Cool white surfaces, logo blue for actions, red and green accents in a 60/30/10 ratio. Gloss without gradients.'], ['Status is the product', 'Every screen answers what is happening and what comes next.'], ['One primary action', 'Large, obvious buttons. Technicians use the app one-handed.'], ['Local by default', 'Taka, cash on delivery, bKash and Nagad from day one.']].map(p => `<div class="panel card"><h3>${p[0]}</h3><p>${p[1]}</p></div>`).join('');
   const P = [['Nadia', 'Customer, Banani', 'Wants a trusted technician today without calling around.', 'Cannot tell who is coming or when.', 'Fixed prices, ETA-first tracking, extra work needs her approval.'], ['Rafi', 'Operations admin', 'Dispatch every request in under two minutes.', 'No view of who is nearby or free.', 'Nearest technicians ranked by distance, one-click vendor forward.'], ['Mizan', 'Vendor, CoolTech', 'Receive jobs and assign his own technicians.', 'Needs access without seeing other vendors.', 'Scoped portal with only his jobs, team and settlement.'], ['Rakib', 'Technician', 'Do the job, get paid, move on.', 'Wasted calls and unclear scope.', 'One next action per screen, clear rules on extra work.']];
   $('#personas').innerHTML = P.map(p => `<div class="panel card persona"><div class="top"><span class="avatar lg">${p[0][0]}</span><div><h3 style="margin:0">${p[0]}</h3><span class="muted" style="font-size:13px">${p[1]}</span></div></div><dl><div><dt>Goal</dt><dd>${p[2]}</dd></div><div><dt>Friction</dt><dd>${p[3]}</dd></div><div><dt>Design response</dt><dd>${p[4]}</dd></div></dl></div>`).join('');
-  const C = [['Ink', '#14253A'], ['Ocean', '#0E6B78'], ['Deep ocean', '#0C3A47'], ['Gold', '#E59A2B'], ['Coral', '#E0654A'], ['Sky', '#2E86B5'], ['Sage', '#4F8F63'], ['Ivory', '#F8F4EC']];
+  const C = [['Ink', '#101426'], ['Blue', '#2E3192'], ['Deep blue', '#151858'], ['Red', '#ED1B24'], ['Green', '#00A74F'], ['Blue tint', '#E9EAF7'], ['Line', '#E3E6F0'], ['Canvas', '#F5F6FA']];
   $('#swatches').innerHTML = C.map(c => `<div class="swatch"><i style="background:${c[1]}"></i><div><b>${c[0]}</b><code>${c[1]}</code></div></div>`).join('');
+  document.getElementById('logoNew').innerHTML = AC.logo.full(200);
+  document.getElementById('logoUses').innerHTML = `<span class="u">${AC.logo.tile(64, true)}App icon</span><span class="u"><span class="band-s">${AC.logo.tile(30, false)}NEW</span>On blue</span><span class="u">${AC.logo.mark(32)}Mark 32</span><span class="u">${AC.logo.mark(20)}Mark 20</span><span class="u">${AC.logo.mark(16)}Mark 16</span>`;
   document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => { const t = b.dataset.copy; const done = () => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1500); }; try { navigator.clipboard.writeText(t).then(done, done); } catch (e) { done(); } }));
 })();
 </script>

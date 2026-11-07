@@ -1,7 +1,7 @@
-/* Static reference data. Brand name "Shital" is a working name (means cool). Replace in one place: AC.brand. */
+/* Static reference data. Brand name "NEW" comes from the client logo. Change it in one place: AC.brand. */
 window.AC = window.AC || {};
 (function () {
-  AC.brand = { name: 'Shital', tagline: 'Cooling, serviced and delivered.' };
+  AC.brand = { name: 'NEW', tagline: 'Cooling, serviced and delivered.' };
 
   AC.fmt = {
     money: n => '৳' + Math.round(n).toLocaleString('en-IN'),
@@ -118,7 +118,7 @@ window.AC = window.AC || {};
     { code: 'COOL10', title: 'AC offer', desc: '10% off air conditioners above \u09F330,000, up to \u09F33,000', pct: 10, cap: 3000, min: 30000, cat: 'ac' },
     { code: 'WELCOME100', title: 'Welcome', desc: '\u09F3100 off orders above \u09F31,000', flat: 100, min: 1000 }
   ];
-  AC.courierSteps = ['Parcel picked up', 'At sorting hub', 'In transit', 'Out for delivery', 'Delivered', 'Delivery attempt failed', 'Returning to Shital'];
+  AC.courierSteps = ['Parcel picked up', 'At sorting hub', 'In transit', 'Out for delivery', 'Delivered', 'Delivery attempt failed', 'Returning to NEW'];
   /* Public tracking pages. Confirm the exact URL format with each courier before launch. */
   AC.courierLinks = { 'Pathao Courier': id => 'https://merchant.pathao.com/tracking?consignment_id=' + id, 'RedX': id => 'https://redx.com.bd/track-global-parcel/?trackingId=' + id };
 
@@ -132,9 +132,9 @@ window.AC = window.AC || {};
     { id: 'sup', name: 'Support agent', perms: ['messages', 'dispatch'] }
   ];
   AC.defaultStaff = [
-    { id: 'U1', name: 'Rafi Ahmed', email: 'rafi@shital.example', role: 'super' }, { id: 'U2', name: 'Tania Rahman', email: 'tania@shital.example', role: 'ops' },
-    { id: 'U3', name: 'Imran Chowdhury', email: 'imran@shital.example', role: 'fin' }, { id: 'U4', name: 'Salma Akter', email: 'salma@shital.example', role: 'cat' }, { id: 'U5', name: 'Joy Das', email: 'joy@shital.example', role: 'sup' }
+    { id: 'U1', name: 'Rafi Ahmed', email: 'rafi@new.example', role: 'super' }, { id: 'U2', name: 'Tania Rahman', email: 'tania@new.example', role: 'ops' },
+    { id: 'U3', name: 'Imran Chowdhury', email: 'imran@new.example', role: 'fin' }, { id: 'U4', name: 'Salma Akter', email: 'salma@new.example', role: 'cat' }, { id: 'U5', name: 'Joy Das', email: 'joy@new.example', role: 'sup' }
   ];
   /* Technician identity records (demo). Onboarded by admin or by a vendor. Vendors only ever see their own technicians. */
-  AC.techs.forEach((t, i) => { t.by = t.vendor || 'admin'; t.kyc = { status: 'verified', nid: '*** *** ' + (4100 + i * 37), method: 'NID photos, live check, live selfie', verifiedBy: t.vendor ? AC.vendById[t.vendor].name : 'Shital Admin', at: 'Mar 2026' }; });
+  AC.techs.forEach((t, i) => { t.by = t.vendor || 'admin'; t.kyc = { status: 'verified', nid: '*** *** ' + (4100 + i * 37), method: 'NID photos, live check, live selfie', verifiedBy: t.vendor ? AC.vendById[t.vendor].name : 'NEW Admin', at: 'Mar 2026' }; });
 })();

@@ -14,6 +14,6 @@ For the video: `marketing/shital-ad-vertical.mp4 (66 seconds, vertical)`
 | 6 | 0:37.5 to 0:45 | The job closes only with your code | And the job closes only when you give the technician your code. <break time="0.3s" /> You stay in control. |
 | 7 | 0:45 to 0:51 | Pay your way | Pay your way, after the work is done. <break time="0.3s" /> Cash, bKash, Nagad or card. |
 | 8 | 0:51 to 0:59.5 | Shop ACs, bags and local cosmetics | Shop air conditioners, bags and local cosmetics in one place. <break time="0.3s" /> Twenty percent off installation, and a one year repair warranty. |
-| 9 | 0:59.5 to 1:06.5 | Shital. Cooling, serviced and delivered. | Shital. <break time="0.4s" /> Cooling, serviced and delivered. <break time="0.4s" /> Coming soon on Android. |
+| 9 | 0:59.5 to 1:06.5 | NEW. Cooling, serviced and delivered. | NEW. <break time="0.4s" /> Cooling, serviced and delivered. <break time="0.4s" /> Coming soon on Android. |
 
 Generation steps and ElevenLabs settings: see `../AUDIO_SCRIPT.md`.
