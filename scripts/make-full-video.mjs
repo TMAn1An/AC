@@ -100,7 +100,7 @@ await click('customer', '[data-a=rate]', 1200);
 await say('Ratings and feedback are private to admin', 'Technicians and vendors never see them.', 3200);
 await nav('reviews', 1800);
 await click('customer', '[data-a=back]', 600); await click('customer', '.tab[data-v=account]', 800); await click('customer', '[data-a=chat]', 1200);
-await click('customer', '[data-a=quick] >> nth=0', 1500);
+await click('customer', '[data-a=quickmsg] >> nth=0', 1500);
 await say('Customers talk to admin in the app', 'After a booking is confirmed, the customer reaches the technician by call or WhatsApp.', 3600);
 await nav('messages', 1500); await click('admin', '[data-a=thread] >> nth=0', 1200);
 await type('admin', '#msg', 'He is on the way and will arrive in ten minutes.', 40); await click('admin', '.conv-f [data-a=send]', 1800);
@@ -126,11 +126,12 @@ await click('adminapp', '.tab[data-v=jobs]', 900); await click('adminapp', '[dat
 await click('adminapp', '[data-a=fwd][data-v=V2]', 1800);
 await say('The vendor assigns one of their own technicians', 'If they do not reply in 15 minutes, admin can forward to another vendor.', 3600);
 await click('vendor', '[data-a=assign] >> nth=0', 1000); await click('vendor', '[data-a=doassign] >> nth=0', 1800);
-await click('adminapp', '.tab[data-v=map]', 1500);
+await click('adminapp', '[data-a=back]', 700); await click('adminapp', '.tab[data-v=map]', 1500);
 await say('The admin app does the same on the go', 'Home, Jobs with dispatch, Map, Inbox and More.', 3400);
 
 /* 8. Shop and courier */
 await show('customer', 'admin'); await stepL('9  Shop and delivery');
+await say('Back to the shop', 'The same customer app also sells products with courier delivery.', 2400);
 await click('customer', '[data-a=back]', 600); await click('customer', '.tab[data-v=shop]', 800); await click('customer', '[data-a=opencats]', 700); await click('customer', '[data-a=shopcat][data-v=ac]', 900);
 await say('Shop ACs, bags and local cosmetics', 'Installation is an optional add-on with a discount when you buy an AC.', 3400);
 await click('customer', '[data-a=buynow][data-v=ac1] >> nth=0', 1200);
