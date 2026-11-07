@@ -3,6 +3,29 @@
   // Skip a render when the markup did not change. Live ticks re-render often, and replacing a button between press and release swallowed the tap.
   window.AC = window.AC || {};
   AC.ui = AC.ui || {};
+  /* Frosted glass selection capsule (iOS style) that slides between tabs. Works on every tab bar, segmented control and tab strip.
+     Renders replace the DOM, so the last position of each control is remembered and the new capsule animates from there. */
+  const GLASS = '.tabbar, .seg, .tabs', memo = {};
+  let queued = false;
+  function glassSync() {
+    queued = false;
+    const all = [...document.querySelectorAll(GLASS)];
+    all.forEach((c, i) => {
+      const on = c.querySelector(':scope > .on'); let ind = c.querySelector(':scope > .glass-ind');
+      if (!on) { if (ind) ind.remove(); return; }
+      const key = c.className + '#' + i, box = { l: on.offsetLeft, t: on.offsetTop, w: on.offsetWidth, h: on.offsetHeight };
+      if (!ind) {
+        ind = document.createElement('i'); ind.className = 'glass-ind'; ind.setAttribute('aria-hidden', 'true'); c.prepend(ind);
+        const m = memo[key] || box; ind.style.cssText = 'left:' + m.l + 'px;top:' + m.t + 'px;width:' + m.w + 'px;height:' + m.h + 'px;transition:none';
+        ind.getBoundingClientRect(); ind.style.transition = '';
+      }
+      ind.style.left = box.l + 'px'; ind.style.top = box.t + 'px'; ind.style.width = box.w + 'px'; ind.style.height = box.h + 'px';
+      memo[key] = box;
+    });
+  }
+  const queueGlass = () => { if (!queued) { queued = true; requestAnimationFrame(glassSync); } };
+  new MutationObserver(queueGlass).observe(document.documentElement, { childList: true, subtree: true });
+  addEventListener('resize', queueGlass); addEventListener('load', queueGlass);
   AC.ui.dedupe = function (el) {
     const d = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML'); let last = null;
     Object.defineProperty(el, 'innerHTML', { get() { return d.get.call(this); }, set(v) { if (v === last) return; last = v; d.set.call(this, v); } });
