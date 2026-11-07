@@ -100,7 +100,7 @@ await click('vendor', '[data-a=assign] >> nth=0', 1000); await click('vendor', '
 /* 6. Shop */
 await show('customer', 'admin'); await stepL('7  Shop');
 await ev('customer', () => { const c = document.querySelector('[data-a=back]'); });
-await click('customer', '[data-a=back]', 600); await click('customer', '.tab[data-v=shop]', 800); await click('customer', '.chip[data-v=ac]', 700);
+await click('customer', '[data-a=back]', 600); await click('customer', '.tab[data-v=shop]', 800); await click('customer', '[data-a=opencats]', 700); await click('customer', '[data-a=shopcat][data-v=ac]', 900);
 await say('Shop ACs, bags and local cosmetics', 'Add to cart or Buy now. Installation is an optional add-on with a discount.', 2600);
 await click('customer', '[data-a=buynow][data-v=ac1] >> nth=0', 1200);
 await say('Promo codes apply with one tap', 'Items can be removed or changed right in checkout.', 2400);
