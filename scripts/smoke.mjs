@@ -32,5 +32,16 @@ const result = await page.evaluate(async () => {
 const ok = result.status === 'completed' && result.total === 1550 && result.paid === 'paid';
 console.log(ok ? 'ok  ' : 'FAIL', 'workflow', JSON.stringify(result));
 if (!ok) failed = true;
+// Notification routing: who hears about an acceptance.
+const routing = await page.evaluate(() => {
+  const S = AC.store; S.act.reset();
+  const aud = id => [...new Set(S.get().notifs.filter(n => n.job === id && n.kind === 'accepted').map(n => n.aud))].sort();
+  const a = S.act.createJob({ cust: 'C1', svc: 'ac-repair', slot: 'x', method: 'cod', verified: true }); S.act.assign(a, 'T1', 'Admin'); S.act.respond(a, true);
+  const b = S.act.createJob({ cust: 'C1', svc: 'ac-repair', slot: 'x', method: 'cod', verified: true }); S.act.forward(b, 'V1'); S.act.assign(b, 'T5', 'CoolTech Services'); S.act.respond(b, true);
+  return { direct: aud(a), viaVendor: aud(b) };
+});
+const rok = JSON.stringify(routing.direct) === '["admin","cust:C1"]' && JSON.stringify(routing.viaVendor) === '["admin","cust:C1","vendor:V1"]';
+console.log(rok ? 'ok  ' : 'FAIL', 'notification routing', JSON.stringify(routing));
+if (!rok) failed = true;
 await browser.close(); server.kill();
 process.exit(failed ? 1 : 0);

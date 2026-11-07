@@ -1,4 +1,4 @@
-/* Static reference data. Brand name "Shital" is a working name (Bangla: cool). Replace in one place: AC.brand. */
+/* Static reference data. Brand name "Shital" is a working name (means cool). Replace in one place: AC.brand. */
 window.AC = window.AC || {};
 (function () {
   AC.brand = { name: 'Shital', tagline: 'Cooling, serviced and delivered.' };
@@ -27,12 +27,12 @@ window.AC = window.AC || {};
   AC.SERVICE_RADIUS = 160; // map units, about 4 km
 
   AC.services = [
-    { id: 'ac-repair', name: 'AC Repair', bn: 'এসি রিপেয়ার', price: 1000, dur: '60-90 min', icon: 'wrench', desc: 'Diagnosis and repair of any fault: noise, water leak, tripping, remote or board issues.' },
-    { id: 'ac-cooling', name: 'AC Cooling Problem', bn: 'এসি ঠান্ডা প্রবলেম', price: 1000, dur: '60-90 min', icon: 'snow', desc: 'Weak or no cooling. Gas pressure, filter and compressor check.' },
-    { id: 'ac-service', name: 'General Servicing', bn: 'জেনারেল সার্ভিসিং', price: 1200, dur: '75 min', icon: 'sparkle', desc: 'Indoor and outdoor wash, filter clean, drain flush and a performance report.' },
-    { id: 'ac-gas', name: 'Gas Refill', bn: 'গ্যাস রিফিল', price: 2200, dur: '60 min', icon: 'drop', desc: 'Leak test, vacuum and refill to the manufacturer pressure.' },
-    { id: 'ac-install', name: 'AC Installation', bn: 'এসি ইন্সটলেশন', price: 1800, dur: '2-3 h', icon: 'box', desc: 'Wall mounting, copper piping up to 10 ft, drain line and test run.' },
-    { id: 'ac-reloc', name: 'Uninstall and Relocate', bn: 'খুলে পুনঃস্থাপন', price: 2500, dur: '3-4 h', icon: 'truck', desc: 'Safe removal, gas recovery and re-installation at the new location.' }
+    { id: 'ac-repair', tone: 0, name: 'AC Repair', price: 1000, dur: '60-90 min', icon: 'wrench', desc: 'Diagnosis and repair of any fault: noise, water leak, tripping, remote or board issues.' },
+    { id: 'ac-cooling', tone: 5, name: 'AC Cooling Problem', price: 1000, dur: '60-90 min', icon: 'snow', desc: 'Weak or no cooling. Gas pressure, filter and compressor check.' },
+    { id: 'ac-service', tone: 2, name: 'General Servicing', price: 1200, dur: '75 min', icon: 'sparkle', desc: 'Indoor and outdoor wash, filter clean, drain flush and a performance report.' },
+    { id: 'ac-gas', tone: 3, name: 'Gas Refill', price: 2200, dur: '60 min', icon: 'drop', desc: 'Leak test, vacuum and refill to the manufacturer pressure.' },
+    { id: 'ac-install', tone: 1, name: 'AC Installation', price: 1800, dur: '2-3 h', icon: 'box', desc: 'Wall mounting, copper piping up to 10 ft, drain line and test run.' },
+    { id: 'ac-reloc', tone: 4, name: 'Uninstall and Relocate', price: 2500, dur: '3-4 h', icon: 'truck', desc: 'Safe removal, gas recovery and re-installation at the new location.' }
   ];
   AC.slots = ['Today, 2-4 PM', 'Today, 4-6 PM', 'Tomorrow, 10 AM-12 PM', 'Tomorrow, 2-4 PM'];
   AC.parts = [
@@ -43,14 +43,14 @@ window.AC = window.AC || {};
 
   AC.catalog = [
     { id: 'ac1', cat: 'ac', brand: 'Arctica', name: 'Inverter Split AC 1.5 Ton', price: 68500, was: 72000, rating: 4.8, kind: 'split', tint: 0, tag: 'Inverter', variants: ['1 Ton', '1.5 Ton', '2 Ton'], stock: 14, sold: 63 },
-    { id: 'ac2', cat: 'ac', brand: 'Hima', name: 'Non-Inverter Split AC 1 Ton', price: 42900, was: 45500, rating: 4.5, kind: 'split', tint: 2, tag: 'Best value', variants: ['1 Ton', '1.5 Ton'], stock: 22, sold: 91 },
+    { id: 'ac2', cat: 'ac', brand: 'Hima', name: 'Non-Inverter Split AC 1 Ton', price: 42900, was: 45500, rating: 4.5, kind: 'split', tint: 5, tag: 'Best value', variants: ['1 Ton', '1.5 Ton'], stock: 22, sold: 91 },
     { id: 'ac3', cat: 'ac', brand: 'Zephyr', name: 'Window AC 1.5 Ton', price: 39500, was: 0, rating: 4.3, kind: 'window', tint: 1, tag: 'Window', variants: ['1 Ton', '1.5 Ton'], stock: 9, sold: 24 },
-    { id: 'ac4', cat: 'ac', brand: 'Arctica', name: 'Ceiling Cassette AC 3 Ton', price: 148000, was: 0, rating: 4.6, kind: 'cassette', tint: 5, tag: 'Commercial', variants: ['2 Ton', '3 Ton', '4 Ton'], stock: 4, sold: 7 },
+    { id: 'ac4', cat: 'ac', brand: 'Arctica', name: 'Ceiling Cassette AC 3 Ton', price: 148000, was: 0, rating: 4.6, kind: 'cassette', tint: 4, tag: 'Commercial', variants: ['2 Ton', '3 Ton', '4 Ton'], stock: 4, sold: 7 },
     { id: 'bg1', cat: 'bag', brand: 'Tanti Crafts', name: 'Mohua Leather Tote', price: 3450, was: 4200, rating: 4.7, kind: 'tote', tint: 1, tag: 'Handmade', variants: ['Tan', 'Black'], stock: 40, sold: 118 },
-    { id: 'bg2', cat: 'bag', brand: 'Urban Kit', name: 'City Daypack 22L', price: 2650, was: 0, rating: 4.4, kind: 'pack', tint: 2, tag: 'Water resistant', variants: ['Navy', 'Slate'], stock: 62, sold: 207 },
-    { id: 'bg3', cat: 'bag', brand: 'Urban Kit', name: 'Weekender Duffel 40L', price: 3900, was: 4500, rating: 4.5, kind: 'duffel', tint: 0, tag: 'Travel', variants: ['Olive', 'Black'], stock: 28, sold: 66 },
+    { id: 'bg2', cat: 'bag', brand: 'Urban Kit', name: 'City Daypack 22L', price: 2650, was: 0, rating: 4.4, kind: 'pack', tint: 0, tag: 'Water resistant', variants: ['Navy', 'Slate'], stock: 62, sold: 207 },
+    { id: 'bg3', cat: 'bag', brand: 'Urban Kit', name: 'Weekender Duffel 40L', price: 3900, was: 4500, rating: 4.5, kind: 'duffel', tint: 2, tag: 'Travel', variants: ['Olive', 'Black'], stock: 28, sold: 66 },
     { id: 'bg4', cat: 'bag', brand: 'Tanti Crafts', name: 'Jamdani Evening Clutch', price: 1850, was: 0, rating: 4.9, kind: 'clutch', tint: 3, tag: 'Local weave', variants: ['Rose', 'Ivory'], stock: 33, sold: 54 },
-    { id: 'cs1', cat: 'cos', brand: 'Nodi', name: 'Neem and Tulsi Face Wash', price: 320, was: 0, rating: 4.6, kind: 'tube', tint: 4, tag: 'Local', variants: ['100 ml'], stock: 210, sold: 640 },
+    { id: 'cs1', cat: 'cos', brand: 'Nodi', name: 'Neem and Tulsi Face Wash', price: 320, was: 0, rating: 4.6, kind: 'tube', tint: 2, tag: 'Local', variants: ['100 ml'], stock: 210, sold: 640 },
     { id: 'cs2', cat: 'cos', brand: 'Kesh', name: 'Amla and Hibiscus Hair Oil', price: 450, was: 520, rating: 4.7, kind: 'bottle', tint: 4, tag: 'Local', variants: ['200 ml'], stock: 150, sold: 512 },
     { id: 'cs3', cat: 'cos', brand: 'Golap', name: 'Rose Water Mist', price: 380, was: 0, rating: 4.5, kind: 'spray', tint: 3, tag: 'Local', variants: ['100 ml'], stock: 120, sold: 301 },
     { id: 'cs4', cat: 'cos', brand: 'Haldi', name: 'Turmeric Glow Cream', price: 540, was: 600, rating: 4.4, kind: 'jar', tint: 1, tag: 'Local', variants: ['50 g'], stock: 88, sold: 233 },

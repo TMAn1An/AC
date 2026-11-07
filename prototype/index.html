@@ -6,13 +6,13 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <title>Shital Design Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
 <link rel="stylesheet" href="shared/base.css">
 <style>
 /* Showcase hub: presents the three connected prototypes on one calm page. */
 html, body { height: auto; } body { overflow-x: hidden; }
 .w { max-width: 1320px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
-.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(242,246,246,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(248,244,236,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 .nav .w { display: flex; align-items: center; gap: 24px; height: 60px; }
 .logo { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: 19px; letter-spacing: -.02em; }
 .mk { width: 32px; height: 32px; border-radius: 9px; background: var(--brand); color: #fff; display: grid; place-items: center; }
@@ -25,11 +25,12 @@ html, body { height: auto; } body { overflow-x: hidden; }
 .role:hover { border-color: var(--brand-m); }
 .role .ico { width: 42px; height: 42px; border-radius: 12px; background: var(--brand-l); color: var(--brand); display: grid; place-items: center; flex: none; }
 .role b { display: block; } .role span.s { color: var(--ink-3); font-size: 13px; }
+.role:nth-child(1) .ico { background: var(--sky-l); color: var(--sky); } .role:nth-child(2) .ico { background: var(--sage-l); color: var(--sage); } .role:nth-child(3) .ico { background: var(--accent-l); color: var(--accent-d); } .role:nth-child(4) .ico { background: var(--coral-l); color: var(--coral); } .role:nth-child(5) .ico { background: var(--plum-l); color: var(--plum); }
 .sec { padding-block: 56px 8px; } .sec h2 { font-size: clamp(26px, 3.2vw, 38px); letter-spacing: -.025em; margin: 8px 0 10px; } .sec .intro { color: var(--ink-2); max-width: 62ch; font-size: 16px; }
 .demo { display: block; margin-top: 24px; }
 .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
-.seg { display: inline-grid; grid-auto-flow: column; background: #E4ECEC; border-radius: 12px; padding: 3px; } .seg button { height: 36px; padding: 0 14px; border-radius: 9px; font-weight: 700; font-size: 13px; color: var(--ink-3); } .seg button.on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-1); }
-.stagebox { background: #DDE6E7; border-radius: 20px; padding: 24px; display: flex; justify-content: center; align-items: flex-start; gap: 24px; overflow: hidden; }
+.seg { display: inline-grid; grid-auto-flow: column; background: #EDE6D8; border-radius: 12px; padding: 3px; } .seg button { height: 36px; padding: 0 14px; border-radius: 9px; font-weight: 700; font-size: 13px; color: var(--ink-3); } .seg button.on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-1); }
+.stagebox { background: #EBE3D3; border-radius: 20px; padding: 24px; display: flex; justify-content: center; align-items: flex-start; gap: 24px; overflow: hidden; }
 .dev { flex: none; position: relative; } .dev .scaler { transform-origin: top left; position: absolute; top: 0; left: 0; }
 .dev-cap { position: absolute; left: 50%; transform: translateX(-50%); top: 100%; margin-top: 10px; white-space: nowrap; font-size: 11.5px; font-weight: 700; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
 .browser { width: 1140px; height: 760px; background: var(--surface); border-radius: 14px; overflow: hidden; box-shadow: 0 20px 50px rgba(16,34,43,.18); display: flex; flex-direction: column; }
@@ -114,7 +115,7 @@ html, body { height: auto; } body { overflow-x: hidden; }
   <div class="g g4" id="personas"></div>
   <h3 style="font-size:22px;margin:40px 0 16px">Visual language</h3>
   <div class="g g2" style="align-items:start"><div class="panel card"><span class="tag">Color</span><div class="sw-row" id="swatches"></div></div>
-  <div class="panel card"><span class="tag">Type</span><div class="type-s"><div class="big" style="font-family:var(--f-display);font-weight:600">Bricolage Grotesque</div><span class="muted">Display. Used for headlines and key numbers only.</span><div style="font-size:22px;margin-top:14px;font-weight:600">Hanken Grotesk</div><span class="muted">Interface and body text. Tabular figures for prices and times.</span><div class="bn" style="font-size:22px;margin-top:14px;font-weight:600">এসি রিপেয়ার . ১০০০</div><span class="muted">Hind Siliguri. Bangla names appear next to every service.</span></div></div></div>
+  <div class="panel card"><span class="tag">Type</span><div class="type-s"><div class="big" style="font-family:var(--f-display);font-weight:600">Bricolage Grotesque</div><span class="muted">Display. Used for headlines and key numbers only.</span><div style="font-size:22px;margin-top:14px;font-weight:600">Hanken Grotesk</div><span class="muted">Interface and body text. Tabular figures for prices and times.</span><div class="mono" style="font-size:20px;margin-top:14px;font-weight:500">J-2054 . ৳1,000</div><span class="muted">IBM Plex Mono. Booking ids, codes and tracking numbers.</span></div></div></div>
 </section>
 
 <section class="w sec" id="system">
@@ -188,8 +189,8 @@ html, body { height: auto; } body { overflow-x: hidden; }
   /* Controls */
   const mine = () => S.get().jobs.filter(j => j.cust.id === 'C1');
   const act = () => mine().find(S.isActive);
-  $('#quick').onclick = () => S.act.createJob({ cust: 'C1', svc: 'ac-cooling', slot: 'Today, 4-6 PM', method: 'cod', note: 'AC is not cooling well.', discount: 100 });
-  $('#auto').onclick = () => { const j = act() || S.job(S.act.createJob({ cust: 'C1', svc: 'ac-repair', slot: 'Today, 4-6 PM', method: 'cod', discount: 100 })); S.auto(j.id); };
+  $('#quick').onclick = () => S.act.createJob({ cust: 'C1', svc: 'ac-cooling', slot: 'Today, 4-6 PM', method: 'cod', note: 'AC is not cooling well.', discount: 100, verified: true });
+  $('#auto').onclick = () => { const j = act() || S.job(S.act.createJob({ cust: 'C1', svc: 'ac-repair', slot: 'Today, 4-6 PM', method: 'cod', discount: 100, verified: true })); S.auto(j.id); };
   $('#reset').onclick = () => S.act.reset();
 
   /* Guided steps follow live state */
@@ -206,8 +207,8 @@ html, body { height: auto; } body { overflow-x: hidden; }
   const arrow = (d, label, lx, ly) => `<path d="${d}" fill="none" stroke="#0E6B78" stroke-width="2" marker-end="url(#ah)"/>${label ? `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="12" font-weight="700" fill="#0A5560" font-family="Hanken Grotesk, sans-serif">${label}</text>` : ''}`;
   $('#flowsvg').innerHTML = `<svg viewBox="0 0 1100 330" role="img" aria-label="Dispatch flow from customer to admin to technician or vendor"><defs><marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M1 1 9 5 1 9z" fill="#0E6B78"/></marker></defs>
     ${box(20, 120, 170, 80, 'Customer app', 'Books a service', '#fff', '#CCD7DA')}
-    ${box(260, 120, 170, 80, 'Admin web and app', 'Receives the request', '#E3F1F3', '#B9DCE1', '#0A5560')}
-    <path d="M520 160 575 125 630 160 575 195z" fill="#FDF2E0" stroke="#E5C48A"/><text x="575" y="157" text-anchor="middle" font-size="13" font-weight="700" fill="#7A4B08" font-family="Hanken Grotesk, sans-serif">Technician</text><text x="575" y="174" text-anchor="middle" font-size="12" fill="#7A4B08" font-family="Hanken Grotesk, sans-serif">within 4 km?</text>
+    ${box(260, 120, 170, 80, 'Admin web and app', 'Receives the request', '#DDEFF8', '#B9DCE1', '#0A5560')}
+    <path d="M520 160 575 125 630 160 575 195z" fill="#FCEFD6" stroke="#E5C48A"/><text x="575" y="157" text-anchor="middle" font-size="13" font-weight="700" fill="#7A4B08" font-family="Hanken Grotesk, sans-serif">Technician</text><text x="575" y="174" text-anchor="middle" font-size="12" fill="#7A4B08" font-family="Hanken Grotesk, sans-serif">within 4 km?</text>
     ${box(740, 72, 190, 80, 'Shital technician', 'Gets the job offer', '#fff', '#CCD7DA')}
     ${box(740, 214, 190, 80, 'Vendor app', 'Assigns own technician', '#fff', '#E5C48A')}
     ${box(960, 123, 130, 74, 'Technician app', 'Accept, travel, work', '#0E6B78', '#0E6B78', '#fff')}
@@ -219,10 +220,10 @@ html, body { height: auto; } body { overflow-x: hidden; }
     <text x="548" y="322" text-anchor="middle" font-size="12.5" fill="#66787F" font-family="Hanken Grotesk, sans-serif">Vendor name, address and phone stay with admin. Vendors keep a fixed map location.</text></svg>`;
 
   /* Principles, personas, swatches */
-  $('#principles').innerHTML = [['Calm over loud', 'Neutral surfaces, one teal for actions, amber only for savings. No gradients.'], ['Status is the product', 'Every screen answers what is happening and what comes next.'], ['One primary action', 'Large, obvious buttons. Technicians use the app one-handed.'], ['Local by default', 'Bangla names, taka, cash on delivery, bKash and Nagad from day one.']].map(p => `<div class="panel card"><h3>${p[0]}</h3><p>${p[1]}</p></div>`).join('');
+  $('#principles').innerHTML = [['Calm over loud', 'Warm ivory surfaces, ocean teal for actions, gold for savings, supporting hues for tiles. No gradients.'], ['Status is the product', 'Every screen answers what is happening and what comes next.'], ['One primary action', 'Large, obvious buttons. Technicians use the app one-handed.'], ['Local by default', 'Taka, cash on delivery, bKash and Nagad from day one.']].map(p => `<div class="panel card"><h3>${p[0]}</h3><p>${p[1]}</p></div>`).join('');
   const P = [['Nadia', 'Customer, Banani', 'Wants a trusted technician today without calling around.', 'Cannot tell who is coming or when.', 'Fixed prices, ETA-first tracking, extra work needs her approval.'], ['Rafi', 'Operations admin', 'Dispatch every request in under two minutes.', 'No view of who is nearby or free.', 'Nearest technicians ranked by distance, one-click vendor forward.'], ['Mizan', 'Vendor, CoolTech', 'Receive jobs and assign his own technicians.', 'Needs access without seeing other vendors.', 'Scoped portal with only his jobs, team and settlement.'], ['Rakib', 'Technician', 'Do the job, get paid, move on.', 'Wasted calls and unclear scope.', 'One next action per screen, clear rules on extra work.']];
   $('#personas').innerHTML = P.map(p => `<div class="panel card persona"><div class="top"><span class="avatar lg">${p[0][0]}</span><div><h3 style="margin:0">${p[0]}</h3><span class="muted" style="font-size:13px">${p[1]}</span></div></div><dl><div><dt>Goal</dt><dd>${p[2]}</dd></div><div><dt>Friction</dt><dd>${p[3]}</dd></div><div><dt>Design response</dt><dd>${p[4]}</dd></div></dl></div>`).join('');
-  const C = [['Ink', '#10222B'], ['Glacier', '#0E6B78'], ['Frost', '#E3F1F3'], ['Amber', '#E59A2B'], ['Success', '#1C8A56'], ['Warning', '#B7700D'], ['Alert', '#C23D2E'], ['Canvas', '#F2F6F6']];
+  const C = [['Ink', '#14253A'], ['Ocean', '#0E6B78'], ['Deep ocean', '#0C3A47'], ['Gold', '#E59A2B'], ['Coral', '#E0654A'], ['Sky', '#2E86B5'], ['Sage', '#4F8F63'], ['Ivory', '#F8F4EC']];
   $('#swatches').innerHTML = C.map(c => `<div class="swatch"><i style="background:${c[1]}"></i><div><b>${c[0]}</b><code>${c[1]}</code></div></div>`).join('');
   document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => { const t = b.dataset.copy; const done = () => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1500); }; try { navigator.clipboard.writeText(t).then(done, done); } catch (e) { done(); } }));
 })();

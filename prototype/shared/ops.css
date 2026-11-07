@@ -9,3 +9,6 @@
 .cta-bar.two .btn { flex: 1; }
 .spark { display: block; width: 100%; height: 64px; }
 .mini-h { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); padding: 0 20px; margin: 22px 0 10px; display: block; }
+
+.kgrid .kcard { border-color: transparent; } .kgrid .kcard:nth-child(1) { background: var(--sky-l); } .kgrid .kcard:nth-child(2) { background: var(--brand-l); } .kgrid .kcard:nth-child(3) { background: var(--accent-l); } .kgrid .kcard:nth-child(4) { background: var(--coral-l); }
+.kgrid .kcard:nth-child(1) small .i { color: var(--sky); } .kgrid .kcard:nth-child(2) small .i { color: var(--brand); } .kgrid .kcard:nth-child(3) small .i { color: var(--accent-d); } .kgrid .kcard:nth-child(4) small .i { color: var(--coral); }

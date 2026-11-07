@@ -15,7 +15,7 @@
 
   function Jobs() {
     const J = jobs(), L = J.filter(SEG[ui.seg]), nNew = J.filter(SEG.new).length;
-    return `<div class="top"><div class="grow"><small class="muted" style="font-weight:600">Vendor partner</small><h1 style="font-size:22px">${esc(V().name)}</h1></div><div class="avatar amber">${AC.fmt.ini(V().name)}</div></div>
+    return `<div class="top"><div class="grow"><small class="muted" style="font-weight:600">Vendor partner</small><h1 style="font-size:22px">${esc(V().name)}</h1></div><button class="icon-btn" data-a="notifs" aria-label="Notifications">${icon('bell', 22)}${S.unread('vendor:' + ui.v) ? `<span class="badge-n">${S.unread('vendor:' + ui.v)}</span>` : ''}</button><div class="avatar amber">${AC.fmt.ini(V().name)}</div></div>
     <div class="seg" style="margin-top:12px">${[['new', 'New' + (nNew ? ' (' + nNew + ')' : '')], ['active', 'Active'], ['done', 'Completed']].map(x => `<button class="${ui.seg === x[0] ? 'on' : ''}" data-a="seg" data-v="${x[0]}">${x[1]}</button>`).join('')}</div>
     <div class="stack">${L.map(j => card(j)).join('') || `<div class="empty"><h3>${ui.seg === 'new' ? 'No new requests' : 'Nothing here yet'}</h3><span>${ui.seg === 'new' ? 'Jobs forwarded by Shital appear here.' : ''}</span></div>`}</div>`;
   }
@@ -73,8 +73,8 @@
   const TABS = [['jobs', 'Jobs', 'briefcase'], ['team', 'Team', 'users'], ['map', 'Map', 'map'], ['earn', 'Earnings', 'wallet'], ['me', 'Profile', 'store']];
   const clock = () => new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(/ [AP]M/, '');
   function render() {
-    const t = ui.stack[ui.stack.length - 1], key = t ? t.s + t.id : ui.tab, old = document.getElementById('view'); if (old) ui.scroll[ui.key] = old.scrollTop;
-    const body = t ? Job(t.id) : { jobs: Jobs, team: Team, map: Map, earn: Earn, me: Me }[ui.tab](), nNew = jobs().filter(SEG.new).length;
+    const t = ui.stack[ui.stack.length - 1], key = t ? t.s + (t.id || '') : ui.tab, old = document.getElementById('view'); if (old) ui.scroll[ui.key] = old.scrollTop;
+    const body = t && t.s === 'notifs' ? top('Notifications') + `<div class="pad"><div class="cardx" style="padding:4px 16px">${AC.notifUI.html('vendor:' + ui.v, 'job')}</div></div>` : t ? Job(t.id) : { jobs: Jobs, team: Team, map: Map, earn: Earn, me: Me }[ui.tab](), nNew = jobs().filter(SEG.new).length;
     $app.innerHTML = `<div class="statusbar"><span>${clock()}</span></div><div class="view" id="view">${body}</div>${t ? '' : `<nav class="tabbar">${TABS.map(x => `<button class="tab ${ui.tab === x[0] ? 'on' : ''}" data-a="tab" data-v="${x[0]}">${icon(x[2], 22, ui.tab === x[0] ? 2.1 : 1.7)}${x[1]}${x[0] === 'jobs' && nNew ? `<span class="dot">${nNew}</span>` : ''}</button>`).join('')}</nav>`}${Sheet()}`;
     const v = document.getElementById('view'); v.scrollTop = key === ui.key ? (ui.scroll[key] || 0) : 0; ui.key = key; mountMap(t);
   }
@@ -93,7 +93,7 @@
   setInterval(draw, 450);
 
   const A = {
-    tab(el) { ui.tab = el.dataset.v; ui.stack = []; render(); }, back() { ui.stack.pop(); render(); }, seg(el) { ui.seg = el.dataset.v; render(); }, toast(el) { toast(el.dataset.v, 'phone'); }, close() { ui.sheet = null; render(); },
+    tab(el) { ui.tab = el.dataset.v; ui.stack = []; render(); }, back() { const x = ui.stack[ui.stack.length - 1]; ui.stack.pop(); render(); if (x && x.s === 'notifs') S.act.markNotifs('vendor:' + ui.v); }, notifs() { ui.stack.push({ s: 'notifs' }); render(); }, seg(el) { ui.seg = el.dataset.v; render(); }, toast(el) { toast(el.dataset.v, 'phone'); }, close() { ui.sheet = null; render(); },
     job(el) { ui.stack.push({ s: 'job', id: el.dataset.v }); render(); }, assign(el) { ui.sheet = { t: 'assign', id: el.dataset.id }; render(); },
     doassign(el) { S.act.assign(el.dataset.id, el.dataset.v, V().name); ui.sheet = null; ui.seg = 'active'; toast(AC.techById[el.dataset.v].name + ' assigned. Shital and the customer are notified.'); render(); },
     decline(el) { S.act.vendorDecline(el.dataset.id); toast('Declined. Shital will reassign.', 'info'); },
@@ -101,9 +101,7 @@
     who(el) { ui.v = el.dataset.v; try { sessionStorage.setItem('vendor.v', ui.v); } catch (e) { } ui.tab = 'jobs'; ui.stack = []; render(); toast('Signed in as ' + V().name, 'store'); }, reset() { S.act.reset(); ui.stack = []; render(); toast('Demo data reset', 'info'); }
   };
   $app.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el || el.disabled) return; const f = A[el.dataset.a]; if (f) f(el); });
-  S.subscribe((s, p) => {
-    s.jobs.filter(j => j.vendorId === ui.v).forEach(j => { const o = p.jobs.find(x => x.id === j.id), t = AC.techById[j.techId]; if ((!o || o.vendorId !== ui.v) && j.status === 'forwarded') toast('New job from Shital: ' + j.svcName, 'bell'); if (o && o.status !== j.status && t && ['accepted', 'ontheway', 'arrived', 'completed'].includes(j.status)) toast(t.name.split(' ')[0] + ': ' + S.META[j.status].label, 'wrench'); });
-    render();
-  });
+  S.subscribe(() => render());
+  S.watch(() => 'vendor:' + ui.v, n => toast(n.text, ({ forwarded: 'bell', declined: 'alert', extra: 'alert', completed: 'checkc' })[n.kind] || 'wrench'));
   render();
 })();

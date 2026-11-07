@@ -22,6 +22,7 @@
 
   /* ---------- Pieces ---------- */
   const art = (p) => Art.product(p);
+  const tone = s => { const t = Art.tints[s.tone || 0]; return 'background:' + t.bg + ';color:' + t.fg; };
   function pcard(p) {
     const off = p.was ? Math.round((1 - p.price / p.was) * 100) : 0;
     return `<div class="pcard fade"><button class="plink" style="text-align:left;width:100%" data-a="prod" data-v="${p.id}"><div class="pimg">${art(p)}<span class="ptag">${esc(p.tag)}</span>${off ? `<span class="pdisc">-${off}%</span>` : ''}</div>
@@ -39,17 +40,17 @@
       const t = AC.techById[aj.techId];
       banner = `<button class="live-banner fade" data-a="track" data-v="${aj.id}"><span class="pulse-dot"></span><span class="grow"><b>${esc(aj.svcName)}</b><small>${S.META[aj.status].cust}${t && aj.status === 'ontheway' ? ' . ' + S.etaMin(aj) + ' min away' : ''}</small></span>${icon('right', 18)}</button>`;
     }
-    return `<div class="top"><div class="loc">${icon('pin', 20)}<div><small>Service and delivery</small>Banani, Dhaka</div></div>${cartBtn()}<button class="icon-btn" data-a="toast" data-v="You have no new notifications" aria-label="Notifications">${icon('bell', 22)}</button></div>
+    return `<div class="top"><div class="loc">${icon('pin', 20)}<div><small>Service and delivery</small>Banani, Dhaka</div></div>${cartBtn()}<button class="icon-btn" data-a="notifs" aria-label="Notifications">${icon('bell', 22)}${S.unread('cust:' + ME) ? `<span class="badge-n">${S.unread('cust:' + ME)}</span>` : ''}</button></div>
     <div class="pad"><h1 class="greet">Hello, ${esc(firstName)}</h1><p class="greet-s">Cool air, fixed fast. Shop or book a technician.</p></div>
     <button class="search" data-a="tab" data-v="shop">${icon('search', 18)}<span>Search ACs, bags, cosmetics</span></button>
     ${banner}
-    <div class="hero"><div><div class="eyebrow">First purchase</div><h2>15% off your first order</h2><span class="code">${icon('tag', 14)} FIRST15</span></div><div class="art">${Art.draw('split', 0)}</div></div>
+    <div class="hero"><div><div class="eyebrow">First purchase</div><h2>15% off your first order</h2><span class="code">${icon('tag', 14)} FIRST15</span></div><div class="art">${Art.draw('split', 1)}</div></div>
     <div class="sec"><div class="sec-h"><h2>Shop by category</h2></div>
-      <div class="cats"><button class="cat cat-ac" style="background:#E3F1F3" data-a="shopcat" data-v="ac"><div class="art">${Art.draw('split', 0)}</div><span><div>Air conditioners<small>Buy and get serviced</small></div>${icon('right', 16)}</span></button>
-      <button class="cat" style="background:#FDF2E0" data-a="shopcat" data-v="bag"><div class="art">${Art.draw('tote', 1)}</div><span><div>Bags</div>${icon('right', 16)}</span></button>
-      <button class="cat" style="background:#F5E8EE" data-a="shopcat" data-v="cos"><div class="art">${Art.draw('bottle', 3)}</div><span><div>Cosmetics<small>Made locally</small></div>${icon('right', 16)}</span></button></div></div>
+      <div class="cats"><button class="cat cat-ac" style="background:#DDEFF8" data-a="shopcat" data-v="ac"><div class="art">${Art.draw('split', 0)}</div><span><div>Air conditioners<small>Buy and get serviced</small></div>${icon('right', 16)}</span></button>
+      <button class="cat" style="background:#FCEFD6" data-a="shopcat" data-v="bag"><div class="art">${Art.draw('tote', 1)}</div><span><div>Bags</div>${icon('right', 16)}</span></button>
+      <button class="cat" style="background:#F9E4DE" data-a="shopcat" data-v="cos"><div class="art">${Art.draw('bottle', 3)}</div><span><div>Cosmetics<small>Made locally</small></div>${icon('right', 16)}</span></button></div></div>
     <div class="sec"><div class="sec-h"><h2>Book a service</h2><button data-a="tab" data-v="services">See all</button></div>
-      <div class="hscroll">${AC.services.map(s => `<button class="svc-chip" data-a="book" data-v="${s.id}"><span class="svc-ic">${icon(s.icon, 22)}</span><b>${s.name}</b><small>From ${money(s.price)}</small></button>`).join('')}</div></div>
+      <div class="hscroll">${AC.services.map(s => `<button class="svc-chip" data-a="book" data-v="${s.id}"><span class="svc-ic" style="${tone(s)}">${icon(s.icon, 22)}</span><b>${s.name}</b><small>From ${money(s.price)}</small></button>`).join('')}</div></div>
     <div class="sec"><div class="sec-h"><h2>Air conditioners</h2><button data-a="shopcat" data-v="ac">See all</button></div><div class="hscroll">${P('ac').map(pcard).join('')}</div></div>
     <div class="sec"><div class="sec-h"><h2>Bags</h2><button data-a="shopcat" data-v="bag">See all</button></div><div class="hscroll">${P('bag').map(pcard).join('')}</div></div>
     <div class="sec"><div class="sec-h"><h2>Local cosmetics</h2><button data-a="shopcat" data-v="cos">See all</button></div><div class="hscroll">${P('cos').map(pcard).join('')}</div></div>
@@ -59,7 +60,7 @@
   function Services() {
     return `${top('Services', { back: false })}
     <div class="pad" style="margin-top:6px"><div class="note ok">${icon('shield', 18)}<span>Pay after the job is done. Extra parts are quoted first and need your approval.</span></div></div>
-    <div class="stack" style="margin-top:14px">${AC.services.map(s => `<button class="svc-row" data-a="book" data-v="${s.id}"><span class="svc-ic">${icon(s.icon, 24)}</span><div class="grow"><h3>${s.name} <span class="bn faint" style="font-size:13px;font-weight:500">${s.bn}</span></h3><p>${s.desc}</p><div class="meta"><span>${money(s.price)}</span><span class="muted" style="font-weight:600;display:inline-flex;gap:4px;align-items:center">${icon('clock', 14)} ${s.dur}</span></div></div>${icon('right', 18)}</button>`).join('')}</div>
+    <div class="stack" style="margin-top:14px">${AC.services.map(s => `<button class="svc-row" data-a="book" data-v="${s.id}"><span class="svc-ic" style="${tone(s)}">${icon(s.icon, 24)}</span><div class="grow"><h3>${s.name}</h3><p>${s.desc}</p><div class="meta"><span>${money(s.price)}</span><span class="muted" style="font-weight:600;display:inline-flex;gap:4px;align-items:center">${icon('clock', 14)} ${s.dur}</span></div></div>${icon('right', 18)}</button>`).join('')}</div>
     <div class="pad sec"><div class="cardx" style="display:flex;gap:12px">${icon('gift', 22)}<div><b>Bought an AC from us?</b><div class="muted" style="font-size:13px">Installation is 20% off and repairs are free for 1 year.</div></div></div></div>`;
   }
 
@@ -67,7 +68,7 @@
     const b = ui.book, s = AC.svcById[b.svc], price = s.price * b.units, total = price - 100;
     return `${top(s.name)}
     <div class="pad">
-      <div class="cardx" style="display:flex;gap:14px;align-items:center"><span class="svc-ic" style="width:48px;height:48px">${icon(s.icon, 24)}</span><div class="grow"><b>${s.name}</b><div class="muted" style="font-size:13px">${s.desc}</div></div></div>
+      <div class="cardx" style="display:flex;gap:14px;align-items:center"><span class="svc-ic" style="width:48px;height:48px;${tone(s)}">${icon(s.icon, 24)}</span><div class="grow"><b>${s.name}</b><div class="muted" style="font-size:13px">${s.desc}</div></div></div>
       <label class="lab">Type of AC</label><div class="seg" style="margin:0">${['Split', 'Window', 'Cassette'].map(t => `<button class="${b.ac === t ? 'on' : ''}" data-a="bac" data-v="${t}">${t}</button>`).join('')}</div>
       <div class="row between" style="margin-top:16px"><b>Number of units</b><div class="step"><button data-a="bunits" data-v="-1" aria-label="Fewer">${icon('minus', 16)}</button><b>${b.units}</b><button data-a="bunits" data-v="1" aria-label="More">${icon('plus', 16)}</button></div></div>
       <label class="lab">When should we come?</label><div class="optgrid">${AC.slots.map(t => `<button class="slot ${b.slot === t ? 'on' : ''}" data-a="bslot" data-v="${t}">${t}</button>`).join('')}</div>
@@ -220,6 +221,12 @@
 
   function Sheet() {
     const sh = ui.sheet; if (!sh) return '';
+    if (sh.t === 'otp') {
+      if (sh.ok) return `<div class="scrim"></div><div class="sheet"><div class="grab"></div><div class="gate"><div class="okc">${icon('check', 36, 2.5)}</div><h3 style="font-size:20px">Phone verified</h3><span class="muted">${esc(sh.phone)}</span></div></div>`;
+      return `<div class="scrim" data-a="otpclose"></div><div class="sheet"><div class="grab"></div><div class="gate" style="gap:10px"><span class="svc-ic" style="width:56px;height:56px;border-radius:16px">${icon('phone', 26)}</span><h3 style="font-size:20px">Verify your phone</h3><span class="muted">Enter the 4-digit code we sent by SMS to <b>${esc(sh.phone)}</b>. This keeps fake orders out.</span>
+        <input class="input otp-in" id="f-otp" data-b="otp" inputmode="numeric" maxlength="4" autocomplete="one-time-code" placeholder="0000" value="${esc(ui.d.otp || '')}">${sh.err ? `<span style="color:var(--bad);font-weight:600;font-size:13px">That code is not correct. Try again.</span>` : ''}
+        <button class="btn btn-p btn-lg btn-block" data-a="otpverify">Verify and continue</button><div class="row" style="gap:4px"><button class="btn btn-g btn-sm" data-a="otpresend">Resend code</button><button class="btn btn-g btn-sm" data-a="otpclose">Change number</button></div><span class="faint" style="font-size:12px">Demo code: ${DEMO_OTP}. No SMS is sent in this prototype.</span></div></div>`;
+    }
     if (sh.t === 'gate') {
       const m = AC.payMethods.find(x => x.id === sh.m), col = { bkash: '#D12053', nagad: '#E2552B', card: '#0E6B78' }[sh.m] || '#0E6B78';
       return `<div class="scrim"></div><div class="sheet"><div class="grab"></div><div class="gate">${sh.stage === 'ok' ? `<div class="okc">${icon('check', 36, 2.5)}</div><h3 style="font-size:20px">Payment received</h3><span class="muted">${money(sh.amount)} paid with ${m.name}</span>` : `<div class="logo" style="background:${col}">${sh.m === 'card' ? icon('card', 30) : m.name[0]}</div><h3 style="font-size:20px">${sh.m === 'card' ? 'Secure checkout (SSLCommerz)' : 'Confirming with ' + m.name}</h3><span class="muted">${money(sh.amount)}. Do not close this screen.</span><span class="ring"></span><span class="faint" style="font-size:12px">Demo gateway. No real payment is made.</span>`}</div></div>`;
@@ -242,6 +249,7 @@
       else if (t.s === 'checkout') { body = Checkout(); cta = `<div class="cta-bar"><div class="grow"><div class="muted" style="font-size:12px">Total</div><b style="font-size:18px">${money(cartCalc().total)}</b></div><button class="btn btn-p btn-lg" style="flex:1.4" data-a="place">Place order</button></div>`; }
       else if (t.s === 'done') { body = OrderDone(t.p.id); }
       else if (t.s === 'order') body = Order(t.p.id);
+      else if (t.s === 'notifs') body = top('Notifications') + `<div class="pad"><div class="cardx" style="padding:4px 16px">${AC.notifUI.html('cust:' + ME, 'track')}</div></div>`;
       else if (t.s === 'chat') { const c = Chat(); body = c.body; cta = c.cta; flush = true; }
     } else body = { home: Home, services: Services, shop: Shop, orders: Orders, account: Account }[ui.tab]();
     const n = cartCalc().n, ordDot = myOrders().filter(o => o.status !== 'delivered').length + myJobs().filter(S.isActive).length;
@@ -252,6 +260,7 @@
     if (t && t.s === 'chat') v.scrollTop = 99999;
     ui.key = key;
     if (afId) { const e = document.getElementById(afId); if (e) { e.focus(); try { e.setSelectionRange(afSel, afSel); } catch (x) { } } }
+    if (ui.sheet && ui.sheet.t === 'otp' && !ui.sheet.ok) { const o = document.getElementById('f-otp'); if (o && document.activeElement !== o) o.focus(); }
     mountMap(t);
   }
 
@@ -275,7 +284,8 @@
   const push = (s, p) => { ui.stack.push({ s, p }); render(); };
   const A = {
     tab(el) { ui.tab = el.dataset.v; ui.stack = []; render(); },
-    back() { ui.stack.pop(); render(); },
+    back() { const t = ui.stack[ui.stack.length - 1]; ui.stack.pop(); render(); if (t && t.s === 'notifs') S.act.markNotifs('cust:' + ME); },
+    notifs() { push('notifs'); },
     toast(el) { toast(el.dataset.v, 'info'); },
     shopcat(el) { ui.cat = el.dataset.v; ui.tab = 'shop'; ui.stack = []; render(); },
     prod(el) { const p = AC.catById[el.dataset.v]; ui.pdraft = { variant: p.variants[0], qty: 1, install: false }; push('prod', { id: p.id }); },
@@ -289,10 +299,11 @@
     cinst(el) { const l = ui.cart[+el.dataset.i]; l.install = !l.install; render(); },
     checkout() { ui.d.pm = ui.d.pm || 'cod'; push('checkout'); },
     pm(el) { ui.d.pm = el.dataset.v; render(); },
-    place() {
+    place() { requireOtp(ui.d.cphone || me.phone, () => A.doPlace()); },
+    doPlace() {
       const c = cartCalc(), m = ui.d.pm || 'cod';
       const finish = () => {
-        const id = S.act.placeOrder({ cust: ME, items: ui.cart.map(l => ({ pid: l.pid, qty: l.qty, price: AC.catById[l.pid].price, variant: l.variant })), subtotal: c.sub, inst: c.inst, discount: c.disc, delivery: c.delivery, install: ui.cart.some(l => l.install && AC.catById[l.pid].cat === 'ac'), addr: ui.d.caddr || me.addr, phone: ui.d.cphone || me.phone, pay: { method: m, status: m === 'cod' ? 'unpaid' : 'paid' } });
+        const id = S.act.placeOrder({ cust: ME, items: ui.cart.map(l => ({ pid: l.pid, qty: l.qty, price: AC.catById[l.pid].price, variant: l.variant })), subtotal: c.sub, inst: c.inst, discount: c.disc, delivery: c.delivery, install: ui.cart.some(l => l.install && AC.catById[l.pid].cat === 'ac'), addr: ui.d.caddr || me.addr, phone: ui.d.cphone || me.phone, verified: true, pay: { method: m, status: m === 'cod' ? 'unpaid' : 'paid' } });
         ui.cart = []; ui.sheet = null; ui.stack = [{ s: 'done', p: { id } }]; ui.tab = 'orders'; ui.ot = 'shop'; render();
       };
       if (m === 'cod') finish(); else gate(m, c.total, finish);
@@ -302,8 +313,9 @@
     book(el) { const s = AC.svcById[el.dataset.v]; ui.book = { svc: s.id, units: 1, ac: 'Split', slot: AC.slots[1], addr: me.addr, phone: me.phone, note: '', method: 'cod' }; push('book'); },
     bac(el) { ui.book.ac = el.dataset.v; render(); }, bslot(el) { ui.book.slot = el.dataset.v; render(); }, bpm(el) { ui.book.method = el.dataset.v; render(); },
     bunits(el) { ui.book.units = Math.max(1, Math.min(4, ui.book.units + +el.dataset.v)); render(); },
-    confirm() {
-      const b = ui.book, id = S.act.createJob({ cust: ME, svc: b.svc, units: b.units, ac: b.ac, slot: b.slot, note: b.note, addr: b.addr, phone: b.phone, method: b.method, discount: 100 });
+    confirm() { requireOtp(ui.book.phone, () => A.doConfirm()); },
+    doConfirm() {
+      const b = ui.book, id = S.act.createJob({ verified: true, cust: ME, svc: b.svc, units: b.units, ac: b.ac, slot: b.slot, note: b.note, addr: b.addr, phone: b.phone, method: b.method, discount: 100 });
       ui.stack = [{ s: 'track', p: { id } }]; ui.tab = 'orders'; ui.ot = 'book'; toast('Booking ' + id + ' sent to Shital', 'checkc'); render();
     },
     track(el) { ui.d.stars = 0; ui.d.rev = ''; push('track', { id: el.dataset.v }); },
@@ -315,30 +327,40 @@
     chat() { push('chat'); },
     send() { const v = (ui.d.chat || '').trim(); if (!v) return; ui.d.chat = ''; S.act.send(ME, 'customer', v); },
     quickmsg(el) { S.act.send(ME, 'customer', el.dataset.v); },
+    otpverify() { checkOtp(); }, otpresend() { toast('A new code was sent by SMS', 'phone'); }, otpclose() { ui.sheet = null; render(); },
     auto() { const j = activeJob(); if (j) { S.auto(j.id); toast('Autopilot running', 'zap'); } },
     reset() { S.act.reset(); ui.stack = []; ui.cart = []; ui.tab = 'home'; render(); toast('Demo data reset'); }
   };
   function addLine(p, variant, qty, install) { const l = ui.cart.find(x => x.pid === p.id && x.variant === variant); if (l) { l.qty += qty; l.install = l.install || install; } else ui.cart.push({ pid: p.id, variant, qty, install }); }
+  /* Phone verification: required once per number before a booking or order, to stop fake requests. Demo code: 4829. */
+  const DEMO_OTP = '4829', digits = p => String(p || '').replace(/\D/g, '').replace(/^88/, '');
+  const verifiedList = () => { try { return JSON.parse(localStorage.getItem('shital.verified') || '[]'); } catch (e) { return []; } };
+  function requireOtp(phone, done) {
+    const d = digits(phone);
+    if (!/^01[3-9]\d{8}$/.test(d)) { toast('Enter a valid mobile number, for example 01712345678', 'alert'); return; }
+    if (verifiedList().includes(d)) { done(); return; }
+    ui.d.otp = ''; ui.sheet = { t: 'otp', phone, d, done, err: false, ok: false }; render();
+  }
+  function checkOtp() {
+    const sh = ui.sheet; if (!sh || sh.t !== 'otp' || sh.ok) return;
+    if ((ui.d.otp || '') === DEMO_OTP) {
+      sh.ok = true; try { localStorage.setItem('shital.verified', JSON.stringify(verifiedList().concat(sh.d))); } catch (e) { }
+      render(); setTimeout(() => { const f = sh.done; ui.sheet = null; render(); f(); }, 900);
+    } else { sh.err = true; ui.d.otp = ''; render(); }
+  }
   function gate(m, amount, done) { ui.sheet = { t: 'gate', m, amount, stage: 'wait' }; render(); setTimeout(() => { ui.sheet.stage = 'ok'; render(); setTimeout(done, 1000); }, 1700); }
 
   $app.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el || el.disabled) return; const f = A[el.dataset.a]; if (f) f(el); });
-  $app.addEventListener('input', e => { const k = e.target.dataset.b; if (!k) return; if (['addr', 'phone', 'note'].includes(k)) ui.book[k] = e.target.value; else ui.d[k] = e.target.value; });
+  $app.addEventListener('input', e => { const k = e.target.dataset.b; if (!k) return; if (['addr', 'phone', 'note'].includes(k)) ui.book[k] = e.target.value; else ui.d[k] = e.target.value; if (k === 'otp' && e.target.value.length === 4) setTimeout(checkOtp, 120); });
   $app.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'f-chat') A.send(); });
 
   /* Notifications on live changes from admin / vendor / technician */
   S.subscribe((s, prev) => {
-    s.jobs.filter(j => j.cust.id === ME).forEach(j => {
-      const o = prev.jobs.find(x => x.id === j.id); if (!o) return; const t = AC.techById[j.techId], n = t ? t.name.split(' ')[0] : 'Technician';
-      if (o.status !== j.status) {
-        const m = { forwarded: 'Your request is with a partner team', assigned: n + ' is assigned to your job', accepted: n + ' confirmed your booking', ontheway: n + ' is on the way', arrived: n + ' has arrived', working: 'Work has started', completed: 'Job completed' }[j.status];
-        if (m) toast(m, j.status === 'completed' ? 'checkc' : 'bell');
-      }
-      if (o.extra.status !== 'proposed' && j.extra.status === 'proposed') toast('Extra work needs your approval', 'alert');
-    });
     s.orders.filter(x => x.cust === ME).forEach(x => { const o = prev.orders.find(y => y.id === x.id); if (o && o.status !== x.status) toast('Order ' + x.id + ': ' + x.status, 'box'); });
     const last = s.msgs[s.msgs.length - 1], pl = prev.msgs[prev.msgs.length - 1];
     if (last && (!pl || last.id !== pl.id) && last.thread === ME && last.from === 'admin') toast('New message from Shital Support', 'chat');
     render();
   });
+  S.watch('cust:' + ME, n => toast(n.text, ({ completed: 'checkc', extra: 'alert', cancelled: 'x' })[n.kind] || 'bell'));
   render();
 })();

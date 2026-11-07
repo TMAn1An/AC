@@ -35,7 +35,7 @@
     for (let i = 0; i <= 4; i++) { const y = t + (H - t - b) * (1 - i / 4); s += `<line x1="${l}" x2="${W - r}" y1="${y}" y2="${y}" stroke="#E2E9EB"/><text x="${l - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#66787F">${Math.round(max * i / 4)}</text>`; }
     vals.forEach((v, i) => {
       const x = l + i * bw + bw * 0.18, w = bw * 0.64, bh = (H - t - b) * v / max, y = H - b - bh, last = i === vals.length - 1, dt = new Date(d - (vals.length - 1 - i) * 864e5);
-      s += `<rect x="${x}" y="${y}" width="${w}" height="${bh}" rx="5" fill="${last ? '#0E6B78' : '#B9DCE1'}"><title>${dt.toDateString()}: ${v}k</title></rect>`;
+      s += `<rect x="${x}" y="${y}" width="${w}" height="${bh}" rx="5" fill="${last ? '#0E6B78' : '#EBD6A6'}"><title>${dt.toDateString()}: ${v}k</title></rect>`;
       if (i % 2 === (vals.length - 1) % 2) s += `<text x="${x + w / 2}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#66787F">${dt.getDate()} ${dt.toLocaleString('en', { month: 'short' })}</text>`;
       if (last) s += `<text x="${x + w / 2}" y="${y - 6}" text-anchor="middle" font-size="12" font-weight="700" fill="#0A5560">${v}k</text>`;
     });
@@ -91,7 +91,7 @@
 
   function Services() {
     const s = S.get().jobs;
-    return head('Services', 'Prices customers see in the app.', `<button class="btn btn-p" data-a="form" data-v="service">${icon('plus', 18)}Add service</button>`) + `<div class="panel">${table([['Service'], ['Price', 'num'], ['Duration'], ['Bookings', 'num'], ['Active']], AC.services.map(sv => `<tr><td><div class="cell"><span class="ico brand">${icon(sv.icon, 18)}</span><div>${sv.name}<small class="bn">${sv.bn}</small></div></div></td><td class="num"><b>${money(sv.price)}</b></td><td>${sv.dur}</td><td class="num">${s.filter(j => j.svc === sv.id).length}</td><td><button class="sw on" data-a="toast" data-v="${sv.name} visibility updated" aria-label="Toggle"></button></td></tr>`))}</div>
+    return head('Services', 'Prices customers see in the app.', `<button class="btn btn-p" data-a="form" data-v="service">${icon('plus', 18)}Add service</button>`) + `<div class="panel">${table([['Service'], ['Price', 'num'], ['Duration'], ['Bookings', 'num'], ['Active']], AC.services.map(sv => `<tr><td><div class="cell"><span class="ico brand">${icon(sv.icon, 18)}</span><div>${sv.name}</div></div></td><td class="num"><b>${money(sv.price)}</b></td><td>${sv.dur}</td><td class="num">${s.filter(j => j.svc === sv.id).length}</td><td><button class="sw on" data-a="toast" data-v="${sv.name} visibility updated" aria-label="Toggle"></button></td></tr>`))}</div>
     <div class="callout info" style="margin-top:18px">${icon('info', 20)}<div><b>Extra parts and repairs</b>Technicians propose extra work from the app. Admin confirms with the customer before it starts. Work outside the order is not covered by Shital.</div></div>`;
   }
 
@@ -191,7 +191,7 @@
     const ex = j.extra.status === 'proposed' ? `<div class="sect"><span class="eyebrow">Extra work approval</span><div class="callout">${icon('alert', 20)}<div style="flex:1"><b>${esc(t.name)} proposes extra work</b>${j.extra.items.map(i => `<div class="row between"><span>${esc(i.label)}</span><b>${money(i.price)}</b></div>`).join('')}<div class="row" style="margin-top:12px;gap:8px;flex-wrap:wrap"><button class="btn btn-s btn-sm" data-a="toast" data-v="Calling ${esc(j.cust.name)} to confirm">${icon('phone', 16)}Call customer</button><button class="btn btn-d btn-sm" data-a="xres" data-id="${j.id}" data-v="no">Decline</button><button class="btn btn-p btn-sm" data-a="xres" data-id="${j.id}" data-v="yes">Approve</button></div></div></div></div>` : '';
     return `<div class="dscrim" data-a="close"></div><aside class="drawer"><div class="d-h"><h2>${j.id}</h2>${jbadge(j)}<button class="icon-btn" data-a="close" aria-label="Close">${icon('x', 20)}</button></div><div class="d-b">
       <div class="sect"><span class="eyebrow">Booking</span><dl class="kvs"><dt>Service</dt><dd>${esc(j.svcName)} x ${j.units}</dd><dt>AC type</dt><dd>${esc(j.ac)}</dd><dt>Slot</dt><dd>${esc(j.slot)}</dd><dt>Total</dt><dd>${money(S.jobTotal(j))}${j.discount ? ' <span class="muted">(after ' + money(j.discount) + ' discount)</span>' : ''}</dd><dt>Payment</dt><dd>${AC.payName(j.pay.method)} ${badge(j.pay.status === 'paid' ? 'Paid' : 'Unpaid', j.pay.status === 'paid' ? 'b-ok' : 'b-warn')}</dd>${j.note ? `<dt>Note</dt><dd>${esc(j.note)}</dd>` : ''}</dl></div>
-      <div class="sect"><span class="eyebrow">Customer</span><div class="pick">${av(j.cust.name)}<div class="grow"><b>${esc(j.cust.name)}</b><div class="muted" style="font-size:13px">${esc(j.cust.addr)} . ${j.cust.phone}</div></div><button class="btn btn-s btn-sm" data-a="toast" data-v="Calling ${esc(j.cust.name)}">${icon('phone', 16)}Call</button></div></div>
+      <div class="sect"><span class="eyebrow">Customer</span><div class="pick">${av(j.cust.name)}<div class="grow"><b>${esc(j.cust.name)}</b> ${j.verified ? badge('Phone verified', 'b-ok') : badge('Not verified', 'b-warn')}<div class="muted" style="font-size:13px">${esc(j.cust.addr)} . ${j.cust.phone}</div></div><button class="btn btn-s btn-sm" data-a="toast" data-v="Calling ${esc(j.cust.name)}">${icon('phone', 16)}Call</button></div></div>
       ${ex}${dispatch}
       <div class="sect"><span class="eyebrow">Timeline</span><div class="tl">${j.tl.map((e, i) => `<div class="tl-i ${i === j.tl.length - 1 && S.isActive(j) ? 'now' : 'done'}"><div class="tl-dot">${i === j.tl.length - 1 && S.isActive(j) ? '' : icon('check', 13, 3)}</div><div><div class="tl-t">${TLT[e.k] || e.k}</div><div class="muted" style="font-size:12.5px">${esc(e.by)}${e.note ? ' . ' + esc(e.note) : ''} . ${AC.fmt.time(e.at)}</div></div></div>`).join('')}</div></div>
       ${j.rating ? `<div class="sect"><span class="eyebrow">Review</span><div class="row">${starRow(j.rating.stars, 16)}<span class="muted">${esc(j.rating.text)}</span></div></div>` : ''}</div>
@@ -213,9 +213,10 @@
       <div class="callout info">${icon('lock', 20)}<div><b>Vendor app access</b>This vendor signs in to the Shital Vendor app on Android. They see only their own jobs, technicians and earnings.</div></div></div>
       <div class="d-f"><button class="btn btn-s" data-a="toast" data-v="Vendors sign in to the Shital Vendor app">${icon('phone', 16)}Call vendor</button><button class="btn btn-p" data-a="close">Done</button></div></aside>`;
   }
+  function NotifDrawer() { return `<div class="dscrim" data-a="close"></div><aside class="drawer"><div class="d-h"><h2>Notifications</h2><button class="icon-btn" data-a="close" aria-label="Close">${icon('x', 20)}</button></div><div class="d-b" style="gap:0">${AC.notifUI.html('admin', 'job')}</div></aside>`; }
   const FORMS = {
     product: ['Add product', [['Name', 'Inverter Split AC 1.5 Ton'], ['Brand', 'Arctica'], ['Category', 'Air conditioners'], ['Price (BDT)', '68500'], ['Stock', '12']]],
-    service: ['Add service', [['Service name', 'Duct cleaning'], ['Bangla name', ''], ['Price (BDT)', '1500'], ['Duration', '90 min']]],
+    service: ['Add service', [['Service name', 'Duct cleaning'], ['Price (BDT)', '1500'], ['Duration', '90 min']]],
     category: ['Add category', [['Name', 'Home appliances'], ['Section', 'Shop']]],
     promo: ['New promotion', [['Title', 'Eid cooling offer'], ['Code', 'EID10'], ['Discount', '10%'], ['Valid until', '30 Nov 2026']]],
     tech: ['Add technician', [['Full name', ''], ['Phone', '017'], ['Service area', 'Banani'], ['Employer', vend() ? vend().name : 'Shital direct']]],
@@ -235,12 +236,12 @@
     if (v && !NAVV.some(g => g[1].some(i => i[0] === ui.page))) ui.page = 'dash';
     const cnt = { bookings: jobs().filter(j => v ? j.status === 'forwarded' : j.status === 'requested').length, messages: new Set(s.msgs.filter((m, i) => m.from === 'customer' && !s.msgs.some(n => n.thread === m.thread && n.from === 'admin' && n.at > m.at)).map(m => m.thread)).size };
     const old = document.getElementById('content'); if (old) ui.scroll[ui.key] = old.scrollTop; const key = ui.page;
-    const D = ui.drawer ? (ui.drawer.t === 'job' ? JobDrawer(ui.drawer.id) : ui.drawer.t === 'order' ? OrderDrawer(ui.drawer.id) : ui.drawer.t === 'vendor' ? VendorDrawer(ui.drawer.id) : FormDrawer(ui.drawer.id)) : '';
+    const D = ui.drawer ? (ui.drawer.t === 'job' ? JobDrawer(ui.drawer.id) : ui.drawer.t === 'order' ? OrderDrawer(ui.drawer.id) : ui.drawer.t === 'vendor' ? VendorDrawer(ui.drawer.id) : ui.drawer.t === 'notifs' ? NotifDrawer() : FormDrawer(ui.drawer.id)) : '';
     $app.innerHTML = `<aside class="side ${ui.menu ? 'open' : ''}"><div class="brand"><span class="mark">${icon('snow', 20, 2)}</span><div>${AC.brand.name}<small>Admin panel</small></div></div><nav class="nav">${nav.map(g => `<div class="nav-g"><span class="eyebrow">${g[0]}</span>${g[1].map(i => `<a class="${ui.page === i[0] ? 'on' : ''}" data-a="go" data-v="${i[0]}">${icon(i[2], 18)}${i[1]}${(!v || i[0] === 'bookings') && cnt[i[0]] ? `<span class="cnt">${cnt[i[0]]}</span>` : ''}</a>`).join('')}</div>`).join('')}</nav>
       <div class="side-foot"><div class="vbox">${v ? `<b>${esc(v.name)}</b><br>${esc(v.addr)}` : '<b>Dhaka operations</b><br>9 technicians, 3 vendors, 12 areas'}</div></div></aside>
       <div class="main"><header class="topbar"><button class="icon-btn menu-btn" data-a="menu" aria-label="Menu">${icon('menu', 22)}</button><label class="search">${icon('search', 18)}<input id="gq" data-b="gq" placeholder="Search bookings, customers, orders" autocomplete="off" value="${esc(ui.q)}"></label><span class="grow"></span>
 
-        <button class="icon-btn" data-a="go" data-v="${v ? 'bookings' : 'dash'}" aria-label="Notifications">${icon('bell', 22)}${attention().length ? `<span class="badge-n" style="position:absolute;top:4px;right:4px;min-width:16px;height:16px;border-radius:8px;background:var(--accent);font-size:10px;font-weight:700;display:grid;place-items:center">${attention().length}</span>` : ''}</button>${av(v ? v.name : 'Admin User', 'ink')}</header>
+        <button class="icon-btn" data-a="notifs" aria-label="Notifications">${icon('bell', 22)}${S.unread(v ? 'vendor:' + v.id : 'admin') ? `<span class="badge-n" style="position:absolute;top:4px;right:4px;min-width:16px;height:16px;border-radius:8px;background:var(--coral);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center">${S.unread(v ? 'vendor:' + v.id : 'admin')}</span>` : ''}</button>${av(v ? v.name : 'Admin User', 'ink')}</header>
       <main class="content" id="content">${PAGES[ui.page]()}</main></div>${D}`;
     const c = document.getElementById('content'); c.scrollTop = key === ui.key ? (ui.scroll[key] || 0) : 0; ui.key = key;
     const cb = document.getElementById('convb'); if (cb) cb.scrollTop = 99999;
@@ -265,7 +266,7 @@
 
   /* ---------- Actions ---------- */
   const A = {
-    go(el) { ui.page = el.dataset.v; ui.menu = false; ui.drawer = null; render(); }, menu() { ui.menu = !ui.menu; render(); }, close() { ui.drawer = null; render(); },
+    go(el) { ui.page = el.dataset.v; ui.menu = false; ui.drawer = null; render(); }, menu() { ui.menu = !ui.menu; render(); }, close() { const d = ui.drawer; ui.drawer = null; render(); if (d && d.t === 'notifs') S.act.markNotifs('admin'); }, notifs() { ui.drawer = { t: 'notifs' }; render(); },
     tab(el) { ui.tab = el.dataset.v; render(); }, pcat(el) { ui.pcat = el.dataset.v; render(); }, paytab(el) { ui.pay = el.dataset.v; render(); },
     toast(el) { toast(el.dataset.v, 'info'); }, saved() { ui.drawer = null; render(); toast('Saved. (Prototype: changes are not stored)'); },
     job(el) { ui.drawer = { t: 'job', id: el.dataset.v }; render(); }, order(el) { ui.drawer = { t: 'order', id: el.dataset.v }; render(); }, vendor(el) { ui.drawer = { t: 'vendor', id: el.dataset.v }; render(); }, form(el) { ui.drawer = { t: 'form', id: el.dataset.v }; render(); },
@@ -286,19 +287,11 @@
   $app.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'msg') A.send(); if (e.key === 'Escape' && ui.drawer) A.close(); });
 
   S.subscribe((s, p) => {
-    const v = vend(), pj = id => p.jobs.find(x => x.id === id);
-    s.jobs.forEach(j => {
-      const o = pj(j.id), t = AC.techById[j.techId];
-      if (!o) { if (!v) toast('New booking ' + j.id + ' from ' + j.cust.name + ', ' + AC.areas[j.cust.area].n, 'bell'); return; }
-      if (v && j.vendorId !== v.id) return;
-      if (v && o.vendorId !== v.id && j.vendorId === v.id) toast('New job forwarded to you: ' + j.id, 'bell');
-      if (o.status !== j.status && t) { const m = { accepted: ' accepted ', ontheway: ' is on the way for ', arrived: ' arrived for ', working: ' started ', completed: ' completed ' }[j.status]; if (m) toast(t.name.split(' ')[0] + m + j.id, j.status === 'completed' ? 'checkc' : 'wrench'); }
-      if (o.extra.status !== 'proposed' && j.extra.status === 'proposed') toast('Extra work needs approval on ' + j.id, 'alert');
-      if (o.extra.status === 'proposed' && j.extra.status === 'approved' && ui.drawer == null) toast('Extra work approved for ' + j.id, 'checkc');
-    });
+    const v = vend();
     if (!v && s.orders.length > p.orders.length) toast('New order ' + s.orders[0].id + ' from ' + AC.custById[s.orders[0].cust].name, 'cart');
     const last = s.msgs[s.msgs.length - 1], pl = p.msgs[p.msgs.length - 1]; if (!v && last && (!pl || last.id !== pl.id) && last.from === 'customer') toast('New message from ' + AC.custById[last.thread].name, 'chat');
     render();
   });
+  S.watch('admin', n => toast(n.text, ({ declined: 'alert', extra: 'alert', completed: 'checkc', requested: 'bell' })[n.kind] || 'wrench'));
   render();
 })();

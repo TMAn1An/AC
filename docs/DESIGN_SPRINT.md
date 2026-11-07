@@ -99,7 +99,7 @@ Customer chooses a method at booking or checkout. Cash on delivery is collected 
 
 ## 7. Visual language
 
-- Color: Ink #10222B, Glacier #0E6B78 (brand), Frost #E3F1F3, Amber #E59A2B (savings and attention), semantic green, amber, red, blue. Neutrals lean teal. No gradients.
+- Color: warm ivory canvas #F8F4EC, navy ink #14253A, ocean teal #0E6B78 (brand), deep ocean #0C3A47 (admin sidebar, hero), gold #E59A2B (savings and attention), supporting coral #E0654A, sky #2E86B5, sage #4F8F63, plum #85508C for tiles and icons. Semantic green, amber, red, blue. No gradients.
 - Type: Bricolage Grotesque (display, restrained), Hanken Grotesk (interface), Hind Siliguri (Bangla), IBM Plex Mono (ids, codes). Tabular figures for money and time.
 - Shape: 8, 12, 18 px radii. Hairline borders over shadows. Shadows only for floating layers.
 - Imagery: flat SVG product illustrations on tinted tiles, so every card is visual without photo licensing. Replace with product photography in production.
@@ -110,7 +110,7 @@ Customer chooses a method at booking or checkout. Cash on delivery is collected 
 
 Included and clickable: all flows above across the three apps with live sync, vendor portal, Collections, Payments, demo payment gateway, autopilot for solo review.
 
-Not included on purpose: real authentication, real maps (the city is a schematic SVG), real payments, push notifications, Bangla UI translation (names only), accessibility audit with assistive tech.
+Not included on purpose: real authentication and SMS (the OTP demo code is 4829), real maps (the city is a schematic SVG), real payments, push notifications, Bangla language option (planned for the Flutter build), accessibility audit with assistive tech.
 
 ## 9. Open questions for the client
 

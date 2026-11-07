@@ -17,14 +17,16 @@ Phase 0 is done: a clickable design prototype in `prototype/` (plain HTML, CSS, 
 - Discounts: first purchase discount, installation discount when buying an AC, 1 year repair warranty with installation.
 - Payments: cash on delivery first. bKash, Nagad and cards through SSLCommerz behind a gateway interface. Offers with providers are decided later.
 - Delivery of goods: third-party couriers (Pathao, RedX). Technician contact: phone call or WhatsApp. Customer to admin: in-app chat.
-- Timeline status updates for every job and order, visible to customer and admin.
+- Timeline status updates for every job and order, visible to customer and admin. Notification routing: admin hears every job event, the assigning vendor hears about its own jobs, the technician hears about their own jobs, the customer hears about their booking (see `mkNotifs` in `prototype/shared/store.js`).
+- Customers verify their mobile number by SMS OTP before a booking or order, to block fake orders.
 
 ## Design rules
 
 - No emoji anywhere (UI, docs, commit messages). No gradients. Icons are line icons from `prototype/shared/icons.js`.
 - All color, type and spacing come from tokens in `prototype/shared/base.css` (and the Flutter theme that mirrors them). Do not hardcode new colors.
 - One primary action per screen. Status first. Large touch targets in the technician app.
-- Copy: plain, active voice. Bangla service names appear next to English ones.
+- Copy: plain, active voice. The prototype is English only. Bangla is a language option for the Flutter build (phase 4), not mixed into screens.
+- Palette: warm ivory neutrals, ocean teal brand, deep ocean chrome, gold for savings, coral, sky, sage and plum as supporting hues for tiles and icons. Defined in `prototype/shared/base.css`.
 - Quality bar: Y Combinator demo. Clean, minimal, alive (live updates, motion with purpose, reduced-motion respected).
 
 ## Working on the prototype

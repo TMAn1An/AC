@@ -133,6 +133,8 @@ Priority: P0 launch-blocking, P1 launch if time allows, P2 after launch.
 12. Vendor commission is a percentage of completed job value, set per vendor. Settlement is weekly (assumption).
 13. Goods are delivered by third-party couriers. The tracking id is stored on the order and shown to the customer.
 14. Technician location is shared only while a job is on the way, and only the customer of that job and admin can see it. Customer phone numbers are visible to a technician only for their active jobs.
+15. Notification routing. Admin receives every job event. A vendor receives events only for jobs forwarded to it. A technician receives events for their own jobs. The customer receives events for their own booking. Whoever assigned a technician (admin or vendor) is told when the technician accepts or declines.
+16. A customer must verify their mobile number by SMS OTP before the first booking or order with that number. Limits: 3 codes per number per hour, 5 wrong attempts then a 15 minute lock, codes expire after 5 minutes. Admin sees a Phone verified badge on every booking.
 
 ## 6. State machines
 
@@ -174,6 +176,22 @@ Every transition writes an append-only event with actor and time. The customer t
 - Maps: `flutter_map` with OpenStreetMap-based tiles from a commercial or self-hosted provider. No Google APIs.
 - Observability: Crashlytics (crashes), structured logs, backend metrics and alerting, product analytics with events defined in section 14.
 
+## 9b. Paid services and what they cost
+
+No Google API is needed anywhere. The workflow runs on these:
+
+| Need | Choice | Cost |
+| --- | --- | --- |
+| Maps and live tracking | `flutter_map` with OpenStreetMap data. The technician phone supplies GPS (free). Positions travel over our own realtime backend. Tiles from a free-tier provider or self-hosted (Protomaps style) because the public OSM tile server must not be used for a production app | Near zero. Live tracking is affordable and stays in scope |
+| Routing and ETA | Straight-line with a traffic factor at first, later self-hosted OSRM | Free, server time only |
+| Push notifications | Firebase Cloud Messaging | Free |
+| SMS OTP | Local Bangladesh SMS gateway, or WhatsApp OTP | Pay per message. Reduce spend with verify-once per number, rate limits and expiry. Get quotes from two gateways |
+| Backend | Managed Postgres and realtime (free tier to start) | Monthly fee after launch growth |
+| Payments | SSLCommerz | Per-transaction percentage, no per-call API fee. Confirm in the merchant agreement |
+| Courier | Pathao, RedX | Per parcel, charged to the order |
+| Crash reporting, analytics | Firebase Crashlytics and Analytics | Free |
+| Store accounts | Google Play developer account | One-time fee. Apple later, yearly |
+
 ## 10. Data model (summary)
 
 Entities: profiles, vendors, technicians, services, jobs, job_events, job_extras, technician_locations, categories, products, product_variants, orders, order_items, order_events, payments, refunds, cash_deposits, vendor_settlements, messages, promotions, redemptions, reviews, notifications, devices (push tokens), audit_log, settings. Full sketch in ARCHITECTURE.md.
@@ -186,7 +204,7 @@ Resource APIs for catalog, orders, jobs, payments. Command endpoints for state c
 
 ## 12. Security, privacy and compliance
 
-- Phone OTP login with rate limits and device binding. Short-lived access tokens, refresh tokens in secure storage.
+- Phone OTP login and OTP verification before orders, with rate limits and device binding. Short-lived access tokens, refresh tokens in secure storage.
 - Role checks and row level security on every table. Admin actions are audited.
 - Encrypt in transit (TLS 1.2+) and at rest. PII minimisation in logs.
 - Privacy policy and terms in Bangla and English. Consent for location (technician) and notifications.

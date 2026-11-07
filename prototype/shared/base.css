@@ -2,37 +2,44 @@
    Layout concept: calm cool-teal surfaces, hairline borders, amber used only for money-saving moments. */
 :root {
   color-scheme: light;
-  /* Neutrals carry a slight teal bias */
-  --ink: #10222B;
-  --ink-2: #3A4E58;
-  --ink-3: #66787F;
-  --ink-4: #98A7AD;
-  --bg: #F2F6F6;
+  /* Warm ivory neutrals with a navy ink */
+  --ink: #14253A;
+  --ink-2: #3D4E5F;
+  --ink-3: #6B7885;
+  --ink-4: #9AA4AC;
+  --bg: #F8F4EC;
   --surface: #FFFFFF;
-  --line: #E2E9EB;
-  --line-2: #CCD7DA;
-  /* Brand: deep glacier teal */
+  --line: #EBE4D8;
+  --line-2: #D9D0BF;
+  /* Brand: ocean teal, with a deep ocean for chrome */
   --brand: #0E6B78;
   --brand-d: #0A5560;
-  --brand-l: #E3F1F3;
+  --brand-l: #DFF0F2;
   --brand-m: #B9DCE1;
-  /* Accent: amber, reserved for savings, offers and attention */
+  --deep: #0C3A47;
+  /* Warm accent: gold for savings and attention */
   --accent: #E59A2B;
   --accent-d: #A86A0E;
-  --accent-l: #FDF2E0;
+  --accent-l: #FCF0DB;
+  /* Supporting hues, used for tiles, icons and highlights */
+  --coral: #E0654A; --coral-l: #FBE6DF;
+  --sky: #2E86B5; --sky-l: #DDEFF8;
+  --sage: #4F8F63; --sage-l: #E2F0E5;
+  --plum: #85508C; --plum-l: #F1E5F2;
+  --sand: #F1E7D3;
   /* Semantic */
   --ok: #1C8A56;  --ok-l: #E1F3E9;
   --warn: #B7700D; --warn-l: #FCF0DA;
   --bad: #C23D2E;  --bad-l: #FBE8E5;
   --info: #2C6CB0; --info-l: #E4EEF8;
   /* Type */
-  --f-display: 'Bricolage Grotesque', 'Hind Siliguri', system-ui, sans-serif;
-  --f-body: 'Hanken Grotesk', 'Hind Siliguri', system-ui, sans-serif;
+  --f-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --f-body: 'Hanken Grotesk', system-ui, sans-serif;
   --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
   /* Shape */
   --r-s: 8px; --r-m: 12px; --r-l: 18px; --r-xl: 26px;
-  --shadow-1: 0 1px 2px rgba(16, 34, 43, .06);
-  --shadow-2: 0 8px 24px rgba(16, 34, 43, .10);
+  --shadow-1: 0 1px 2px rgba(20, 37, 58, .06);
+  --shadow-2: 0 8px 24px rgba(20, 37, 58, .10);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
 html, body { height: 100%; }
@@ -44,7 +51,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 input, select, textarea { font: inherit; color: inherit; }
 a { color: inherit; text-decoration: none; }
 h1, h2, h3, h4 { font-family: var(--f-display); font-weight: 600; letter-spacing: -.012em; text-wrap: balance; line-height: 1.2; }
-.bn { font-family: 'Hind Siliguri', var(--f-body); }
 .mono { font-family: var(--f-mono); font-size: .92em; }
 .i { flex: none; display: inline-block; vertical-align: middle; }
 :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 6px; }
@@ -136,3 +142,10 @@ h1, h2, h3, h4 { font-family: var(--f-display); font-weight: 600; letter-spacing
 .map-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .lg-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--brand); } .lg-sq { width: 10px; height: 10px; border-radius: 3px; background: var(--accent); } .lg-pin { width: 10px; height: 10px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--ink); }
 .attr { position: absolute; right: 10px; bottom: 8px; font-size: 10px; color: var(--ink-4); }
+
+/* Notifications */
+.nrow { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); width: 100%; text-align: left; }
+.nrow:last-child { border-bottom: 0; } .nrow b { display: block; font-weight: 600; font-size: 14px; line-height: 1.35; } .nrow small { color: var(--ink-3); font-size: 12.5px; }
+.nico { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: var(--brand-l); color: var(--brand); flex: none; }
+.nico.ok { background: var(--ok-l); color: var(--ok); } .nico.warn { background: var(--warn-l); color: var(--warn); } .nico.bad { background: var(--bad-l); color: var(--bad); }
+.ndot { width: 9px; height: 9px; border-radius: 50%; background: var(--coral, var(--accent)); flex: none; }

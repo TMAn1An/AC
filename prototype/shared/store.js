@@ -68,7 +68,7 @@
     const n = Date.now(), ago = m => n - m * MIN;
     const mk = o => {
       const s = AC.svcById[o.svc], c = AC.custById[o.cust];
-      const j = Object.assign({ units: 1, ac: 'Split', slot: 'Today, 4-6 PM', note: '', extra: { items: [], status: 'none' }, discount: 0, pay: { method: 'cod', status: 'unpaid' }, techId: null, vendorId: null, trip: null, rating: null, deposited: false, createdAt: ago(60) }, o);
+      const j = Object.assign({ units: 1, ac: 'Split', slot: 'Today, 4-6 PM', note: '', extra: { items: [], status: 'none' }, discount: 0, pay: { method: 'cod', status: 'unpaid' }, techId: null, vendorId: null, trip: null, rating: null, deposited: false, createdAt: ago(60), verified: true }, o);
       j.cust = { id: c.id, name: c.name, phone: c.phone, area: c.area, addr: c.addr, x: c.x, y: c.y };
       j.price = s.price * j.units; j.svcName = s.name; return j;
     };
@@ -128,8 +128,46 @@
     return {
       rev: n, seq: { job: 2054, order: 1039, msg: 10 }, jobs, orders, msgs, reviews,
       online: { T1: true, T2: true, T3: true, T4: true, T5: true, T6: true, T7: true, T8: true, T9: true },
-      readAt: { C1: n, admin: ago(20) }
+      readAt: { C1: n, admin: ago(20) }, nread: {},
+      notifs: [
+        { id: 's1', aud: 'admin', at: ago(6), job: 'J-2051', kind: 'requested', text: 'New booking J-2051 from Farhana Akter, Uttara' },
+        { id: 's2', aud: 'admin', at: ago(11), job: 'J-2052', kind: 'forwarded', text: 'J-2052 forwarded to CoolTech Services' },
+        { id: 's3', aud: 'vendor:V1', at: ago(11), job: 'J-2052', kind: 'forwarded', text: 'New job forwarded to you: AC Installation in Mirpur (J-2052)' },
+        { id: 's4', aud: 'admin', at: ago(6), job: 'J-2049', kind: 'extra', text: 'Extra work proposed on J-2049: \u09F32,500' }
+      ]
     };
+  }
+
+
+  /* ---------- Notifications: one entry per recipient, derived from timeline events ---------- */
+  const sumExtra = j => j.extra.items.reduce((a, i) => a + i.price, 0);
+  function mkNotifs(j, e) {
+    const t = AC.techById[j.techId], tn = t ? t.name : 'The technician', id = j.id, area = AC.areas[j.cust.area].n, svc = j.svcName;
+    const vend = j.vendorId ? 'vendor:' + j.vendorId : null, cust = 'cust:' + j.cust.id, tech = t ? 'tech:' + t.id : null, out = [];
+    const add = (aud, text, kind) => { if (aud) out.push({ aud, text, kind: kind || e.k }); };
+    const staff = text => { add('admin', text); add(vend, text); };
+    switch (e.k) {
+      case 'requested': add('admin', 'New booking ' + id + ' from ' + j.cust.name + ', ' + area); add(cust, 'Booking ' + id + ' received. We are finding your technician.'); break;
+      case 'forwarded': add('admin', id + ' forwarded to ' + (j.vendorId ? AC.vendById[j.vendorId].name : 'a vendor')); add(vend, 'New job forwarded to you: ' + svc + ' in ' + area + ' (' + id + ')'); add(cust, 'Your request is with a partner team. They will assign a technician shortly.'); break;
+      case 'assigned': staff(tn + ' assigned to ' + id + ' by ' + e.by); add(tech, 'New job offer: ' + svc + ' in ' + area + ' (' + id + ')'); add(cust, tn + ' is assigned to your booking.'); break;
+      case 'accepted': staff(tn + ' accepted ' + id); add(cust, tn + ' accepted your booking.'); break;
+      case 'declined': staff(e.by + ' declined ' + id + '. It needs to be reassigned.'); break;
+      case 'ontheway': staff(tn + ' is on the way for ' + id); add(cust, tn + ' is on the way to you.'); break;
+      case 'arrived': staff(tn + ' arrived for ' + id); add(cust, tn + ' has arrived.'); break;
+      case 'working': staff(tn + ' started work on ' + id); add(cust, 'Work has started.'); break;
+      case 'extra': staff('Extra work proposed on ' + id + ': ' + AC.fmt.money(sumExtra(j))); add(cust, 'Extra work needs your approval: ' + AC.fmt.money(sumExtra(j)) + '.'); break;
+      case 'extra_ok': staff('Extra work approved on ' + id + ' by ' + e.by); add(tech, 'Extra work approved. You can start.'); add(cust, 'Extra work approved.'); break;
+      case 'extra_no': staff('Extra work declined on ' + id + ' by ' + e.by); add(tech, 'Extra work declined. Finish the original job only.'); add(cust, 'Extra work declined.'); break;
+      case 'completed': staff(tn + ' completed ' + id); add(cust, 'Your job is completed. Thank you.'); break;
+      case 'paid': staff('Payment received for ' + id); add(tech, 'Customer paid for ' + id); break;
+      case 'cancelled': staff(id + ' was cancelled by ' + e.by); add(tech, id + ' was cancelled.'); add(cust, 'Booking ' + id + ' is cancelled.'); break;
+    }
+    return out.map((x, i) => Object.assign({ id: id + ':' + e.k + ':' + e.at + ':' + i, at: e.at, job: id }, x));
+  }
+  function derive(prev, next) {
+    next.notifs = (next.notifs || []).slice(); next.nread = next.nread || {};
+    next.jobs.forEach(j => { const o = prev.jobs.find(x => x.id === j.id), from = o ? o.tl.length : 0; j.tl.slice(from).forEach(e => mkNotifs(j, e).forEach(n => next.notifs.push(n))); });
+    if (next.notifs.length > 150) next.notifs = next.notifs.slice(-150);
   }
 
   /* ---------- Persistence + sync ---------- */
@@ -149,10 +187,11 @@
   window.addEventListener('storage', e => { if (e.key === KEY && e.newValue) { try { receive(JSON.parse(e.newValue)); } catch (x) { } } });
   S = load() || seed();
   if (!S.jobs || !S.seq) S = seed();
+  S.notifs = S.notifs || []; S.nread = S.nread || {};
 
   function commit(fn) {
     const prev = S; const next = JSON.parse(JSON.stringify(S)); S = next;
-    const out = fn(next); next.rev = Math.max(prev.rev + 1, Date.now());
+    const out = fn(next); derive(prev, next); next.rev = Math.max(prev.rev + 1, Date.now());
     emit(); notify(prev); return out;
   }
   const job = id => S.jobs.find(j => j.id === id);
@@ -167,7 +206,7 @@
         const j = {
           id, cust: { id: c.id, name: c.name, phone: d.phone || c.phone, area: d.area || c.area, addr: d.addr || c.addr, x: c.x, y: c.y }, svc: d.svc, svcName: sv.name, units: d.units || 1, ac: d.ac || 'Split', slot: d.slot, note: d.note || '',
           price: sv.price * (d.units || 1), discount: d.discount || 0, extra: { items: [], status: 'none' }, pay: { method: d.method || 'cod', status: 'unpaid' }, status: 'requested', techId: null, vendorId: null, trip: null, rating: null, deposited: false,
-          createdAt: Date.now(), tl: [], linkedOrder: d.linkedOrder || null
+          createdAt: Date.now(), tl: [], linkedOrder: d.linkedOrder || null, verified: !!d.verified
         };
         push(j, 'requested', 'Customer'); s.jobs.unshift(j); return id;
       });
@@ -210,7 +249,7 @@
         if (o.install) {
           const c = AC.custById[o.cust], sv = AC.svcById['ac-install'];
           const jid = 'J-' + (s.seq.job++);
-          const j = { id: jid, cust: { id: c.id, name: c.name, phone: o.phone || c.phone, area: c.area, addr: o.addr || c.addr, x: c.x, y: c.y }, svc: 'ac-install', svcName: sv.name, units: 1, ac: 'Split', slot: 'After delivery of ' + id, note: 'Linked to order ' + id + '. Bundle discount applied.', price: sv.price, discount: Math.round(sv.price * 0.2), extra: { items: [], status: 'none' }, pay: { method: o.pay.method, status: 'unpaid' }, status: 'requested', techId: null, vendorId: null, trip: null, rating: null, deposited: false, createdAt: Date.now(), tl: [], linkedOrder: id, warranty: true };
+          const j = { id: jid, cust: { id: c.id, name: c.name, phone: o.phone || c.phone, area: c.area, addr: o.addr || c.addr, x: c.x, y: c.y }, svc: 'ac-install', svcName: sv.name, units: 1, ac: 'Split', slot: 'After delivery of ' + id, note: 'Linked to order ' + id + '. Bundle discount applied.', price: sv.price, discount: Math.round(sv.price * 0.2), extra: { items: [], status: 'none' }, pay: { method: o.pay.method, status: 'unpaid' }, status: 'requested', techId: null, vendorId: null, trip: null, rating: null, deposited: false, createdAt: Date.now(), tl: [], linkedOrder: id, warranty: true, verified: !!o.verified };
           push(j, 'requested', 'Customer', 'Created with order ' + id); s.jobs.unshift(j); ord.jobId = jid;
         }
         return id;
@@ -226,6 +265,7 @@
       });
     },
     send(thread, from, text) { commit(s => { s.msgs.push({ id: 'm' + (s.seq.msg++), thread, from, text, at: Date.now() }); }); },
+    markNotifs(aud) { commit(s => { s.nread[aud] = Date.now(); }); },
     markRead(who, thread) { commit(s => { s.readAt[who + ':' + thread] = Date.now(); }); },
     reset() { const fresh = seed(); fresh.rev = Math.max(S.rev + 1, Date.now()); const prev = S; S = fresh; emit(); notify(prev); }
   };
@@ -266,6 +306,9 @@
     get: () => S, subscribe: f => { subs.push(f); return () => subs.splice(subs.indexOf(f), 1); },
     act: A, job, auto, ORDER, META, isActive, jobTotal, extraTotal, dist, route, routeLen, along, tripPoints, tripProgress, techPos, etaMin, nearbyTechs,
     ordTotal: o => Math.max(0, o.subtotal + (o.inst || 0) - o.discount + o.delivery),
+    notifs: aud => (S.notifs || []).filter(n => n.aud === aud).slice().reverse(),
+    unread: aud => (S.notifs || []).filter(n => n.aud === aud && n.at > ((S.nread || {})[aud] || 0)).length,
+    watch: (aud, cb) => subs.push((s, p) => { const a = typeof aud === 'function' ? aud() : aud, seen = new Set((p.notifs || []).map(n => n.id)); (s.notifs || []).filter(n => n.aud === a && !seen.has(n.id)).forEach(cb); }),
     threadMsgs: t => S.msgs.filter(m => m.thread === t)
   };
 })();

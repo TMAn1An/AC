@@ -31,7 +31,7 @@
         <div class="row"><button class="btn btn-s btn-lg grow" data-a="decline" data-id="${of.id}">Decline</button><button class="btn btn-p btn-lg grow" style="flex:1.5" data-a="accept" data-id="${of.id}">Accept job</button></div></div></div>` : '';
     const curHtml = cur ? `<div class="sec"><div class="sec-h"><h2>Active job</h2></div><div style="padding:0 20px"><button class="jcard active" data-a="job" data-v="${cur.id}"><span class="svc-ic">${icon(AC.svcById[cur.svc].icon, 22)}</span><span class="grow"><b>${esc(cur.svcName)}</b><div class="muted" style="font-size:13px">${esc(cur.cust.name)} . ${AC.areas[cur.cust.area].n}</div></span><span class="badge ${S.META[cur.status].cls}">${S.META[cur.status].label}</span></button></div></div>` : '';
     const empty = !of && !cur ? `<div class="empty" style="padding-top:36px"><div class="radar"><span class="core">${icon(on ? 'nav' : 'power', 26, 2)}</span></div><h3>${on ? 'Waiting for jobs' : 'You are offline'}</h3><span>${on ? 'New requests near ' + AC.areas[t.area].n + ' appear here.' : 'Go online to receive requests.'}</span></div>` : '';
-    return `<div class="top"><div class="grow"><small class="muted" style="font-weight:600">${t.vendor ? 'Partner of ' + esc(AC.vendById[t.vendor].name) : 'Shital technician'}</small><h1 style="font-size:24px">Hi, ${esc(t.name.split(' ')[0])}</h1></div><div class="avatar">${AC.fmt.ini(t.name)}</div></div>
+    return `<div class="top"><div class="grow"><small class="muted" style="font-weight:600">${t.vendor ? 'Partner of ' + esc(AC.vendById[t.vendor].name) : 'Shital technician'}</small><h1 style="font-size:24px">Hi, ${esc(t.name.split(' ')[0])}</h1></div><button class="icon-btn" data-a="notifs" aria-label="Notifications">${icon('bell', 22)}${S.unread('tech:' + ui.me) ? `<span class="badge-n">${S.unread('tech:' + ui.me)}</span>` : ''}</button><div class="avatar">${AC.fmt.ini(t.name)}</div></div>
     <button class="online ${on ? '' : 'off'}" data-a="online"><span class="dotg"></span><span class="grow"><b>${on ? 'Online' : 'Offline'}</b><div class="muted" style="font-size:12.5px">${on ? 'Accepting jobs in ' + AC.areas[t.area].n : 'Not receiving requests'}</div></span><span class="sw ${on ? 'on' : ''}"></span></button>
     <div class="statrow"><div class="stat"><small>Jobs today</small><b>${dj.length + (cur ? 1 : 0)}</b></div><div class="stat"><small>${t.vendor ? 'Job value' : 'Incentive'}</small><b>${money(t.vendor ? dj.reduce((s, j) => s + S.jobTotal(j), 0) : earn)}</b></div><div class="stat"><small>Rating</small><b>${t.rating}</b></div></div>
     ${offerHtml}${curHtml}${empty}
@@ -110,11 +110,11 @@
   /* ---------- Render ---------- */
   const TABS = [['jobs', 'Jobs', 'briefcase'], ['map', 'Map', 'map'], ['earn', 'Earnings', 'wallet'], ['me', 'Profile', 'user']];
   function render() {
-    const t = ui.stack[ui.stack.length - 1], key = t ? t.s + t.id : ui.tab;
+    const t = ui.stack[ui.stack.length - 1], key = t ? t.s + (t.id || '') : ui.tab;
     const old = document.getElementById('view'); if (old) ui.scroll[ui.key] = old.scrollTop;
     let body, cta = '', tabs = !t;
     if (!ui.signed) { $app.innerHTML = `<div class="statusbar"><span>${clock()}</span></div>${Login()}`; return; }
-    if (t) { body = Job(t.id); const j = S.job(t.id); if (j) cta = jobCta(j); } else body = { jobs: Home, map: Map, earn: Earn, me: Me }[ui.tab]();
+    if (t && t.s === 'notifs') body = top('Notifications') + `<div class="pad"><div class="cardx" style="padding:4px 16px">${AC.notifUI.html('tech:' + ui.me, 'job')}</div></div>`; else if (t) { body = Job(t.id); const j = S.job(t.id); if (j) cta = jobCta(j); } else body = { jobs: Home, map: Map, earn: Earn, me: Me }[ui.tab]();
     const dot = offer() ? 1 : 0;
     $app.innerHTML = `<div class="statusbar"><span>${clock()}</span><span class="sb-r"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" width="3" height="12" rx="1"/></svg></span></div><div class="view" id="view">${body}</div>${cta}${tabs ? `<nav class="tabbar t4">${TABS.map(x => `<button class="tab ${ui.tab === x[0] ? 'on' : ''}" data-a="tab" data-v="${x[0]}">${icon(x[2], 22, ui.tab === x[0] ? 2.1 : 1.7)}${x[1]}${x[0] === 'jobs' && dot ? '<span class="dot">1</span>' : ''}</button>`).join('')}</nav>` : ''}${Sheet()}`;
     const v = document.getElementById('view'); v.scrollTop = key === ui.key ? (ui.scroll[key] || 0) : 0; ui.key = key;
@@ -140,7 +140,7 @@
 
   /* ---------- Actions ---------- */
   const A = {
-    tab(el) { ui.tab = el.dataset.v; ui.stack = []; render(); }, back() { ui.stack.pop(); render(); }, toast(el) { toast(el.dataset.v, 'phone'); }, close() { ui.sheet = null; render(); },
+    tab(el) { ui.tab = el.dataset.v; ui.stack = []; render(); }, back() { const x = ui.stack[ui.stack.length - 1]; ui.stack.pop(); render(); if (x && x.s === 'notifs') S.act.markNotifs('tech:' + ui.me); }, notifs() { ui.stack.push({ s: 'notifs' }); render(); }, toast(el) { toast(el.dataset.v, 'phone'); }, close() { ui.sheet = null; render(); },
     signin() { ui.signed = true; try { sessionStorage.removeItem('tech.out'); } catch (e) { } render(); },
     signout() { ui.signed = false; try { sessionStorage.setItem('tech.out', '1'); } catch (e) { } render(); },
     online() { S.act.setOnline(ui.me, S.get().online[ui.me] === false); },
@@ -160,20 +160,13 @@
     sim() {
       const pool = ['C10', 'C9', 'C1', 'C5'].map(id => AC.custById[id]).sort((a, b) => S.dist(a, T()) - S.dist(b, T()));
       const c = pool[0], svc = ['ac-repair', 'ac-cooling', 'ac-service'][Math.floor(Math.random() * 3)];
-      const id = S.act.createJob({ cust: c.id, svc, slot: 'Today, 4-6 PM', method: 'cod', note: 'Simulated request', discount: 100 }); S.act.assign(id, ui.me, 'Admin');
+      const id = S.act.createJob({ cust: c.id, svc, slot: 'Today, 4-6 PM', method: 'cod', note: 'Simulated request', discount: 100, verified: true }); S.act.assign(id, ui.me, 'Admin');
     },
     reset() { S.act.reset(); ui.stack = []; ui.tab = 'jobs'; render(); toast('Demo data reset', 'info'); }
   };
   $app.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el || el.disabled) return; const f = A[el.dataset.a]; if (f) f(el); });
 
-  S.subscribe((s, prev) => {
-    s.jobs.filter(j => j.techId === ui.me).forEach(j => {
-      const o = prev.jobs.find(x => x.id === j.id);
-      if ((!o || o.techId !== ui.me) && j.status === 'assigned') toast('New job offer: ' + j.svcName, 'bell');
-      if (o && o.extra.status === 'proposed' && j.extra.status === 'approved') toast('Extra work approved. You can start.', 'checkc');
-      if (o && o.extra.status === 'proposed' && j.extra.status === 'declined') toast('Customer declined extra work', 'info');
-    });
-    render();
-  });
+  S.subscribe(() => render());
+  S.watch(() => 'tech:' + ui.me, n => toast(n.text, ({ assigned: 'bell', extra_ok: 'checkc', extra_no: 'info' })[n.kind] || 'bell'));
   render();
 })();

@@ -6,25 +6,25 @@
   function base(svg) {
     const defs = el('defs', {}, svg);
     const pat = el('pattern', { id: 'blk', width: 34, height: 34, patternUnits: 'userSpaceOnUse' }, defs);
-    el('rect', { x: 3, y: 3, width: 28, height: 28, rx: 4, fill: '#E4ECEB' }, pat);
-    el('rect', { width: W, height: H, fill: '#EEF3F2' }, svg);
+    el('rect', { x: 3, y: 3, width: 28, height: 28, rx: 4, fill: '#EAE3D4' }, pat);
+    el('rect', { width: W, height: H, fill: '#F3EEE3' }, svg);
     el('rect', { width: W, height: H, fill: 'url(#blk)' }, svg);
     // River and lake
-    el('path', { d: 'M0 505C130 478 215 548 330 592S520 668 610 646L0 650Z', fill: '#CFE2E8' }, svg);
-    el('path', { d: 'M690 160c34-6 46 30 40 76s-34 70-52 52c-22-22-8-112 12-128z', fill: '#CFE2E8' }, svg);
+    el('path', { d: 'M0 505C130 478 215 548 330 592S520 668 610 646L0 650Z', fill: '#BFDFEC' }, svg);
+    el('path', { d: 'M690 160c34-6 46 30 40 76s-34 70-52 52c-22-22-8-112 12-128z', fill: '#BFDFEC' }, svg);
     // Parks
-    [[300, 262, 64, 44], [540, 372, 70, 44], [820, 90, 80, 52], [90, 250, 60, 40]].forEach(p => el('rect', { x: p[0], y: p[1], width: p[2], height: p[3], rx: 10, fill: '#DAE9D8' }, svg));
+    [[300, 262, 64, 44], [540, 372, 70, 44], [820, 90, 80, 52], [90, 250, 60, 40]].forEach(p => el('rect', { x: p[0], y: p[1], width: p[2], height: p[3], rx: 10, fill: '#D5E6CB' }, svg));
     // Roads: casing then fill
     const roads = ['M0 130H1000', 'M0 305H1000', 'M0 455H1000', 'M210 0V640', 'M430 0V560', 'M650 0V600', 'M850 0V640', 'M70 640 560 345 900 120'];
-    roads.forEach(d => el('path', { d, fill: 'none', stroke: '#D3DDDD', 'stroke-width': 13, 'stroke-linecap': 'round' }, svg));
+    roads.forEach(d => el('path', { d, fill: 'none', stroke: '#E1D9C8', 'stroke-width': 13, 'stroke-linecap': 'round' }, svg));
     roads.forEach(d => el('path', { d, fill: 'none', stroke: '#FFFFFF', 'stroke-width': 9, 'stroke-linecap': 'round' }, svg));
     ['M0 215H1000', 'M0 380H1000', 'M320 0V640', 'M540 0V640', 'M750 0V640'].forEach(d => el('path', { d, fill: 'none', stroke: '#FFFFFF', 'stroke-width': 4, opacity: .9 }, svg));
     // Area labels
     Object.values(AC.areas).forEach(a => {
-      const t = el('text', { x: a.x, y: a.y + 34, 'text-anchor': 'middle', 'font-size': 12, 'font-weight': 700, 'letter-spacing': '.1em', fill: '#8A9DA4', 'font-family': 'Hanken Grotesk, sans-serif' }, svg);
+      const t = el('text', { x: a.x, y: a.y + 34, 'text-anchor': 'middle', 'font-size': 12, 'font-weight': 700, 'letter-spacing': '.1em', fill: '#8D8574', 'font-family': 'Hanken Grotesk, sans-serif' }, svg);
       t.textContent = a.n.toUpperCase();
     });
-    el('text', { x: 140, y: 600, 'font-size': 12, 'font-weight': 700, 'letter-spacing': '.14em', fill: '#7FA3B0', 'font-family': 'Hanken Grotesk, sans-serif', 'text-anchor': 'middle' }, svg).textContent = 'BURIGANGA';
+    el('text', { x: 140, y: 600, 'font-size': 12, 'font-weight': 700, 'letter-spacing': '.14em', fill: '#4F93B0', 'font-family': 'Hanken Grotesk, sans-serif', 'text-anchor': 'middle' }, svg).textContent = 'BURIGANGA';
   }
 
   function pinNode(p) {
