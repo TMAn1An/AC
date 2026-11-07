@@ -105,35 +105,37 @@ header.nav { background: var(--bg); }
 .pdisc { background: var(--green); color: #fff; }
 .sec-h h2::before { background: var(--brand); }
 
-/* ---- iOS style translucent glass: floating tab bar and segmented controls */
-.screen .tabbar { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 15; padding: 6px; border: 1px solid rgba(255,255,255,.75); border-radius: 28px;
-  background: rgba(255,255,255,.58); backdrop-filter: blur(24px) saturate(1.8); -webkit-backdrop-filter: blur(24px) saturate(1.8); box-shadow: 0 8px 28px rgba(30,27,24,.14), inset 0 0 0 .5px rgba(30,27,24,.06); }
-.screen .tabbar .tab { border-radius: 22px; min-height: 48px; }
-.screen .tabbar .tab.on { background: rgba(39,43,122,.10); }
-.screen .tabbar .tab.on svg, .screen .tabbar .tab svg { width: 24px; height: 24px; padding: 0; background: none; box-shadow: none; }
-.screen .view { padding-bottom: 104px; }
-.screen .cta-bar { background: rgba(255,255,255,.7); backdrop-filter: blur(20px) saturate(1.6); -webkit-backdrop-filter: blur(20px) saturate(1.6); }
-.seg { background: rgba(60,60,67,.10); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-.seg button.on { background: rgba(255,255,255,.92); box-shadow: 0 1px 4px rgba(30,27,24,.14); }
-.live-banner { background: var(--brand); } .live-banner small { color: #C9CBE0; }
-
-/* Professional neutral stat cards: white with a hairline, colour only in the icon and the number that needs attention */
-.kgrid .kcard, .statrow .stat, .trust div { background: var(--surface) !important; border: 1px solid var(--line) !important; }
-.kgrid .kcard:nth-child(4) { background: var(--red-l) !important; border-color: transparent !important; }
-.screen .hero .art { background: #fff; }
-
-/* ---- Frosted glass selection capsule */
+/* ---- Tabs, foodpanda style: flat bar, small icons, brand colour on the active item with a pop, and a sliding indicator line */
+.screen .tabbar { position: relative; left: auto; right: auto; bottom: auto; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: var(--surface); backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; padding: 6px 4px calc(8px + env(safe-area-inset-bottom, 0px)); }
+.screen .view { padding-bottom: 24px; }
+.screen .tabbar .tab { min-height: 48px; gap: 3px; font-size: 10.5px; font-weight: 600; color: var(--ink-3); border-radius: 0; background: none !important; }
+.screen .tabbar .tab svg, .screen .tabbar .tab.on svg { width: 20px; height: 20px; padding: 0; background: none; box-shadow: none; }
+.screen .tabbar .tab.on { color: var(--brand); font-weight: 700; }
+.screen .tabbar .tab.on svg { animation: tabpop .38s cubic-bezier(.3,1.6,.5,1); }
+@keyframes tabpop { 0% { transform: translateY(2px) scale(.8); } 60% { transform: translateY(-3px) scale(1.12); } 100% { transform: none; } }
+.screen .tabbar .tab .dot { right: calc(50% - 18px); top: 0; }
 .tabbar, .seg, .tabs { position: relative; }
-.glass-ind { position: absolute; z-index: 0; pointer-events: none; border-radius: 22px; background: rgba(255,255,255,.5);
-  backdrop-filter: blur(14px) saturate(1.9); -webkit-backdrop-filter: blur(14px) saturate(1.9);
-  border: 1px solid rgba(255,255,255,.85); box-shadow: 0 3px 12px rgba(30,27,24,.14), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(30,27,24,.04);
-  transition: left .42s cubic-bezier(.3,1.25,.4,1), top .42s cubic-bezier(.3,1.25,.4,1), width .42s cubic-bezier(.3,1.25,.4,1), height .42s cubic-bezier(.3,1.25,.4,1); }
+.glass-ind { position: absolute; z-index: 0; pointer-events: none; background: var(--brand); border-radius: 3px;
+  transition: left .32s cubic-bezier(.4,0,.2,1), width .32s cubic-bezier(.4,0,.2,1); }
+.tabbar > .glass-ind { top: 0 !important; height: 3px !important; border-radius: 0 0 3px 3px; margin: 0 22px; box-sizing: content-box; }
 .tabbar > :not(.glass-ind), .seg > :not(.glass-ind), .tabs > :not(.glass-ind) { position: relative; z-index: 1; }
-.screen .tabbar .tab.on, .seg button.on, .tabs button.on { background: transparent !important; box-shadow: none !important; }
-.screen .tabbar .tab.on { color: var(--brand); }
-.seg { border-radius: 14px; } .seg .glass-ind { border-radius: 11px; background: rgba(255,255,255,.72); }
-/* Admin web tab strips become frosted segmented controls */
-.tabs { display: inline-flex; margin: 14px 16px; padding: 3px; gap: 2px; border: 0; border-radius: 13px; background: rgba(60,60,67,.09); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); max-width: calc(100% - 32px); }
-.tabs button { height: 34px; padding: 0 14px; border-bottom: 0 !important; border-radius: 10px; }
-.tabs button.on { color: var(--ink); } .tabs .glass-ind { border-radius: 10px; background: rgba(255,255,255,.78); }
-@media (prefers-reduced-motion: reduce) { .glass-ind { transition: none; } }
+/* Top tabs and segmented controls: text tabs on a hairline with a sliding underline */
+.seg { background: none; border-bottom: 1px solid var(--line); border-radius: 0; padding: 0; margin: 4px 20px 14px; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.seg button, .screen .seg button { height: 44px; border-radius: 0; background: none !important; box-shadow: none !important; color: var(--ink-3); font-weight: 600; font-size: 14px; }
+.seg button.on { color: var(--brand); font-weight: 700; }
+.seg > .glass-ind { top: auto !important; bottom: -1px; height: 3px !important; }
+.tabs { display: flex; margin: 0; padding: 0 12px; gap: 4px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; max-width: none; }
+.tabs button { height: 46px; padding: 0 14px; border-radius: 0; border-bottom: 0 !important; background: none !important; }
+.tabs button.on { color: var(--brand); font-weight: 700; }
+.tabs > .glass-ind { top: auto !important; bottom: -1px; height: 3px !important; }
+.cta-bar { background: var(--surface); }
+@media (prefers-reduced-motion: reduce) { .glass-ind { transition: none; } .screen .tabbar .tab.on svg { animation: none; } }
+
+/* Technician wallet: white card, hairline divider, brand and outline buttons */
+.wallet { background: var(--surface); color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
+.w-col + .w-col { background: var(--surface); border-left: 1px solid var(--line); }
+.w-col small { color: var(--ink-3); } .w-col b { color: var(--ink); } .w-col span { color: var(--ink-3); }
+.w-col .btn-a { background: var(--brand); color: #fff; } .w-col .btn-s { background: var(--surface); color: var(--ink); border: 1px solid var(--line-2); }
+.w-col .btn[disabled] { opacity: 1; background: var(--bg); color: var(--ink-4); border-color: transparent; }
+.seg { margin: 0 0 14px !important; padding: 0 20px; background: var(--surface); box-shadow: none !important; border-bottom: 1px solid var(--line); }
+.band + .seg { margin-top: 0 !important; }
