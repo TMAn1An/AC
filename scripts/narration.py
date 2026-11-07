@@ -157,6 +157,12 @@ BN.update({
  'Super admin': "সুপার অ্যাডমিন সব পারেন, রোলসহ। অনুমতি থাকলেই কেবল মেনু দেখা যায়, আর সার্ভার প্রতিটি অনুরোধ যাচাই করে।",
  'Vendor technicians are visible only to that vendor and admin': "ভেন্ডর শুধু নিজের টেকনিশিয়ান দেখেন; অ্যাডমিন সবাইকে।",
 })
+EN.update({
+ 'The nearest technicians are ranked by distance': "Admin opens the booking and sees the nearest technicians ranked by distance. If nobody is close, it goes to a vendor.",
+ 'The admin app does the same on the go': "The admin mobile app does this on the go.",
+ 'Shop ACs, bags and local cosmetics': "Customers shop ACs, bags and cosmetics. Installation is an add-on with a discount and warranty.",
+ 'Super admin': "The Super admin can do everything, including roles. Menus appear only when a role allows them.",
+})
 OFFSET = 0.0  # timeline.json already holds the exact times read back from the footage (scripts/video_timeline.py)
 
 def build():

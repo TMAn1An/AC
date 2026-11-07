@@ -15,6 +15,14 @@ tl = json.load(open('marketing/audio/timeline.json'))
 miss = [it['a'] for it in tl['items'] if it['n'] not in seen]
 for it in tl['items']:
     if it['n'] in seen: it['t'] = round(seen[it['n']], 1)
+# A section marker is replaced by the caption marker painted in the same instant, so use the next caption's time
+items = tl['items']
+for k, it in enumerate(items):
+    if it['n'] not in seen:
+        nxt = next((x for x in items[k + 1:] if x['n'] in seen), None)
+        if nxt: it['t'] = round(seen[nxt['n']], 1)
+dur = float(subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=nw=1:nk=1', 'marketing/out/with-markers.mp4'], capture_output=True, text=True).stdout.strip())
+tl['total'] = round(dur, 1)
 tl['exact'] = True; tl['missing'] = miss
 json.dump(tl, open('marketing/audio/timeline.json', 'w'), indent=1)
 print('markers found', len(seen), 'of', len(tl['items']), 'missing', miss)
