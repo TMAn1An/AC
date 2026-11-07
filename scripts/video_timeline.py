@@ -3,7 +3,7 @@ each caption appears in the final video. Run by make-full-video.mjs."""
 import glob, json, os, shutil, subprocess
 from PIL import Image
 tmp = 'marketing/out/mk'; shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
-subprocess.run(['ffmpeg', '-loglevel', 'error', '-i', 'marketing/out/with-markers.mp4', '-vf', 'fps=5,crop=1920:4:0:0,scale=24:1', tmp + '/%05d.png'], check=True)
+subprocess.run(['ffmpeg', '-loglevel', 'error', '-i', 'marketing/out/with-markers.mp4', '-vf', 'fps=5,crop=1920:2:0:0,scale=24:1', tmp + '/%05d.png'], check=True)
 seen = {}
 for i, f in enumerate(sorted(glob.glob(tmp + '/*.png'))):
     px = Image.open(f).convert('L'); v = [px.getpixel((x, 0)) for x in (4, 12, 20)]

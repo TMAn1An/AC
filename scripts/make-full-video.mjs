@@ -200,7 +200,7 @@ await page.evaluate(() => V.title('Everything in one live system', 'Faster dispa
 { const n = ++IDX; TL.push({ n, t: +now().toFixed(1), kind: 'section', a: 'Close' }); await page.evaluate(n => V.mark(n), n); } await wait(8000);
 const total = +now().toFixed(1);
 await ctx.close(); await browser.close();
-const raw = fs.readdirSync(out + '/raw-full').filter(f => f.endsWith('.webm')).map(f => out + '/raw-full/' + f).sort().pop();
+const raw = fs.readdirSync(out + '/raw-full').filter(f => f.endsWith('.webm')).map(f => out + '/raw-full/' + f).sort((a, b) => fs.statSync(a).mtimeMs - fs.statSync(b).mtimeMs).pop();
 execSync(`ffmpeg -y -loglevel error -i "${raw}" -ss 2.2 -vf "tpad=start_duration=6:start_mode=clone" -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p -r 30 marketing/out/with-markers.mp4`);
 fs.mkdirSync('marketing/audio', { recursive: true }); fs.writeFileSync('marketing/audio/timeline.json', JSON.stringify({ total, items: TL }, null, 1));
 execSync('python3 scripts/video_timeline.py', { stdio: 'inherit' });
