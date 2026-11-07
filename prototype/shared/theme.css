@@ -152,12 +152,11 @@ header.nav { background: var(--bg); }
 .tabbar > .glass-ind { display: none; }
 .screen .tabbar .tab { border-radius: 18px; position: relative; }
 .rip-clip { position: absolute; inset: 0; overflow: hidden; border-radius: 18px; pointer-events: none; z-index: 0; }
-.splash { position: absolute; width: 0; height: 0; pointer-events: none; z-index: 2; }
-:root { --water: #8FD3F4; --water-edge: #3BA7DB; }
-.splash b { position: absolute; left: 0; top: 0; border-radius: 50%; background: var(--water); box-shadow: 0 0 1.5px var(--water-edge); opacity: 0; animation: drop .6s cubic-bezier(.2,.7,.3,1) forwards; }
-@keyframes drop { 0% { transform: translate(0,0) scale(.4); opacity: .85; } 55% { opacity: .7; } 100% { transform: translate(var(--dx), calc(var(--dy) + 8px)) scale(1); opacity: 0; } }
+.glitter { position: absolute; width: 0; height: 0; pointer-events: none; }
+.glitter b { position: absolute; border-radius: 50%; background: #fff; opacity: 0; animation: twinkle .4s ease-in-out both; box-shadow: 0 0 2px rgba(255,255,255,.9); }
+@keyframes twinkle { 0% { opacity: 0; transform: scale(.3); } 40% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(.5); } }
 .screen .tabbar .tab:not(.on):active::after { display: none; }
-.ripple { position: absolute; border-radius: 50%; background: rgba(39,43,122,.28); pointer-events: none; z-index: 0; transform: scale(0); animation: rip .7s ease-out forwards; }
+.ripple { position: absolute; border-radius: 50%; background: rgba(39,43,122,.42); pointer-events: none; z-index: 0; transform: scale(0); animation: rip .8s ease-out forwards; }
 @keyframes rip { 0% { transform: scale(0); opacity: .9; } 60% { opacity: .7; } 100% { transform: scale(1); opacity: 0; } }
 .screen .tabbar .tab > svg, .screen .tabbar .tab > span, .screen .tabbar .tab > small { position: relative; z-index: 1; }
-@media (prefers-reduced-motion: reduce) { .ripple { animation-duration: .01s; } .splash { display: none; } }
+@media (prefers-reduced-motion: reduce) { .ripple { animation-duration: .01s; } .glitter { display: none; } }

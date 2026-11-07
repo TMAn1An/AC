@@ -32,14 +32,16 @@
     const r = document.createElement('i'); r.className = 'ripple';
     r.style.cssText = 'width:' + d + 'px;height:' + d + 'px;left:' + (px - d / 2) + 'px;top:' + (py - d / 2) + 'px;animation-delay:-' + late + 'ms';
     clip.appendChild(r); el.appendChild(clip);
-    // Water splash: small droplets fly out from the touch point and fade
-    const fx = document.createElement('i'); fx.className = 'splash'; fx.style.cssText = 'left:' + px + 'px;top:' + py + 'px';
-    for (let k = 0; k < 30; k++) {
-      const a = Math.random() * Math.PI * 2, dist = 10 + Math.random() * 26, s = 0.7 + Math.random() * 1.0, dl = Math.random() * 70;
+    // Glitter: dense tiny speckles twinkle inside the pressed area (like the Pixel launcher press), then fade
+    const fx = document.createElement('i'); fx.className = 'glitter'; fx.style.cssText = 'left:' + px + 'px;top:' + py + 'px';
+    for (let k = 0; k < 70; k++) {
+      const a = Math.random() * Math.PI * 2, dist = Math.sqrt(Math.random()) * 30, s = 0.7 + Math.random() * 1.1, dl = Math.random() * 380, du = 260 + Math.random() * 300;
       const dp = document.createElement('b');
-      dp.style.cssText = '--dx:' + Math.cos(a) * dist + 'px;--dy:' + (Math.sin(a) * dist - 6) + 'px;width:' + s + 'px;height:' + s + 'px;animation-delay:' + (dl - late) + 'ms';
+      dp.style.cssText = 'left:' + Math.cos(a) * dist + 'px;top:' + Math.sin(a) * dist + 'px;width:' + s + 'px;height:' + s + 'px;animation-delay:' + (dl - late) + 'ms;animation-duration:' + du + 'ms';
       fx.appendChild(dp);
     }
+    clip.appendChild(fx); setTimeout(() => { clip.remove(); }, 800 - late);
+    return;
     el.appendChild(fx); setTimeout(() => { clip.remove(); fx.remove(); }, 800 - late);
   }
   document.addEventListener('pointerdown', e => {
