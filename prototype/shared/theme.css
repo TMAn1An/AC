@@ -80,19 +80,20 @@ header.nav { background: var(--bg); }
 .okc { box-shadow: 0 0 0 8px var(--green-l); }
 .live-banner .pulse-dot { background: #3DD68C; }
 
-/* ---- Button and control sizing. Touch targets follow Android (48 dp) and iOS (44 pt) guidance on phones; compact sizes on desktop. */
-.screen .btn { height: 48px; padding: 0 20px; border-radius: 14px; font-size: 15px; }
-.screen .btn-sm { height: 40px; padding: 0 14px; border-radius: 12px; font-size: 13.5px; position: relative; }
+/* ---- Control sizing. Visible sizes are compact; small controls get an invisible hit area so touch targets stay 44 pt. */
+.screen .btn { height: 44px; padding: 0 18px; border-radius: 12px; font-size: 14.5px; }
+.screen .btn-sm { height: 36px; padding: 0 14px; border-radius: 10px; font-size: 13.5px; position: relative; }
 .screen .btn-sm::after { content: ''; position: absolute; inset: -4px; }
-.screen .btn-lg, .screen .btn-big { height: 56px; border-radius: 16px; font-size: 16px; }
-.screen .icon-btn { width: 44px; height: 44px; border-radius: 14px; }
-.screen .chip { height: 40px; padding: 0 16px; font-size: 13.5px; } .screen .chip.sm { height: 36px; }
-.screen .tab { min-height: 56px; justify-content: center; }
-.screen .step { height: 44px; } .screen .step button { width: 44px; min-width: 44px; height: 42px; }
-.screen .seg button { height: 40px; } .screen .opt, .screen .chk { min-height: 56px; } .screen .slot { height: 48px; }
-.screen .input, .screen .select { height: 48px; border-radius: 12px; }
-.screen .pact .pbtn { height: 44px; border-radius: 12px; }
+.screen .btn-lg, .screen .btn-big { height: 50px; border-radius: 14px; font-size: 15.5px; }
+.screen .icon-btn { width: 40px; height: 40px; border-radius: 12px; }
+.screen .chip { height: 36px; padding: 0 14px; font-size: 13.5px; } .screen .chip.sm { height: 32px; position: relative; } .screen .chip.sm::after { content: ''; position: absolute; inset: -6px 0; }
+.screen .tab { min-height: 52px; justify-content: center; }
+.screen .step { height: 40px; } .screen .step button { width: 40px; min-width: 40px; height: 38px; }
+.screen .seg button { height: 34px; } .screen .opt, .screen .chk { min-height: 52px; } .screen .slot { height: 44px; }
+.screen .input, .screen .select { height: 44px; border-radius: 12px; }
+.screen .pact .pbtn { height: 36px; border-radius: 10px; font-size: 13px; position: relative; } .screen .pact .pbtn::after { content: ''; position: absolute; inset: -4px; }
 .screen .cline .rm { width: 44px; height: 44px; }
+.sq-btn { width: 44px; height: 44px; border-radius: 12px; }
 .btn { border-radius: 10px; } .btn-sm { height: 34px; } .btn-lg { height: 48px; }
 /* Green commit buttons: logo green on large buttons, a slightly deeper shade on small ones for text contrast */
 .btn-ok { background: var(--green); } .btn-ok:hover { background: #009644; } .btn-sm.btn-ok { background: #008A40; }
@@ -103,3 +104,20 @@ header.nav { background: var(--bg); }
 
 .pdisc { background: var(--green); color: #fff; }
 .sec-h h2::before { background: var(--brand); }
+
+/* ---- iOS style translucent glass: floating tab bar and segmented controls */
+.screen .tabbar { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 15; padding: 6px; border: 1px solid rgba(255,255,255,.75); border-radius: 28px;
+  background: rgba(255,255,255,.58); backdrop-filter: blur(24px) saturate(1.8); -webkit-backdrop-filter: blur(24px) saturate(1.8); box-shadow: 0 8px 28px rgba(30,27,24,.14), inset 0 0 0 .5px rgba(30,27,24,.06); }
+.screen .tabbar .tab { border-radius: 22px; min-height: 48px; }
+.screen .tabbar .tab.on { background: rgba(39,43,122,.10); }
+.screen .tabbar .tab.on svg, .screen .tabbar .tab svg { width: 24px; height: 24px; padding: 0; background: none; box-shadow: none; }
+.screen .view { padding-bottom: 104px; }
+.screen .cta-bar { background: rgba(255,255,255,.7); backdrop-filter: blur(20px) saturate(1.6); -webkit-backdrop-filter: blur(20px) saturate(1.6); }
+.seg { background: rgba(60,60,67,.10); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.seg button.on { background: rgba(255,255,255,.92); box-shadow: 0 1px 4px rgba(30,27,24,.14); }
+.live-banner { background: var(--brand); } .live-banner small { color: #C9CBE0; }
+
+/* Professional neutral stat cards: white with a hairline, colour only in the icon and the number that needs attention */
+.kgrid .kcard, .statrow .stat, .trust div { background: var(--surface) !important; border: 1px solid var(--line) !important; }
+.kgrid .kcard:nth-child(4) { background: var(--red-l) !important; border-color: transparent !important; }
+.screen .hero .art { background: #fff; }

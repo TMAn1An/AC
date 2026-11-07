@@ -1,6 +1,6 @@
 /* NEW admin mobile app prototype: control on the go (dispatch, approvals, inbox, collections). Heavy catalog and finance work lives in the admin web app. */
 (function () {
-  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app');
+  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app'); AC.ui.dedupe($app);
   const ui = { f: { ov: '', ovs: 'completed', xl: '', xp: '', xs: true, cs: 'Out for delivery' }, kyc: null, tab: 'home', seg: 'all', stack: [], sheet: null, thread: null, msg: '', key: '', scroll: {}, map: null, sel: null };
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const toast = (m, ic) => { const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = icon(ic || 'checkc', 18) + '<span>' + esc(m) + '</span>'; document.getElementById('toasts').appendChild(t); setTimeout(() => t.remove(), 3300); };

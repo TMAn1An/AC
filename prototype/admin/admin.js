@@ -1,6 +1,6 @@
 /* NEW admin and vendor panel prototype. One codebase: the role switcher shows the vendor portal view (scoped data, fewer menus). */
 (function () {
-  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app');
+  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app'); AC.ui.dedupe($app);
   const ui = { tab0: 1, page: 'dash', staff: 'U1', ov: { status: 'completed', reason: '' }, xq: { label: '', price: '', save: true }, xo: { label: '', price: '' }, cs: 'Out for delivery', kyc: null, roleEdit: null, invite: { name: '', email: '', role: 'ops' }, role: 'admin', drawer: null, tab: 'all', q: '', thread: 'C2', pcat: 'all', pay: 'all', mapSel: null, menu: false, key: '', scroll: {}, map: null };
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const vend = () => ui.role === 'admin' ? null : AC.vendById[ui.role];

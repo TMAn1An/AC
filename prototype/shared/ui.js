@@ -1,5 +1,12 @@
 /* Small interaction helpers shared by every app. */
 (function () {
+  // Skip a render when the markup did not change. Live ticks re-render often, and replacing a button between press and release swallowed the tap.
+  window.AC = window.AC || {};
+  AC.ui = AC.ui || {};
+  AC.ui.dedupe = function (el) {
+    const d = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML'); let last = null;
+    Object.defineProperty(el, 'innerHTML', { get() { return d.get.call(this); }, set(v) { if (v === last) return; last = v; d.set.call(this, v); } });
+  };
   // Drag to scroll for horizontal strips (carousels, tabs, chips). Mouse users have no horizontal wheel, so these looked stuck.
   let drag = null;
   document.addEventListener('pointerdown', e => {

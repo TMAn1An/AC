@@ -1,6 +1,6 @@
 /* NEW customer app prototype. Signed in as Nadia Rahman (C1). */
 (function () {
-  const S = AC.store, ME = 'C1', me = AC.custById[ME], money = AC.fmt.money, $app = document.getElementById('app');
+  const S = AC.store, ME = 'C1', me = AC.custById[ME], money = AC.fmt.money, $app = document.getElementById('app'); AC.ui.dedupe($app);
   const ui = { tab: 'home', stack: [], sheet: null, cat: 'all', cart: [], d: {}, ot: 'book', key: '', pdraft: null, buy: [], buyMode: false, promo: null, promoOff: false, promoOpen: false, promoErr: '', undo: null, wish: {}, sort: 'popular', added: false, book: null, map: null, scroll: {} };
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const myJobs = () => S.get().jobs.filter(j => j.cust.id === ME);

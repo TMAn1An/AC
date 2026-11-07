@@ -1,6 +1,6 @@
 /* NEW vendor app prototype. Default vendor: CoolTech Services (V1). Vendors see only jobs forwarded to them. */
 (function () {
-  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app');
+  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app'); AC.ui.dedupe($app);
   const ui = { f: { xl: '', xp: '', xs: true }, kyc: null, v: 'V1', tab: 'jobs', seg: 'new', stack: [], sheet: null, key: '', scroll: {}, map: null };
   try { if (sessionStorage.getItem('vendor.v')) ui.v = sessionStorage.getItem('vendor.v'); } catch (e) { }
   const V = () => AC.vendById[ui.v], esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

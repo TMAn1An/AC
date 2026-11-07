@@ -1,6 +1,6 @@
 /* NEW technician app prototype. Default user: Rakib Hasan (T1, own staff). Switch to a vendor technician from Profile. */
 (function () {
-  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app');
+  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app'); AC.ui.dedupe($app);
   const ui = { me: 'T1', tab: 'jobs', stack: [], sheet: null, signed: true, extra: {}, d: {}, done: { cash: false, ck: [true, true, false], photos: 1, err: false }, key: '', scroll: {}, map: null };
   try { if (sessionStorage.getItem('tech.me')) ui.me = sessionStorage.getItem('tech.me'); if (sessionStorage.getItem('tech.out')) ui.signed = false; } catch (e) { }
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
