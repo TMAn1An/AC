@@ -341,3 +341,11 @@ Critical path: payment merchant onboarding (weeks of paperwork, start in phase 1
 ## 21. Definition of production ready
 
 All P0 features done and tested on real devices. Crash-free sessions above 99.5% in the pilot. Security review passed with no high findings. Payment reconciliation proven. Play listings approved. Runbooks and support in place. Backups and restore tested. Staged rollout plan and rollback plan agreed.
+
+
+## Chat service (job chat and dispatch help)
+
+- Threads: `support` (customer to admin), `job:<id>` (customer and technician, open from accepted to working, read only afterwards) and `dispatch:<techId>` (technician, assistant, agent).
+- Dispatch state per technician: `bot`, `waiting` (needs an agent) or `agent`. Handoff happens on an explicit request, on an urgent keyword, or after two unmatched messages. An agent can take over, reply and resolve, which returns the thread to the assistant.
+- The assistant sits behind an interface (`reply(text, missCount, job) -> { text, handoff }`). The prototype uses keyword rules from data. Production can swap in a language model with the same contract and the same handoff rule.
+- Realtime delivery and unread counts use the same channel as job events. Push notifications (FCM) wake the other side. Admin can read job chats for accountability. Chat retention and report-a-message rules are open questions for the client.

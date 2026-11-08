@@ -21,7 +21,7 @@ Source: `Client_Requirements.pdf` (client notes plus developer Q&A). Where the b
 | Cart | AC can be added to cart. Installation is an optional add-on. AC bought from NEW gets an installation discount and a 1 year repair warranty. | Client reply 3 |
 | Tracking | Timeline status. Live map with a moving technician. Vendor location fixed. No Google APIs. | Client reply 4 and brief |
 | Payments | Cash on delivery plus bKash, Nagad and cards. Offers with providers later. | Client reply 5 |
-| Messaging | Customer to admin in the app. After confirmation, customer to technician by call or WhatsApp. Admin and technician stay in contact. | Client reply 6 and round 2 |
+| Messaging | Customer to admin in the app. Customer and technician text in the app while the job is on, and can still call or use WhatsApp. Technician to dispatch: assistant first, then a human agent in the admin panel. | Client reply 6, round 2 and later decision |
 | Delivery | Third-party courier (Pathao, RedX). | Client round 2 |
 | Admin modules | Dashboard, users, services, bookings, payments, collections, earnings, categories, promotions, vendors, reviews, messages. | Brief |
 
