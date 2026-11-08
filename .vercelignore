@@ -1,0 +1,7 @@
+node_modules
+marketing/out
+.agents
+.claude
+marketing/shital-*.mp4
+marketing/*.mp3
+scratch
