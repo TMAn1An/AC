@@ -87,3 +87,9 @@ body { overflow: hidden; }
 @media (max-width: 560px) { .kpis { grid-template-columns: 1fr; } .kpi { border-right: 0; border-bottom: 1px solid var(--line); } .g4 { grid-template-columns: 1fr 1fr; } .page-h h1 { font-size: 24px; } }
 
 .kpi:nth-child(1) small .i { color: var(--sky); } .kpi:nth-child(2) small .i { color: var(--brand); } .kpi:nth-child(3) small .i { color: var(--accent-d); } .kpi:nth-child(4) small .i { color: var(--coral); }
+
+.thr-tabs { border-bottom: 1px solid var(--line); } .thr-tabs .tabs { margin: 0; padding: 0 8px; }
+.thr button .badge { margin-left: 6px; flex: none; }
+.link { color: var(--brand); font-weight: 700; cursor: pointer; text-decoration: underline; }
+.conv-b .chat { padding: 0; }
+.chat { display: flex; flex-direction: column; gap: 8px; }

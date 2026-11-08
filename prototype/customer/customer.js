@@ -109,8 +109,10 @@
       return `<div class="tl-i ${cls}"><div class="tl-dot">${cls === 'done' ? icon('check', 13, 3) : ''}</div><div><div class="tl-t">${st[0]}</div><div class="muted" style="font-size:12.5px">${e ? AC.fmt.time(e.at) + (e.note && i === 0 ? '' : '') : (i === idx ? 'In progress' : 'Pending')}</div></div></div>`;
     }).join('');
     const vend = t && t.vendor ? AC.vendById[t.vendor].name : '';
+    const jc = S.chatMsgs('J:' + j.id), jOpen = S.chatOpen(j), jUn = S.chatUnread('cust:' + ME).includes('J:' + j.id);
+    const msgBtn = t && (jOpen || jc.length) ? `<button class="btn ${jOpen ? 'btn-p' : 'btn-s'} btn-block" style="margin-top:12px" data-a="jchat" data-v="${j.id}">${icon('chat', 18)}${jOpen ? 'Message ' + esc(t.name.split(' ')[0]) : 'Chat history'}${jUn ? '<span class="pill-n">New</span>' : ''}</button>` : '';
     const techCard = t && j.status !== 'cancelled' ? `<div class="cardx"><div class="techcard"><div class="avatar lg">${AC.fmt.ini(t.name)}</div><div class="grow"><b>${esc(t.name)}</b><div class="muted" style="font-size:13px">${vend ? 'Partner: ' + esc(vend) : 'NEW technician'}</div><div class="rate" style="font-weight:600;color:var(--ink-3)">${t.jobs} jobs completed</div></div></div>
-      <div class="actions"><button class="btn btn-s" data-a="toast" data-v="Calling ${esc(t.name)} (opens the phone dialer in the real app)">${icon('phone', 18)}Call</button><button class="btn btn-s" data-a="toast" data-v="Opening WhatsApp chat with ${esc(t.name)}">${icon('chat', 18)}WhatsApp</button><button class="btn btn-s" data-a="chat">${icon('send', 18)}Support</button></div></div>` : '';
+      ${msgBtn}<div class="actions"><button class="btn btn-s" data-a="toast" data-v="Calling ${esc(t.name)} (opens the phone dialer in the real app)">${icon('phone', 18)}Call</button><button class="btn btn-s" data-a="toast" data-v="Opening WhatsApp chat with ${esc(t.name)}">${icon('chat', 18)}WhatsApp</button><button class="btn btn-s" data-a="chat">${icon('send', 18)}Support</button></div></div>` : '';
     let extra = '';
     if (j.extra.status === 'proposed') {
       const sum = j.extra.items.reduce((a, i) => a + i.price, 0);
@@ -256,6 +258,15 @@
       cta: `<div class="qr" style="background:var(--surface);padding-top:10px">${['Where is my technician?', 'Please call me', 'Change my time slot'].map(q => `<button class="chip" data-a="quickmsg" data-v="${q}">${q}</button>`).join('')}</div><div class="chat-in"><input class="input" id="f-chat" data-b="chat" placeholder="Write a message" value="${esc(ui.d.chat || '')}" autocomplete="off"><button class="send" data-a="send" aria-label="Send">${icon('send', 20)}</button></div>`, flush: true };
   }
 
+  function JChat(id) {
+    const j = S.job(id), t = AC.techById[j.techId], first = t ? t.name.split(' ')[0] : 'Technician', open = S.chatOpen(j), ms = S.chatMsgs('J:' + id);
+    const QUICK = ['I am home', 'The gate is open', 'Please call me', 'Which floor are you on?'];
+    return { body: `${top('Chat with ' + esc(first), { right: `<span class="badge ${open ? 'b-ok' : 'b-n'}">${open ? 'On the job' : 'Closed'}</span>` })}
+      ${open ? '' : `<div class="chat-closed note">${icon('info', 18)}<span>Chat closes when the job ends. You can still read it.</span></div>`}
+      ${ms.length ? AC.chatUI.bubbles(ms, ['customer'], { tech: t ? t.name : 'Technician' }) : `<div class="empty"><h3>No messages yet</h3><span>Say hello to ${esc(first)}. Messages stay between you and your technician while the job is on.</span></div>`}`,
+      cta: open ? `<div class="qr" style="background:var(--surface);padding-top:10px">${QUICK.map(q => `<button class="chip" data-a="jquick" data-v="${q}">${q}</button>`).join('')}</div><div class="chat-in"><input class="input" id="f-jchat" data-b="jchat" placeholder="Message ${esc(first)}" value="${esc(ui.d.jchat || '')}" autocomplete="off"><button class="send" data-a="jsend" aria-label="Send">${icon('send', 20)}</button></div>` : '' };
+  }
+
   function Sheet() {
     const sh = ui.sheet; if (!sh) return '';
     if (sh.t === 'otp') {
@@ -295,6 +306,7 @@
       else if (t.s === 'history') body = top('History') + `<div class="pad">${AC.history.html('cust:' + ME)}</div>`;
       else if (t.s === 'notifs') body = top('Notifications') + `<div class="pad"><div class="cardx" style="padding:4px 16px">${AC.notifUI.html('cust:' + ME, 'track', 'order')}</div></div>`;
       else if (t.s === 'chat') { const c = Chat(); body = c.body; cta = c.cta; flush = true; }
+      else if (t.s === 'jchat') { const c = JChat(t.p.id); body = c.body; cta = c.cta; flush = true; if (S.chatUnread('cust:' + ME).includes('J:' + t.p.id)) setTimeout(() => S.act.markSeen('cust:' + ME, 'c:J:' + t.p.id), 0); }
     } else body = { home: Home, services: Services, shop: Shop, orders: Orders, account: Account }[ui.tab]();
     const n = cartCalc().n, UC = S.unread('cust:' + ME), ordDot = UC.jobs.length + UC.orders.length;
     const wb = ['track', 'chat'].includes(t && t.s) ? ' w' : (!t ? ' dk' : '');
@@ -302,7 +314,7 @@
     $app.innerHTML = `<div class="statusbar${wb}"><span>${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(' PM', '').replace(' AM', '')}</span><span class="sb-r"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3.5" fill="none" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><rect x="24" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".5"/></svg></span></div><div class="view" id="view">${body}</div>${cta}${tabs ? `<nav class="tabbar">${TABS.map(x => `<button class="tab ${ui.tab === x[0] ? 'on' : ''}" data-a="tab" data-v="${x[0]}">${icon(x[2], 22, ui.tab === x[0] ? 2.1 : 1.7)}${x[1]}${x[0] === 'orders' && ordDot ? `<span class="dot">${ordDot}</span>` : ''}</button>`).join('')}</nav>` : ''}${snack}${Sheet()}`;
     const v = document.getElementById('view');
     if (key === ui.key && ui.scroll[key] != null) v.scrollTop = ui.scroll[key]; else v.scrollTop = key.startsWith('chat') ? 99999 : 0;
-    if (t && t.s === 'chat') v.scrollTop = 99999;
+    if (t && (t.s === 'chat' || t.s === 'jchat')) v.scrollTop = 99999;
     ui.key = key;
     if (afId) { const e = document.getElementById(afId); if (e) { e.focus(); try { e.setSelectionRange(afSel, afSel); } catch (x) { } } }
     if (ui.sheet && ui.sheet.t === 'otp' && !ui.sheet.ok) { const o = document.getElementById('f-otp'); if (o && document.activeElement !== o) o.focus(); }
@@ -382,6 +394,9 @@
       const b = ui.book, id = S.act.createJob({ verified: true, cust: ME, svc: b.svc, units: b.units, ac: b.ac, slot: b.slot, note: b.note, addr: b.addr, phone: b.phone, method: b.method, discount: 100 });
       ui.stack = [{ s: 'track', p: { id } }]; ui.tab = 'orders'; ui.ot = 'book'; toast('Booking ' + id + ' sent to NEW', 'checkc'); render();
     },
+    jchat(el) { ui.d.jchat = ''; push('jchat', { id: el.dataset.v }); S.act.markSeen('cust:' + ME, 'c:J:' + el.dataset.v); },
+    jsend() { const t = ui.stack[ui.stack.length - 1]; if (!t || t.s !== 'jchat') return; const v = (ui.d.jchat || '').trim(); if (!v) return; S.act.jobChat(t.p.id, 'customer', v); ui.d.jchat = ''; render(); },
+    jquick(el) { const t = ui.stack[ui.stack.length - 1]; if (!t || t.s !== 'jchat') return; S.act.jobChat(t.p.id, 'customer', el.dataset.v); },
     track(el) { ui.d.rt = {}; ui.d.rev = ''; push('track', { id: el.dataset.v }); S.act.markSeen('cust:' + ME, 'j:' + el.dataset.v); },
     extra(el) { S.act.resolveExtra(el.dataset.id, el.dataset.v === 'yes', 'Customer'); toast(el.dataset.v === 'yes' ? 'Extra work approved' : 'Extra work declined'); },
     cancel(el) { S.act.cancel(el.dataset.id, 'Customer'); toast('Booking cancelled', 'info'); },
@@ -416,13 +431,15 @@
 
   $app.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el || el.disabled) return; const f = A[el.dataset.a]; if (f) f(el); });
   $app.addEventListener('input', e => { const k = e.target.dataset.b; if (!k) return; if (['addr', 'phone', 'note'].includes(k)) ui.book[k] = e.target.value; else ui.d[k] = e.target.value; if (k === 'otp' && e.target.value.length === 4) setTimeout(checkOtp, 120); if (k === 'q') render(); });
-  $app.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'f-chat') A.send(); });
+  $app.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'f-chat') A.send(); if (e.key === 'Enter' && e.target.id === 'f-jchat') A.jsend(); });
 
   /* Notifications on live changes from admin / vendor / technician */
   S.subscribe((s, prev) => {
     s.orders.filter(x => x.cust === ME).forEach(x => { const o = prev.orders.find(y => y.id === x.id); if (o && o.status !== x.status) toast('Order ' + x.id + ': ' + x.status, 'box'); });
     const last = s.msgs[s.msgs.length - 1], pl = prev.msgs[prev.msgs.length - 1];
     if (last && (!pl || last.id !== pl.id) && last.thread === ME && last.from === 'admin') toast('New message from NEW Support', 'chat');
+    const lc = (s.chat || []).slice(-1)[0], pc = (prev.chat || []).slice(-1)[0], tp = ui.stack[ui.stack.length - 1];
+    if (lc && (!pc || lc.id !== pc.id) && lc.from === 'tech' && S.chatUnread('cust:' + ME).includes(lc.thread) && !(tp && tp.s === 'jchat' && 'J:' + tp.p.id === lc.thread)) toast('New message from your technician', 'chat');
     render();
   });
   AC.history.track('cust:' + ME);

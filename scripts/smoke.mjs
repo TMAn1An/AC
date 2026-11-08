@@ -70,6 +70,20 @@ const r2 = await page.evaluate(async () => {
   // unread: new booking is unread for admin, own action does not re-flag it
   const c = mkJob(); out.unread = S.unread('admin', 'jobs').includes(c); S.act.markSeen('admin', 'j:' + c); out.read = !S.unread('admin', 'jobs').includes(c); S.act.assign(c, 'T1', 'Admin'); out.ownAction = !S.unread('admin', 'jobs').includes(c);
   out.forVendor = !S.unread('vendor:V2', 'jobs').includes(c);
+  // job chat: customer and technician can text only while the technician is on the job
+  const jc = mkJob(); S.act.assign(jc, 'T1', 'Admin'); S.act.jobChat(jc, 'customer', 'too early');
+  out.chatClosedEarly = S.chatMsgs('J:' + jc).length === 0;
+  S.act.respond(jc, 'T1', true); S.act.jobChat(jc, 'customer', 'Gate is open'); const unT = S.chatUnread('tech:T1').includes('J:' + jc); S.act.jobChat(jc, 'tech', 'On my way');
+  out.chatOpen = S.chatMsgs('J:' + jc).length === 2 && unT && !S.chatUnread('tech:T1').includes('J:' + jc);
+  S.act.startTrip(jc); S.act.arrive(jc); S.act.startWork(jc); S.act.complete(jc, true, S.job(jc).otp, 'technician');
+  const nChat = S.chatMsgs('J:' + jc).length; S.act.jobChat(jc, 'customer', 'after the job');
+  out.chatClosedAfter = S.chatMsgs('J:' + jc).length === nChat;
+  // dispatch help: assistant answers, unknown text gets one retry then a human agent, agent replies, resolve returns to the assistant
+  S.act.dispatchSend('T2', 'How do I deposit my cash?'); out.botAnswers = S.chatMsgs('D:T2').some(m => m.from === 'bot' && /Deposit cash/.test(m.text)) && S.dispatchOf('T2').mode === 'bot';
+  S.act.dispatchSend('T2', 'zzz qqq'); S.act.dispatchSend('T2', 'xyz plm'); out.botHandsOff = S.dispatchOf('T2').mode === 'waiting' && S.chatUnread('admin').includes('D:T2');
+  S.act.dispatchAgent('T2', 'Hi, how can I help?', 'Joy Das'); out.agentJoins = S.dispatchOf('T2').mode === 'agent' && S.chatMsgs('D:T2').slice(-1)[0].from === 'agent' && S.chatUnread('tech:T2').includes('D:T2');
+  S.act.dispatchResolve('T2', 'Joy Das'); out.resolved = S.dispatchOf('T2').mode === 'bot';
+  S.act.dispatchSend('T4', 'urgent accident'); out.urgentHandoff = S.dispatchOf('T4').mode === 'waiting';
   return out;
 });
 const bad = Object.entries(r2).filter(([, v]) => v !== true).map(([k]) => k);

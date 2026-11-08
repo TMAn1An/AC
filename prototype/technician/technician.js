@@ -44,6 +44,8 @@
   function Job(id) {
     const j = S.job(id); if (!j) return top('Job');
     const cod = j.pay.method === 'cod';
+    const jcN = S.chatMsgs('J:' + j.id).length, jcOpen = S.chatOpen(j), jcUn = S.chatUnread('tech:' + ui.me).includes('J:' + j.id);
+    const jChatBtn = j.techId === ui.me && (jcOpen || jcN) ? `<button class="btn ${jcOpen ? 'btn-p' : 'btn-s'} btn-block" style="margin-top:12px" data-a="jchat" data-v="${j.id}">${icon('chat', 18)}${jcOpen ? 'Message ' + esc(j.cust.name.split(' ')[0]) : 'Chat history'}${jcUn ? '<span class="pill-n">New</span>' : ''}</button>` : '';
     const stepHint = { assigned: 'Review and accept to start.', accepted: 'Head to the customer when ready.', ontheway: 'Customer can see your live location.', arrived: 'Greet the customer and confirm the issue.', working: 'Only do work covered by the booking. Anything extra needs approval first.', completed: 'Job finished.' }[j.status];
     return `${top(esc(j.id), { right: `<span class="badge ${S.META[j.status].cls}">${S.META[j.status].label}</span>` })}
     ${j.status === 'ontheway' ? navBanner(j) : ''}
@@ -52,7 +54,7 @@
       <div class="cardx"><div class="row" style="align-items:flex-start"><span class="svc-ic">${icon(AC.svcById[j.svc].icon, 22)}</span><div class="grow"><b style="font-size:16px">${esc(j.svcName)}</b><div class="muted" style="font-size:13px">${j.units} x ${esc(j.ac)} AC . ${esc(j.slot)}</div></div><b>${money(S.jobTotal(j))}</b></div>
         ${j.note ? `<div class="note" style="margin-top:12px">${icon('info', 18)}<span>${esc(j.note)}</span></div>` : ''}</div>
       <div class="cardx"><div class="row"><div class="avatar">${AC.fmt.ini(j.cust.name)}</div><div class="grow"><b>${esc(j.cust.name)}</b><div class="muted" style="font-size:13px">${esc(j.cust.addr)}</div></div></div>
-        <div class="actions" style="grid-template-columns:1fr 1fr"><button class="btn btn-s" data-a="toast" data-v="Calling ${esc(j.cust.name)} (dialer opens in the real app)">${icon('phone', 18)}Call</button><button class="btn btn-s" data-a="toast" data-v="Opening WhatsApp with ${esc(j.cust.name)}">${icon('chat', 18)}WhatsApp</button></div></div>
+        ${jChatBtn}<div class="actions" style="grid-template-columns:1fr 1fr"><button class="btn btn-s" data-a="toast" data-v="Calling ${esc(j.cust.name)} (dialer opens in the real app)">${icon('phone', 18)}Call</button><button class="btn btn-s" data-a="toast" data-v="Opening WhatsApp with ${esc(j.cust.name)}">${icon('chat', 18)}WhatsApp</button></div></div>
       <div class="cardx"><div class="row between"><b>Payment</b><span class="badge ${j.pay.status === 'paid' ? 'b-ok' : cod ? 'b-warn' : 'b-info'}">${j.pay.status === 'paid' ? 'Paid' : cod ? 'Collect cash' : 'Customer pays online'}</span></div>
         <div class="sum" style="margin-top:12px"><div><span>Service</span><span>${money(j.price)}</span></div>${j.discount ? `<div class="sv"><span>Discount</span><span>-${money(j.discount)}</span></div>` : ''}${j.extra.status === 'approved' ? `<div><span>Approved extra work</span><span>${money(S.extraTotal(j))}</span></div>` : ''}<div class="tot"><span>Total</span><span>${money(S.jobTotal(j))}</span></div></div></div>
       ${j.extra.status === 'proposed' ? `<div class="note warn">${icon('clock', 18)}<span><b>Waiting for the customer.</b> ${money(j.extra.items.reduce((a, i) => a + i.price, 0))} of extra work was sent to the customer. Start it only after they approve. NEW is informed.</span></div>` : ''}
@@ -141,17 +143,35 @@
   }
 
   /* ---------- Render ---------- */
-  const TABS = [['jobs', 'Jobs', 'briefcase'], ['map', 'Map', 'map'], ['earn', 'Earnings', 'wallet'], ['me', 'Profile', 'user']];
+  function JChat(id) {
+    const j = S.job(id), open = S.chatOpen(j), first = j.cust.name.split(' ')[0], ms = S.chatMsgs('J:' + id);
+    const QUICK = ['I am 10 minutes away', 'I am at your door', 'Please share the exact address', 'Please call me'];
+    return { body: `${top('Chat with ' + esc(first), { right: `<span class="badge ${open ? 'b-ok' : 'b-n'}">${open ? 'On the job' : 'Closed'}</span>` })}
+      ${open ? '' : `<div class="chat-closed note">${icon('info', 18)}<span>Chat closes when the job ends. You can still read it.</span></div>`}
+      ${ms.length ? AC.chatUI.bubbles(ms, ['tech'], { customer: j.cust.name }) : `<div class="empty"><h3>No messages yet</h3><span>Tell ${esc(first)} when you are close. Messages stay between you and the customer while the job is on.</span></div>`}`,
+      cta: open ? `<div class="qr" style="background:var(--surface);padding-top:10px">${QUICK.map(q => `<button class="chip" data-a="jquick" data-v="${q}">${q}</button>`).join('')}</div><div class="chat-in"><input class="input" id="f-jchat" data-b="jchat" placeholder="Message ${esc(first)}" value="${esc(ui.d.jchat || '')}" autocomplete="off"><button class="send" data-a="jsend" aria-label="Send">${icon('send', 20)}</button></div>` : '' };
+  }
+  /* Dispatch help: assistant first, then a human agent from the admin panel */
+  function Help() {
+    const d = S.dispatchOf(ui.me), ms = S.chatMsgs('D:' + ui.me), mode = d.mode;
+    const st = mode === 'agent' ? [`${esc(d.agent || 'An agent')} is with you`, 'A dispatch agent is replying here.', 'b-ok', 'user'] : mode === 'waiting' ? ['Waiting for a dispatch agent', 'You are in the queue. You can keep typing, the agent sees everything.', 'b-warn', 'clock'] : ['Dispatch assistant', 'Replies at once. An agent joins if it cannot solve it.', 'b-info', 'chat'];
+    const QUICK = ['Customer not answering', 'Cannot find the address', 'Cash or payment question', 'App problem'];
+    return { body: `${top('Dispatch', { back: false })}
+      <div class="cardx chat-head-card"><div class="row"><span class="svc-ic">${icon(st[3], 20)}</span><div class="grow"><b>${st[0]}</b><div class="muted" style="font-size:13px">${st[1]}</div></div><span class="badge ${st[2]}">${mode === 'bot' ? 'Assistant' : mode === 'waiting' ? 'Queue' : 'Agent'}</span></div></div>
+      ${ms.length ? AC.chatUI.bubbles(ms, ['tech'], {}) : `<div class="empty"><h3>Need help on a job?</h3><span>Tell dispatch what is wrong. The assistant answers first and an agent takes over when needed.</span></div>`}`,
+      cta: `<div class="qr" style="background:var(--surface);padding-top:10px">${mode === 'bot' ? `<button class="chip on" data-a="dagent">Talk to an agent</button>` + QUICK.map(q => `<button class="chip" data-a="dquick" data-v="${q}">${q}</button>`).join('') : ''}</div><div class="chat-in"><input class="input" id="f-dm" data-b="dm" placeholder="${mode === 'agent' ? 'Reply to ' + esc(d.agent || 'the agent') : 'Describe the problem'}" value="${esc(ui.d.dm || '')}" autocomplete="off"><button class="send" data-a="dsend" aria-label="Send">${icon('send', 20)}</button></div>` };
+  }
+  const TABS = [['jobs', 'Jobs', 'briefcase'], ['map', 'Map', 'map'], ['help', 'Dispatch', 'chat'], ['earn', 'Earnings', 'wallet'], ['me', 'Profile', 'user']];
   function render() {
     const af = document.activeElement, afId = af && af.id, afSel = af && af.selectionStart;
     const t = ui.stack[ui.stack.length - 1], key = t ? t.s + (t.id || '') : ui.tab;
     const old = document.getElementById('view'); if (old) ui.scroll[ui.key] = old.scrollTop;
     let body, cta = '', tabs = !t;
     if (!ui.signed) { $app.innerHTML = `<div class="statusbar"><span>${clock()}</span></div>${Login()}`; return; }
-    if (t && t.s === 'history') body = top('History') + `<div class="pad">${AC.history.html('tech:' + ui.me)}</div>`; else if (t && t.s === 'notifs') body = top('Notifications') + `<div class="pad"><div class="cardx" style="padding:4px 16px">${AC.notifUI.html('tech:' + ui.me, 'job')}</div></div>`; else if (t) { body = Job(t.id); const j = S.job(t.id); if (j) cta = jobCta(j); } else body = { jobs: Home, map: Map, earn: Earn, me: Me }[ui.tab]();
-    const dot = S.unread('tech:' + ui.me, 'jobs').length;
-    $app.innerHTML = `<div class="statusbar${!t && ui.tab === 'jobs' || !t ? ' dk' : ''}"><span>${clock()}</span><span class="sb-r"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" width="3" height="12" rx="1"/></svg></span></div><div class="view" id="view">${body}</div>${cta}${tabs ? `<nav class="tabbar t4">${TABS.map(x => `<button class="tab ${ui.tab === x[0] ? 'on' : ''}" data-a="tab" data-v="${x[0]}">${icon(x[2], 22, ui.tab === x[0] ? 2.1 : 1.7)}${x[1]}${x[0] === 'jobs' && dot ? `<span class="dot">${dot}</span>` : ''}</button>`).join('')}</nav>` : ''}${Sheet()}`;
-    const v = document.getElementById('view'); v.scrollTop = key === ui.key ? (ui.scroll[key] || 0) : 0; ui.key = key;
+    if (t && t.s === 'history') body = top('History') + `<div class="pad">${AC.history.html('tech:' + ui.me)}</div>`; else if (t && t.s === 'notifs') body = top('Notifications') + `<div class="pad"><div class="cardx" style="padding:4px 16px">${AC.notifUI.html('tech:' + ui.me, 'job')}</div></div>`; else if (t && t.s === 'jchat') { const c = JChat(t.id); body = c.body; cta = c.cta; if (S.chatUnread('tech:' + ui.me).includes('J:' + t.id)) setTimeout(() => S.act.markSeen('tech:' + ui.me, 'c:J:' + t.id), 0); } else if (t) { body = Job(t.id); const j = S.job(t.id); if (j) cta = jobCta(j); } else if (ui.tab === 'help') { const h = Help(); body = h.body; cta = h.cta; if (S.chatUnread('tech:' + ui.me).includes('D:' + ui.me)) setTimeout(() => S.act.markSeen('tech:' + ui.me, 'c:D:' + ui.me), 0); } else body = { jobs: Home, map: Map, earn: Earn, me: Me }[ui.tab]();
+    const CU = S.chatUnread('tech:' + ui.me), dot = S.unread('tech:' + ui.me, 'jobs').length + CU.filter(x => x.startsWith('J:')).length, helpDot = CU.filter(x => x.startsWith('D:')).length;
+    $app.innerHTML = `<div class="statusbar${!t && ui.tab === 'jobs' || !t ? ' dk' : ''}"><span>${clock()}</span><span class="sb-r"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" width="3" height="12" rx="1"/></svg></span></div><div class="view" id="view">${body}</div>${cta}${tabs ? `<nav class="tabbar">${TABS.map(x => `<button class="tab ${ui.tab === x[0] ? 'on' : ''}" data-a="tab" data-v="${x[0]}">${icon(x[2], 22, ui.tab === x[0] ? 2.1 : 1.7)}${x[1]}${x[0] === 'jobs' && dot ? `<span class="dot">${dot}</span>` : ''}${x[0] === 'help' && helpDot ? `<span class="dot">${helpDot}</span>` : ''}</button>`).join('')}</nav>` : ''}${Sheet()}`;
+    const v = document.getElementById('view'); v.scrollTop = (t && t.s === 'jchat') || (!t && ui.tab === 'help') ? 99999 : key === ui.key ? (ui.scroll[key] || 0) : 0; ui.key = key;
     if (afId) { const e = document.getElementById(afId); if (e && e !== document.activeElement) { e.focus(); try { e.setSelectionRange(afSel, afSel); } catch (x) { } } }
     mountMap(t);
   }
@@ -184,6 +204,12 @@
     signin() { ui.signed = true; try { sessionStorage.removeItem('tech.out'); } catch (e) { } render(); },
     signout() { ui.signed = false; try { sessionStorage.setItem('tech.out', '1'); } catch (e) { } render(); },
     online() { S.act.setOnline(ui.me, S.get().online[ui.me] === false); },
+    jchat(el) { ui.d.jchat = ''; ui.stack.push({ s: 'jchat', id: el.dataset.v }); render(); S.act.markSeen('tech:' + ui.me, 'c:J:' + el.dataset.v); },
+    jsend() { const x = ui.stack[ui.stack.length - 1]; if (!x || x.s !== 'jchat') return; const v = (ui.d.jchat || '').trim(); if (!v) return; S.act.jobChat(x.id, 'tech', v); ui.d.jchat = ''; render(); },
+    jquick(el) { const x = ui.stack[ui.stack.length - 1]; if (!x || x.s !== 'jchat') return; S.act.jobChat(x.id, 'tech', el.dataset.v); },
+    dsend() { const v = (ui.d.dm || '').trim(); if (!v) return; S.act.dispatchSend(ui.me, v); ui.d.dm = ''; render(); },
+    dquick(el) { S.act.dispatchSend(ui.me, el.dataset.v); },
+    dagent() { S.act.dispatchHandoff(ui.me); toast('A dispatch agent will reply here', 'chat'); },
     job(el) { ui.stack.push({ s: 'job', id: el.dataset.v }); render(); S.act.markSeen('tech:' + ui.me, 'j:' + el.dataset.v); },
     accept(el) { S.act.respond(el.dataset.id, true); toast('Job accepted. Customer notified.'); if (!ui.stack.length) { ui.stack.push({ s: 'job', id: el.dataset.id }); } render(); },
     decline(el) { S.act.respond(el.dataset.id, false); ui.stack = []; toast('Job declined', 'info'); render(); },
@@ -213,7 +239,12 @@
   $app.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el || el.disabled) return; const f = A[el.dataset.a]; if (f) f(el); });
 
   $app.addEventListener('input', e => { const k = e.target.dataset.b; if (!k) return; ui.d[k] = e.target.value; if (k === 'code' && e.target.value.length === 4) { ui.done.err = false; render(); } if (k === 'xtext' || k === 'amt' || k === 'ref' || k === 'wamt' || k === 'num') render(); });
-  S.subscribe(() => render());
+  $app.addEventListener('keydown', e => { if (e.key !== 'Enter') return; if (e.target.id === 'f-jchat') A.jsend(); if (e.target.id === 'f-dm') A.dsend(); });
+  S.subscribe((s, prev) => {
+    const lc = (s.chat || []).slice(-1)[0], pc = (prev.chat || []).slice(-1)[0], x = ui.stack[ui.stack.length - 1];
+    if (ui.signed && lc && (!pc || lc.id !== pc.id) && S.chatUnread('tech:' + ui.me).includes(lc.thread) && !(x && x.s === 'jchat' && 'J:' + x.id === lc.thread) && !(lc.thread.startsWith('D:') && !x && ui.tab === 'help')) toast(lc.thread.startsWith('D:') ? 'New message from dispatch' : 'New message from the customer', 'chat');
+    render();
+  });
   setInterval(() => document.querySelectorAll('.cd').forEach(e => { const s = Math.max(0, Math.round((+e.dataset.end - Date.now()) / 1000)); e.innerHTML = icon('clock', 16) + ' Respond in ' + fmtLeft(s); }), 1000);
   AC.history.track(() => 'tech:' + ui.me);
   render();

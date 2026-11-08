@@ -84,13 +84,35 @@
   }
 
   function Messages() {
-    const TU = new Set(S.unread('admin', 'threads')), s = S.get(), ids = [...new Set(s.msgs.map(m => m.thread))].sort((a, b) => Math.max(...s.msgs.filter(m => m.thread === b).map(m => m.at)) - Math.max(...s.msgs.filter(m => m.thread === a).map(m => m.at)));
+    const s = S.get(), TU = new Set(S.unread('admin', 'threads')), DU = new Set(S.chatUnread('admin')), me = staffMe().name;
+    const lastAt = t => Math.max(0, ...s.msgs.filter(m => m.thread === t).map(m => m.at));
+    const dLast = t => Math.max(0, ...(s.chat || []).filter(m => m.thread === t).map(m => m.at));
+    const custIds = [...new Set(s.msgs.map(m => m.thread))].sort((x, y) => lastAt(y) - lastAt(x));
+    const dispIds = [...new Set([...Object.keys(s.dispatch || {}).map(t => 'D:' + t), ...(s.chat || []).filter(m => m.thread.startsWith('D:')).map(m => m.thread)])].sort((x, y) => (s.dispatch[y.slice(2)] && s.dispatch[y.slice(2)].mode !== 'bot' ? 1 : 0) - (s.dispatch[x.slice(2)] && s.dispatch[x.slice(2)].mode !== 'bot' ? 1 : 0) || dLast(y) - dLast(x));
+    ui.mtab = ui.mtab || 'cust';
+    const ids = ui.mtab === 'tech' ? dispIds : custIds;
     if (!ids.includes(ui.thread)) ui.thread = ids[0];
-    const ms = s.msgs.filter(m => m.thread === ui.thread).sort((a, b) => a.at - b.at), c = AC.custById[ui.thread];
-    return head('Messages', 'Customers write to NEW support. Once a job is confirmed they reach the technician by call or WhatsApp.') + `<div class="msgs"><div class="thr">${ids.map(id => { const last = s.msgs.filter(m => m.thread === id).sort((a, b) => b.at - a.at)[0], cu = AC.custById[id]; return `<button class="${ui.thread === id ? 'on' : ''} ${TU.has(id) ? 'unread' : ''}" data-a="thread" data-v="${id}">${av(cu.name)}<span class="grow"><b>${esc(cu.name)}</b><div class="muted ellip" style="font-size:13px;max-width:170px">${esc(last.text)}</div></span>${TU.has(id) ? '<span class="un"></span>' : ''}</button>`; }).join('')}</div>
-      <div class="conv"><div class="conv-h">${av(c.name)}<div class="grow"><b>${esc(c.name)}</b><div class="muted" style="font-size:13px">${c.phone} . ${AC.areas[c.area].n}</div></div><button class="btn btn-s btn-sm" data-a="toast" data-v="Calling ${esc(c.name)} (VoIP in the real build)">${icon('phone', 16)}Call</button></div>
+    const tabs = `<div class="tabs"><button class="${ui.mtab === 'cust' ? 'on' : ''}" data-a="mtab" data-v="cust">Customers${TU.size ? `<span>${TU.size}</span>` : ''}</button><button class="${ui.mtab === 'tech' ? 'on' : ''}" data-a="mtab" data-v="tech">Technicians${DU.size ? `<span>${DU.size}</span>` : ''}</button></div>`;
+    const MODE = { bot: ['Assistant', 'b-info'], waiting: ['Needs agent', 'b-warn'], agent: ['With agent', 'b-ok'] };
+    let list, conv;
+    if (ui.mtab === 'tech') {
+      list = dispIds.map(id => { const tid = id.slice(2), t = AC.techById[tid], d = S.dispatchOf(tid), last = S.chatMsgs(id).filter(m => m.from !== 'sys').slice(-1)[0]; return `<button class="${ui.thread === id ? 'on' : ''} ${DU.has(id) ? 'unread' : ''}" data-a="thread" data-v="${id}">${av(t.name)}<span class="grow"><b>${esc(t.name)}</b><div class="muted ellip" style="font-size:13px;max-width:170px">${last ? esc(last.text) : 'No messages'}</div></span><span class="badge ${MODE[d.mode][1]}">${MODE[d.mode][0]}</span>${DU.has(id) ? '<span class="un"></span>' : ''}</button>`; }).join('') || '<div class="empty" style="padding:24px"><span>No technician chats yet.</span></div>';
+      const id = ui.thread, tid = id ? id.slice(2) : null, t = tid ? AC.techById[tid] : null;
+      if (t) {
+        const d = S.dispatchOf(tid), ms = S.chatMsgs(id), job = s.jobs.find(j => j.techId === tid && S.isActive(j));
+        conv = `<div class="conv"><div class="conv-h">${av(t.name)}<div class="grow"><b>${esc(t.name)}</b><div class="muted" style="font-size:13px">${t.vendor ? esc(AC.vendById[t.vendor].name) : 'NEW direct'} . ${t.phone || ''}${job ? ` . Job <a class="link" data-a="job" data-v="${job.id}">${job.id}</a>` : ''}</div></div><span class="badge ${MODE[d.mode][1]}">${MODE[d.mode][0]}${d.mode === 'agent' && d.agent ? ' . ' + esc(d.agent) : ''}</span>${d.mode === 'agent' ? `<button class="btn btn-s btn-sm" data-a="dres">${icon('check', 16)}Resolve</button>` : `<button class="btn ${d.mode === 'waiting' ? 'btn-p' : 'btn-s'} btn-sm" data-a="dtake">${d.mode === 'waiting' ? 'Take over' : 'Join chat'}</button>`}</div>
+          <div class="conv-b" id="convb">${ms.length ? AC.chatUI.bubbles(ms, ['agent'], { tech: t.name }) : '<div class="empty"><span>No messages yet.</span></div>'}</div>
+          <div class="conv-f"><input class="input" id="msg" data-b="msg" placeholder="${d.mode === 'agent' ? 'Reply to ' + esc(t.name.split(' ')[0]) : 'Reply to join the chat as ' + esc(me)}" autocomplete="off" value="${esc(ui.msg || '')}"><button class="btn btn-p" data-a="send">${icon('send', 16)}Send</button></div></div>`;
+      } else conv = '<div class="conv"><div class="empty"><h3>No technician chats yet</h3><span>Technicians write to dispatch from their app. The assistant answers first.</span></div></div>';
+    } else {
+      list = custIds.map(id => { const last = s.msgs.filter(m => m.thread === id).sort((x, y) => y.at - x.at)[0], cu = AC.custById[id]; return `<button class="${ui.thread === id ? 'on' : ''} ${TU.has(id) ? 'unread' : ''}" data-a="thread" data-v="${id}">${av(cu.name)}<span class="grow"><b>${esc(cu.name)}</b><div class="muted ellip" style="font-size:13px;max-width:170px">${esc(last.text)}</div></span>${TU.has(id) ? '<span class="un"></span>' : ''}</button>`; }).join('');
+      const c = AC.custById[ui.thread], ms = s.msgs.filter(m => m.thread === ui.thread).sort((x, y) => x.at - y.at);
+      conv = c ? `<div class="conv"><div class="conv-h">${av(c.name)}<div class="grow"><b>${esc(c.name)}</b><div class="muted" style="font-size:13px">${c.phone} . ${AC.areas[c.area].n}</div></div><button class="btn btn-s btn-sm" data-a="toast" data-v="Calling ${esc(c.name)} (VoIP in the real build)">${icon('phone', 16)}Call</button></div>
       <div class="conv-b" id="convb">${ms.map(m => `<div class="bub ${m.from === 'admin' ? 'me' : 'them'}">${esc(m.text)}<small>${AC.fmt.time(m.at)}</small></div>`).join('')}</div>
-      <div class="conv-f"><input class="input" id="msg" data-b="msg" placeholder="Reply to ${esc(c.name.split(' ')[0])}" autocomplete="off" value="${esc(ui.msg || '')}"><button class="btn btn-p" data-a="send">${icon('send', 16)}Send</button></div></div></div>`;
+      <div class="conv-f"><input class="input" id="msg" data-b="msg" placeholder="Reply to ${esc(c.name.split(' ')[0])}" autocomplete="off" value="${esc(ui.msg || '')}"><button class="btn btn-p" data-a="send">${icon('send', 16)}Send</button></div></div>` : '<div class="conv"></div>';
+    }
+    if (ui.mtab === 'tech' && ui.thread && DU.has(ui.thread) && ui.page === 'messages') setTimeout(() => S.act.markSeen('admin', 'c:' + ui.thread), 0);
+    return head('Messages', 'Customers write to NEW support. Technicians write to dispatch: the assistant answers first, and your team takes over here when it cannot.') + `<div class="msgs"><div class="thr"><div class="thr-tabs">${tabs}</div>${list}</div>${conv}</div>`;
   }
 
   function Services() {
@@ -207,6 +229,7 @@
       <div class="sect"><span class="eyebrow">Booking</span><dl class="kvs"><dt>Service</dt><dd>${esc(j.svcName)} x ${j.units}</dd><dt>AC type</dt><dd>${esc(j.ac)}</dd><dt>Slot</dt><dd>${esc(j.slot)}</dd><dt>Total</dt><dd>${money(S.jobTotal(j))}${j.discount ? ' <span class="muted">(after ' + money(j.discount) + ' discount)</span>' : ''}</dd><dt>Payment</dt><dd>${AC.payName(j.pay.method)} ${badge(j.pay.status === 'paid' ? 'Paid' : 'Unpaid', j.pay.status === 'paid' ? 'b-ok' : 'b-warn')}</dd>${j.note ? `<dt>Note</dt><dd>${esc(j.note)}</dd>` : ''}</dl></div>
       <div class="sect"><span class="eyebrow">Customer</span><div class="pick">${av(j.cust.name)}<div class="grow"><b>${esc(j.cust.name)}</b> ${j.verified ? badge('Phone verified', 'b-ok') : badge('Not verified', 'b-warn')}<div class="muted" style="font-size:13px">${esc(j.cust.addr)} . ${j.cust.phone}</div></div><button class="btn btn-s btn-sm" data-a="toast" data-v="Calling ${esc(j.cust.name)}">${icon('phone', 16)}Call</button></div></div>
       ${extra}${dispatch}${ov}
+      ${S.chatMsgs('J:' + j.id).length ? `<div class="sect"><span class="eyebrow">Customer and technician chat (read only)</span>${AC.chatUI.bubbles(S.chatMsgs('J:' + j.id), ['tech'], { customer: j.cust.name })}</div>` : ''}
       <div class="sect"><span class="eyebrow">Timeline</span><div class="tl">${j.tl.map((e, i) => `<div class="tl-i ${i === j.tl.length - 1 && S.isActive(j) ? 'now' : 'done'}"><div class="tl-dot">${i === j.tl.length - 1 && S.isActive(j) ? '' : icon('check', 13, 3)}</div><div><div class="tl-t">${TLT[e.k] || e.k}</div><div class="muted" style="font-size:12.5px">${esc(e.by)}${e.note ? ' . ' + esc(e.note) : ''} . ${AC.fmt.time(e.at)}</div></div></div>`).join('')}</div></div>${rate}</div>
       <div class="d-f">${can('messages') ? `<button class="btn btn-s" data-a="msgcust" data-v="${j.cust.id}">${icon('chat', 16)}Message customer</button>` : ''}<button class="btn btn-p" data-a="close">Done</button></div></aside>`;
   }
@@ -268,7 +291,7 @@
     const af = document.activeElement, afId = af && af.id, afSel = af && af.selectionStart, v = vend(), nav = v ? NAVV : NAVA, s = S.get();
     if (v && !NAVV.some(g => g[1].some(i => i[0] === ui.page))) ui.page = 'dash';
     if (!v && PAGE_PERM[ui.page] && !can(PAGE_PERM[ui.page])) ui.page = 'dash';
-    const un = S.unread('admin'), cnt = { bookings: un.jobs.length, messages: un.threads.length, orders: un.orders.length };
+    const un = S.unread('admin'), cnt = { bookings: un.jobs.length, messages: un.threads.length + S.chatUnread('admin').length, orders: un.orders.length };
     const old = document.getElementById('content'); if (old) ui.scroll[ui.key] = old.scrollTop; const key = ui.page;
     const D = ui.drawer ? (ui.drawer.t === 'job' ? JobDrawer(ui.drawer.id) : ui.drawer.t === 'order' ? OrderDrawer(ui.drawer.id) : ui.drawer.t === 'vendor' ? VendorDrawer(ui.drawer.id) : ui.drawer.t === 'notifs' ? NotifDrawer() : ui.drawer.t === 'tech' ? TechDrawer(ui.drawer.id) : ui.drawer.t === 'kyc' ? KycDrawer() : ui.drawer.t === 'role' ? RoleDrawer() : ui.drawer.t === 'invite' ? InviteDrawer() : FormDrawer(ui.drawer.id)) : '';
     $app.innerHTML = `<aside class="side ${ui.menu ? 'open' : ''}"><div class="brand">${AC.logo.tile(42, false)}<div>${AC.brand.name}<small>Admin panel</small></div></div><nav class="nav">${nav.map(g => [g[0], g[1].filter(i => v || !PAGE_PERM[i[0]] || can(PAGE_PERM[i[0]]))]).filter(g => g[1].length).map(g => `<div class="nav-g"><span class="eyebrow">${g[0]}</span>${g[1].map(i => `<a class="${ui.page === i[0] ? 'on' : ''}" data-a="go" data-v="${i[0]}">${icon(i[2], 18)}${i[1]}${cnt[i[0]] ? `<span class="cnt">${cnt[i[0]]}</span>` : ''}</a>`).join('')}</div>`).join('')}</nav>
@@ -331,8 +354,11 @@ ${av(v ? v.name : 'Admin User', 'ink')}</header>
     accdep(el) { S.act.acceptDeposit(el.dataset.v, 'Admin'); toast('Deposit accepted. Technician cash updated.', 'wallet'); }, rejdep(el) { S.act.rejectDeposit(el.dataset.v, 'Admin', 'Amount not received'); toast('Deposit rejected', 'info'); },
     paywd(el) { S.act.payWithdraw(el.dataset.v, 'Admin'); toast('Marked as paid. Technician notified.', 'wallet'); }, rejwd(el) { S.act.rejectWithdraw(el.dataset.v, 'Admin', 'Please contact finance'); toast('Returned to technician balance', 'info'); },
     msel(el) { ui.mapSel = el.dataset.v; render(); },
-    thread(el) { ui.thread = el.dataset.v; render(); S.act.markSeen('admin', 't:' + el.dataset.v); }, msgcust(el) { ui.thread = el.dataset.v; ui.page = 'messages'; ui.drawer = null; if (!S.get().msgs.some(m => m.thread === el.dataset.v)) S.act.send(el.dataset.v, 'admin', 'Hello from NEW support.'); render(); },
-    send() { const t = (ui.msg || '').trim(); if (!t) return; ui.msg = ''; S.act.send(ui.thread, 'admin', t); }
+    mtab(el) { ui.mtab = el.dataset.v; ui.thread = null; render(); },
+    dtake() { if (ui.thread && ui.thread.startsWith('D:')) S.act.dispatchTakeover(ui.thread.slice(2), staffMe().name); },
+    dres() { if (ui.thread && ui.thread.startsWith('D:')) { S.act.dispatchResolve(ui.thread.slice(2), staffMe().name); toast('Chat resolved. The assistant answers new messages.'); } },
+    thread(el) { ui.thread = el.dataset.v; render(); S.act.markSeen('admin', (el.dataset.v.startsWith('D:') ? 'c:' : 't:') + el.dataset.v); }, msgcust(el) { ui.mtab = 'cust'; ui.thread = el.dataset.v; ui.page = 'messages'; ui.drawer = null; if (!S.get().msgs.some(m => m.thread === el.dataset.v)) S.act.send(el.dataset.v, 'admin', 'Hello from NEW support.'); render(); },
+    send() { const t = (ui.msg || '').trim(); if (!t) return; ui.msg = ''; if (ui.thread && ui.thread.startsWith('D:')) S.act.dispatchAgent(ui.thread.slice(2), t, staffMe().name); else S.act.send(ui.thread, 'admin', t); }
   };
   $app.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el || el.disabled) return; if (el.classList.contains('dscrim') && e.target !== el) return; const f = A[el.dataset.a]; if (f) f(el); });
   const setPath = (path, val) => { const [a, b] = path.split('.'); if (b) ui[a][b] = val; else ui[a] = val; };
@@ -343,6 +369,8 @@ ${av(v ? v.name : 'Admin User', 'ink')}</header>
   S.subscribe((s, p) => {
     const v = vend();
     if (!v && s.orders.length > p.orders.length) toast('New order ' + s.orders[0].id + ' from ' + AC.custById[s.orders[0].cust].name, 'cart');
+    const lc = (s.chat || []).slice(-1)[0], pc = (p.chat || []).slice(-1)[0];
+    if (!vend() && lc && (!pc || lc.id !== pc.id) && lc.thread.startsWith('D:') && ((lc.from === 'sys' && lc.text.startsWith('Waiting')) || (lc.from === 'tech' && S.dispatchOf(lc.thread.slice(2)).mode !== 'bot'))) toast(AC.techById[lc.thread.slice(2)].name + ' needs a dispatch agent', 'chat');
     const last = s.msgs[s.msgs.length - 1], pl = p.msgs[p.msgs.length - 1]; if (!v && last && (!pl || last.id !== pl.id) && last.from === 'customer') toast('New message from ' + AC.custById[last.thread].name, 'chat');
     render();
   });

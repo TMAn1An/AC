@@ -2,7 +2,7 @@
    BroadcastChannel + localStorage + postMessage relay, so an action in one app shows up in the others in real time.
    In the Flutter build this layer becomes the backend API + realtime channel (see docs/ARCHITECTURE.md). */
 (function () {
-  const KEY = 'shital.demo.v1', MIN = 60000;
+  const KEY = 'shital.demo.v2', MIN = 60000, CHAT_OPEN = ['accepted', 'ontheway', 'arrived', 'working'];
   let S = null; const subs = [];
 
   /* ---------- Geometry ---------- */
@@ -136,12 +136,20 @@
       M('m4', 'C3', 'admin', 'Thanks Farhana. We are matching you with a partner technician near Uttara.', 3),
       M('m5', 'C8', 'customer', 'Where is my daypack order?', 14)
     ];
+    const CM = (id, thread, from, text, m) => ({ id, thread, from, text, at: ago(m) });
+    const chat = [
+      CM('c1', 'D:T3', 'tech', 'The customer is not opening the gate. I have been here for 10 minutes.', 9),
+      CM('c2', 'D:T3', 'bot', 'Call the customer twice, then send a message in the job chat. Wait up to ten minutes at the address. If there is still no answer, tap Talk to an agent and dispatch will decide whether to reschedule or cancel.', 9),
+      CM('c3', 'D:T3', 'tech', 'I called three times. No answer.', 6),
+      CM('c4', 'D:T3', 'bot', 'I am passing you to a dispatch agent. You do not need to repeat yourself.', 6),
+      CM('c5', 'D:T3', 'sys', 'Waiting for a dispatch agent', 6)
+    ];
     const reviews = [
       { id: 'r1', cust: 'C4', pid: 'bg1', stars: 5, text: 'Beautiful stitching. Looks even better in person.', at: ago(2400) },
       { id: 'r2', cust: 'C2', pid: 'cs2', stars: 4, text: 'Light scent and my hair feels softer.', at: ago(1400) }
     ];
     return {
-      rev: n, seq: { job: 2054, order: 1039, msg: 10 }, jobs, orders, msgs, reviews,
+      rev: n, seq: { job: 2054, order: 1039, msg: 10 }, jobs, orders, msgs, chat, dispatch: { T3: { mode: 'waiting', miss: 0, agent: null, at: ago(6) } }, reviews,
       online: { T1: true, T2: true, T3: true, T4: true, T5: true, T6: true, T7: true, T8: true, T9: true },
       readAt: { C1: n, admin: ago(20) }, nread: {}, seen: {}, wallets, deposits: [], withdrawals: [], ledger: [], baseline: n - 15 * MIN, newTechs: [], roles: JSON.parse(JSON.stringify(AC.defaultRoles)), staff: JSON.parse(JSON.stringify(AC.defaultStaff)),
       extraCatalog: AC.parts.map((p, i) => ({ id: 'X' + (i + 1), label: p.label, price: p.price })), seq2: { tech: 10, x: 10 },
@@ -415,6 +423,14 @@
         o.tl.push({ k: o.status, at: Date.now(), by: o.status === 'delivered' ? (o.courier || 'Courier') : 'Admin' });
       });
     },
+    /* Job chat: customer and technician can text while the technician is on the job. It closes when the job ends. */
+    jobChat(id, from, text) { text = String(text || '').trim(); if (!text) return; commit(s => { const j = s.jobs.find(x => x.id === id); if (!j || !CHAT_OPEN.includes(j.status)) return; s.chat.push({ id: 'c' + (s.seq.msg++), thread: 'J:' + id, from, text, at: Date.now() }); }); },
+    /* Dispatch help: technician writes, the assistant answers, and the chat moves to a human agent when needed. */
+    dispatchSend(techId, text) { text = String(text || '').trim(); if (!text) return; commit(s => { const th = 'D:' + techId, d = s.dispatch[techId] = s.dispatch[techId] || { mode: 'bot', miss: 0, agent: null }, add = (from, t, by) => s.chat.push({ id: 'c' + (s.seq.msg++), thread: th, from, text: t, at: Date.now() + s.chat.length % 3, by }); add('tech', text); d.at = Date.now(); if (d.mode !== 'bot') return; const j = s.jobs.find(x => x.techId === techId && CHAT_OPEN.includes(x.status)), r = AC.bot.reply(text, d.miss, j); d.miss = r.miss; add('bot', r.text); if (r.handoff) { d.mode = 'waiting'; add('sys', 'Waiting for a dispatch agent'); } }); },
+    dispatchHandoff(techId) { commit(s => { const th = 'D:' + techId, d = s.dispatch[techId] = s.dispatch[techId] || { mode: 'bot', miss: 0, agent: null }; if (d.mode !== 'bot') return; const add = (from, t) => s.chat.push({ id: 'c' + (s.seq.msg++), thread: th, from, text: t, at: Date.now(), by: undefined }); add('tech', 'Talk to an agent'); add('bot', 'I am passing this to a dispatch agent. You do not need to repeat yourself.'); add('sys', 'Waiting for a dispatch agent'); d.mode = 'waiting'; d.at = Date.now(); }); },
+    dispatchAgent(techId, text, by) { text = String(text || '').trim(); if (!text) return; commit(s => { const d = s.dispatch[techId] = s.dispatch[techId] || { mode: 'bot', miss: 0, agent: null }; if (d.mode !== 'agent') s.chat.push({ id: 'c' + (s.seq.msg++), thread: 'D:' + techId, from: 'sys', text: by + ' joined the chat', at: Date.now() }); d.mode = 'agent'; d.agent = by; d.at = Date.now(); s.chat.push({ id: 'c' + (s.seq.msg++), thread: 'D:' + techId, from: 'agent', text, at: Date.now() + 1, by }); }); },
+    dispatchTakeover(techId, by) { commit(s => { const d = s.dispatch[techId]; if (!d || d.mode === 'agent') return; d.mode = 'agent'; d.agent = by; d.at = Date.now(); s.chat.push({ id: 'c' + (s.seq.msg++), thread: 'D:' + techId, from: 'sys', text: by + ' joined the chat', at: Date.now() }); }); },
+    dispatchResolve(techId, by) { commit(s => { const d = s.dispatch[techId]; if (!d || d.mode === 'bot') return; d.mode = 'bot'; d.miss = 0; d.agent = null; d.at = Date.now(); s.chat.push({ id: 'c' + (s.seq.msg++), thread: 'D:' + techId, from: 'sys', text: 'Resolved by ' + by + '. Message again any time.', at: Date.now() }); }); },
     send(thread, from, text) { commit(s => { s.msgs.push({ id: 'm' + (s.seq.msg++), thread, from, text, at: Date.now() }); }); },
     markSeen(aud, key) { commit(s => { (s.seen[aud] = s.seen[aud] || {})[key] = Date.now(); }); },
     markNotifs(aud) { commit(s => { s.nread[aud] = Date.now(); }); },
@@ -476,6 +492,28 @@
     notifUnread: aud => (S.notifs || []).filter(n => n.aud === aud && n.at > ((S.nread || {})[aud] || 0)).length,
     watch: (aud, cb) => subs.push((s, p) => { const a = typeof aud === 'function' ? aud() : aud, seen = new Set((p.notifs || []).map(n => n.id)); (s.notifs || []).filter(n => n.aud === a && !seen.has(n.id)).forEach(cb); }),
     threadMsgs: t => S.msgs.filter(m => m.thread === t),
+    chatMsgs: t => (S.chat || []).filter(m => m.thread === t).sort((a, b) => a.at - b.at),
+    chatOpen: j => !!j && CHAT_OPEN.includes(j.status),
+    dispatchOf: id => (S.dispatch || {})[id] || { mode: 'bot', miss: 0, agent: null },
+    /* Newest message from the other side, or 0 once the reader has replied after it. */
+    chatVer(thread, aud) {
+      const dm = S.dispatch || {}, ms = (S.chat || []).filter(x => x.thread === thread);
+      const other = thread.startsWith('J:') ? (aud.startsWith('cust:') ? ['tech'] : ['customer']) : aud === 'admin' ? ['tech'] : ['bot', 'agent'];
+      const mine = thread.startsWith('J:') ? (aud.startsWith('cust:') ? ['customer'] : ['tech']) : aud === 'admin' ? ['agent'] : ['tech'];
+      if (thread.startsWith('D:') && aud === 'admin' && (dm[thread.slice(2)] || {}).mode === 'bot') return 0;
+      const last = ms.filter(x => other.includes(x.from)).reduce((a, x) => Math.max(a, x.at), 0), reply = ms.filter(x => mine.includes(x.from)).reduce((a, x) => Math.max(a, x.at), 0);
+      return last > reply || (thread.startsWith('D:') && aud.startsWith('tech:')) ? last : 0;
+    },
+    chatUnread(aud) {
+      const out = [], th = new Set((S.chat || []).map(m => m.thread)), id = aud.includes(':') ? aud.split(':')[1] : '';
+      th.forEach(t => {
+        let mineT = false;
+        if (t.startsWith('J:')) { const j = S.jobs.find(x => x.id === t.slice(2)); mineT = !!j && ((aud.startsWith('cust:') && j.cust.id === id) || (aud.startsWith('tech:') && j.techId === id)); }
+        else mineT = aud === 'admin' || (aud.startsWith('tech:') && t === 'D:' + id);
+        if (mineT && this.isUnread(aud, 'c:' + t, this.chatVer(t, aud))) out.push(t);
+      });
+      return out;
+    },
     wallet: id => (S.wallets || {})[id] || { cash: 0, incentive: 0 },
     ratingOf: j => j.rating ? (j.rating.overall || j.rating.stars || 0) : 0
   };

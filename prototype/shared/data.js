@@ -122,6 +122,34 @@ window.AC = window.AC || {};
   /* Public tracking pages. Confirm the exact URL format with each courier before launch. */
   AC.courierLinks = { 'Pathao Courier': id => 'https://merchant.pathao.com/tracking?consignment_id=' + id, 'RedX': id => 'https://redx.com.bd/track-global-parcel/?trackingId=' + id };
 
+
+  /* Dispatch assistant (technician help). Rules are plain data so wording and topics can change without touching code.
+     Each rule lists keywords (any match counts, the rule with most matches wins). `handoff` sends the chat to a human agent at once.
+     No rule matched twice in a row also hands off. In production the same interface can be backed by a language model. */
+  AC.botRules = [
+    { id: 'agent', handoff: true, k: ['agent', 'human', 'person', 'call me', 'urgent', 'emergency', 'accident', 'hurt', 'injur', 'police', 'threat', 'fight', 'unsafe'], a: 'I am passing you to a dispatch agent now.' },
+    { id: 'hello', k: ['hello', 'hi ', 'hey', 'salam', 'help'], a: 'Hi, I am the NEW dispatch assistant. Tell me the problem in a few words, for example customer, address, payment, extra work or the app.' },
+    { id: 'thanks', k: ['thanks', 'thank you', 'solved', 'ok got it', 'fixed'], a: 'Glad to help. Message me any time.' },
+    { id: 'noanswer', k: ['not answer', 'no answer', 'not picking', 'not opening', 'phone off', 'not home', 'not here', 'gate', 'unreachable', 'switched off'], a: 'Call the customer twice, then send a message in the job chat. Wait up to ten minutes at the address. If there is still no answer, tap Talk to an agent and dispatch will decide whether to reschedule or cancel.' },
+    { id: 'address', k: ['address', 'location', 'cannot find', 'cant find', 'lost', 'wrong pin', 'map', 'direction', 'route', 'landmark'], a: 'Open the job and follow the live directions on the map. If the pin looks wrong, call the customer from the job screen and ask for a landmark. Still stuck? Tell me the area name or tap Talk to an agent.' },
+    { id: 'extra', k: ['extra', 'part', 'spare', 'price', 'cost', 'not in list', 'capacitor', 'gas'], a: 'For extra work tap Extra work and pick a priced item. If it is not on the list, choose Ask for a price and describe it. NEW or your vendor adds the price, and the customer decides. Do not start extra work before they approve.' },
+    { id: 'cash', k: ['cash', 'payment', 'paid', 'deposit', 'collect', 'money', 'balance', 'wallet'], a: 'Cash you collect stays in your wallet. Open Earnings and tap Deposit cash. Admin or your vendor accepts it, and only then does your cash balance go to zero.' },
+    { id: 'withdraw', k: ['withdraw', 'incentive', 'bonus', 'payout', 'commission'], a: 'Incentive can be withdrawn once your cash balance is zero. Open Earnings and tap Withdraw. Finance pays it to your bKash or Nagad.' },
+    { id: 'code', k: ['code', 'otp', 'finish', 'complete', 'close job', 'cannot complete'], a: 'To finish a job, ask the customer for the 4 digit completion code in their NEW app. It is not an SMS. If they cannot find it, they open the booking in their app.' },
+    { id: 'late', k: ['late', 'traffic', 'delay', 'stuck', 'jam', 'running behind'], a: 'Send the customer your new arrival time in the job chat. If you will be more than 30 minutes late, tap Talk to an agent so dispatch can warn them or reassign.' },
+    { id: 'cancel', k: ['cancel', 'reassign', 'change job', 'swap', 'give job'], a: 'Only dispatch can cancel or reassign a job. Tap Talk to an agent and share the job number.' },
+    { id: 'app', k: ['app', 'crash', 'bug', 'not working', 'slow', 'freeze', 'error', 'login', 'network'], a: 'Close and reopen the app and check your connection. If it keeps failing, tap Talk to an agent. An agent can finish the job from the admin panel if the app is down.' }
+  ];
+  AC.bot = {
+    reply(text, miss, job) {
+      const t = ' ' + String(text || '').toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ') + ' ';
+      let best = null, bestN = 0;
+      AC.botRules.forEach(r => { const n = r.k.filter(k => t.includes(k.includes(' ') || k.endsWith(' ') ? k : ' ' + k) || t.includes(k)).length; if (n > bestN) { best = r; bestN = n; } });
+      if (best) { const ctx = job && best.id !== 'agent' && best.id !== 'hello' && best.id !== 'thanks' ? ' (Your current job is ' + job.id + '.)' : ''; return { text: best.a + ctx, handoff: !!best.handoff, miss: 0 }; }
+      if ((miss || 0) >= 1) return { text: 'I could not work that out. I am passing you to a dispatch agent. You do not need to repeat yourself.', handoff: true, miss: 0 };
+      return { text: 'I am not sure I understood. Can you say it another way, for example customer, address, payment, extra work or app? Or tap Talk to an agent.', handoff: false, miss: 1 };
+    }
+  };
   /* Staff permissions and default roles. Editable at runtime in the admin web app (Team and roles). */
   AC.perms = [['dispatch', 'Dispatch and bookings'], ['override', 'Override job status'], ['extra', 'Price extra work'], ['orders', 'Orders and couriers'], ['catalog', 'Services, products, categories'], ['promos', 'Promotions'], ['people', 'Users, technicians, vendors'], ['kyc', 'Onboard and verify technicians'], ['finance', 'Payments, collections, earnings'], ['reviews', 'Reviews and ratings'], ['messages', 'Customer messages'], ['roles', 'Staff and roles']];
   AC.defaultRoles = [
