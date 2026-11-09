@@ -36,6 +36,7 @@ Phase 0 is done: a clickable design prototype in `prototype/` (plain HTML, CSS, 
 - One primary action per screen. Status first. Large touch targets in the technician app.
 - Copy: plain, active voice. The prototype is English only. Bangla is a language option for the Flutter build (phase 4), not mixed into screens.
 - Brand: the client logo (NEW). Palette sampled from it: darker warm tones of the logo blue, green and red (red only for flags and warnings) (neutrals, blue, red and green accents). Tokens in `prototype/shared/base.css`, flat theme in `prototype/shared/theme.css`. See `docs/BRAND.md`. No gloss: flat surfaces, hairline borders, one soft shadow on floating layers. Rebuild the logo with `python3 scripts/build-logo.py`.
+- Dark mode: light, dark or system, chosen in each app (Account, Profile, More, admin top bar) and in the hub header. `prototype/shared/theme.js` sets `data-theme` on `<html>`; dark tokens live in `base.css` under `:root[data-theme="dark"]`. Use tokens only (`--surface`, `--bg-2`, `--ink-bg`, `--surface-a`, map and art colours follow the theme). Never hardcode a light colour.
 - Quality bar: Y Combinator demo. Clean, minimal, alive (live updates, motion with purpose, reduced-motion respected).
 
 ## Working on the prototype

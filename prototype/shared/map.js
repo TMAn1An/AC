@@ -1,7 +1,9 @@
 /* Schematic city map drawn in SVG. No Google APIs. Production uses OpenStreetMap tiles through flutter_map (see docs/ARCHITECTURE.md). */
 (function () {
   const NS = 'http://www.w3.org/2000/svg', W = 1000, H = 640;
-  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const VARS = {"#E6E9F4": "--map-block", "#F1F3F9": "--map-bg", "#CFE1F5": "--map-water", "#D4EEDC": "--map-park", "#DDE1EF": "--map-case", "#FFFFFF": "--map-road", "#8A90AB": "--map-label", "#6B84C9": "--map-water-label", "#A6DDBF": "--map-route", "#A9D6BC": "--map-route", "#FEFEFE": "--pin-ring"};
+  /* Map colours come from CSS variables so the map follows light and dark mode without redrawing. */
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) { const v = attrs[k]; if ((k === 'fill' || k === 'stroke') && typeof v === 'string' && VARS[v.toUpperCase()] && !(k === 'stroke' && v === '#fff')) e.style.setProperty(k, 'var(' + VARS[v.toUpperCase()] + ')'); else e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; };
 
   function base(svg) {
     const defs = el('defs', {}, svg);
@@ -32,16 +34,16 @@
     const k = p.kind, c = p.color || '';
     if (k === 'tech') {
       if (p.pulse) el('circle', { r: 12, fill: '#272B7A', opacity: .35, class: 'pulse' }, g);
-      el('circle', { r: 11, fill: p.dim ? '#A29C93' : '#272B7A', stroke: '#fff', 'stroke-width': 3 }, g);
+      el('circle', { r: 11, fill: p.dim ? '#A29C93' : '#272B7A', stroke: '#FEFEFE', 'stroke-width': 3 }, g);
       el('path', { d: 'M-3.5 3.5 3.5-3.5M-1.5-4.5h-2v2M1.5 4.5h2v-2', stroke: '#fff', 'stroke-width': 1.6, fill: 'none', 'stroke-linecap': 'round' }, g);
     } else if (k === 'vendor') {
-      el('rect', { x: -12, y: -12, width: 24, height: 24, rx: 7, fill: '#0A8A47', stroke: '#fff', 'stroke-width': 3 }, g);
+      el('rect', { x: -12, y: -12, width: 24, height: 24, rx: 7, fill: '#0A8A47', stroke: '#FEFEFE', 'stroke-width': 3 }, g);
       el('path', { d: 'M-6 -2l1.8-4.5h8.4L6 -2M-6 -2h12M-5 -2v7h10v-7', stroke: '#fff', 'stroke-width': 1.6, fill: 'none', 'stroke-linejoin': 'round' }, g);
     } else if (k === 'cust') {
       el('path', { d: 'M0 0C-14-14-16-22-16-26a16 16 0 0 1 32 0c0 4-2 12-16 26Z', transform: 'translate(0 0)', fill: '#1E1B18', stroke: '#fff', 'stroke-width': 2.5 }, g);
       el('circle', { cy: -26, r: 5.5, fill: '#fff' }, g);
     } else if (k === 'job') {
-      el('circle', { r: 9, fill: p.color || '#272B7A', stroke: '#fff', 'stroke-width': 3 }, g);
+      el('circle', { r: 9, fill: p.color || '#272B7A', stroke: '#FEFEFE', 'stroke-width': 3 }, g);
     }
     if (p.label) {
       const w = Math.max(34, p.label.length * 6.4 + 14), y = k === 'cust' ? 14 : 24;

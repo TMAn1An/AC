@@ -1,6 +1,6 @@
 /* NEW admin mobile app prototype: control on the go (dispatch, approvals, inbox, collections). Heavy catalog and finance work lives in the admin web app. */
 (function () {
-  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app'); AC.ui.dedupe($app);
+  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app'); AC.ui.dedupe($app); AC.theme.on(() => render());
   const ui = { f: { ov: '', ovs: 'completed', xl: '', xp: '', xs: true, cs: 'Out for delivery' }, kyc: null, tab: 'home', seg: 'all', stack: [], sheet: null, thread: null, msg: '', key: '', scroll: {}, map: null, sel: null };
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const toast = (m, ic) => { const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = icon(ic || 'checkc', 18) + '<span>' + esc(m) + '</span>'; document.getElementById('toasts').appendChild(t); setTimeout(() => t.remove(), 3300); };
@@ -14,7 +14,7 @@
 
   function spark(vals) {
     const W = 300, H = 64, mx = Math.max(...vals), pts = vals.map((v, i) => [i * W / (vals.length - 1), H - 6 - (H - 14) * v / mx]), d = 'M' + pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('L'), last = pts[pts.length - 1];
-    return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Revenue trend"><path d="${d}L${W} ${H}L0 ${H}Z" fill="#ECECF3"/><path d="${d}" fill="none" stroke="#272B7A" stroke-width="2.5" stroke-linejoin="round"/><circle cx="${last[0]}" cy="${last[1]}" r="4.5" fill="#272B7A" stroke="#fff" stroke-width="2"/></svg>`;
+    return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Revenue trend"><path d="${d}L${W} ${H}L0 ${H}Z" style="fill:var(--brand-l)"/><path d="${d}" fill="none" style="stroke:var(--brand)" stroke-width="2.5" stroke-linejoin="round"/><circle cx="${last[0]}" cy="${last[1]}" r="4.5" style="fill:var(--brand);stroke:var(--surface)" stroke-width="2"/></svg>`;
   }
 
   function Home() {
@@ -81,7 +81,7 @@
   const LISTS = { history: 'My history', notifs: 'Notifications', orders: 'Orders', vendors: 'Vendors', techs: 'Technicians', cash: 'Collections and payouts', pays: 'Payments', reviews: 'Reviews', promos: 'Promotions' };
   function More() {
     const L = [['orders', 'cart', 'Orders', 'Pack, ship and track goods'], ['vendors', 'store', 'Vendors', 'Partner companies and contacts'], ['techs', 'briefcase', 'Technicians', 'Status, rating, cash in hand'], ['history', 'clock', 'My history', 'Updates saved on this phone'], ['cash', 'wallet', 'Collections and payouts', 'Deposits to accept, withdrawals to pay'], ['pays', 'card', 'Payments', 'All transactions'], ['reviews', 'star', 'Reviews', 'Customer feedback'], ['promos', 'megaphone', 'Promotions', 'Active offers']];
-    return `${top('More', { back: false })}<div class="stack">${L.map(x => `<button class="cardx lrow" data-a="list" data-v="${x[0]}"><span class="svc-ic">${icon(x[1], 20)}</span><span class="grow"><b>${x[2]}</b><small>${x[3]}</small></span>${x[0] === 'orders' && S.unread('admin', 'orders').length ? `<span class="ucount">${S.unread('admin', 'orders').length}</span>` : ''}${icon('right', 18)}</button>`).join('')}<div class="note">${icon('info', 18)}<span>Catalog, finance reports, settings and user management are in the NEW admin web app.</span></div></div>`;
+    return `${top('More', { back: false })}<div class="stack"><div class="cardx"><div class="row between" style="margin-bottom:10px"><b>Appearance</b><span class="muted" style="font-size:13px">Light, dark or follow the phone</span></div>${AC.theme.seg()}</div>${L.map(x => `<button class="cardx lrow" data-a="list" data-v="${x[0]}"><span class="svc-ic">${icon(x[1], 20)}</span><span class="grow"><b>${x[2]}</b><small>${x[3]}</small></span>${x[0] === 'orders' && S.unread('admin', 'orders').length ? `<span class="ucount">${S.unread('admin', 'orders').length}</span>` : ''}${icon('right', 18)}</button>`).join('')}<div class="note">${icon('info', 18)}<span>Catalog, finance reports, settings and user management are in the NEW admin web app.</span></div></div>`;
   }
   function List(k) {
     const s = S.get(), OU = new Set(S.unread('admin', 'orders')); let h = '';

@@ -51,7 +51,7 @@
 .tabbar { background: var(--surface); box-shadow: none; border-top: 1px solid var(--line); }
 .topbar, .cta-bar { background: var(--surface); }
 header.nav { background: var(--bg); }
-.toast, .snack { background: var(--ink); box-shadow: 0 8px 24px rgba(16,20,38,.28); }
+.toast, .snack { background: var(--ink-bg); box-shadow: 0 8px 24px rgba(16,20,38,.28); }
 .tab.on svg { box-shadow: none; }
 .logo-tile { box-shadow: none; }
 .brand .logo-tile { box-shadow: none; }
@@ -169,3 +169,11 @@ header.nav { background: var(--bg); }
 .chat-closed { margin: 0 20px 14px; }
 .chat-head-card { margin: 12px 20px 0; }
 .pill-n { background: var(--red); color: #fff; border-radius: 99px; min-width: 18px; height: 18px; padding: 0 7px; font-size: 11px; font-weight: 700; display: inline-grid; place-items: center; margin-left: 8px; }
+
+/* Theme switch */
+.theme-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; padding: 3px; background: var(--seg-bg); border-radius: 12px; }
+.theme-seg button { height: 36px; border-radius: 9px; font-weight: 700; font-size: 13px; color: var(--ink-3); }
+.theme-seg button.on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-1); }
+.toast, .snack { background: var(--ink-bg); color: #fff; }
+.logo-tile { --logo-ink: #111111; }
+:root[data-theme="dark"] { --logo-ink: #F2EFEA; }

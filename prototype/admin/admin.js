@@ -1,6 +1,6 @@
 /* NEW admin and vendor panel prototype. One codebase: the role switcher shows the vendor portal view (scoped data, fewer menus). */
 (function () {
-  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app'); AC.ui.dedupe($app);
+  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app'); AC.ui.dedupe($app); AC.theme.on(() => render());
   const ui = { tab0: 1, page: 'dash', staff: 'U1', ov: { status: 'completed', reason: '' }, xq: { label: '', price: '', save: true }, xo: { label: '', price: '' }, cs: 'Out for delivery', kyc: null, roleEdit: null, invite: { name: '', email: '', role: 'ops' }, role: 'admin', drawer: null, tab: 'all', q: '', thread: 'C2', pcat: 'all', pay: 'all', mapSel: null, menu: false, key: '', scroll: {}, map: null };
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const vend = () => ui.role === 'admin' ? null : AC.vendById[ui.role];
@@ -35,12 +35,12 @@
   function bars(vals, h) {
     const W = 640, H = h || 240, l = 40, r = 8, t = 14, b = 28, max = Math.ceil(Math.max(...vals) / 20) * 20, bw = (W - l - r) / vals.length, d = new Date();
     let s = '';
-    for (let i = 0; i <= 4; i++) { const y = t + (H - t - b) * (1 - i / 4); s += `<line x1="${l}" x2="${W - r}" y1="${y}" y2="${y}" stroke="#E3E6F0"/><text x="${l - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#6A7190">${Math.round(max * i / 4)}</text>`; }
+    for (let i = 0; i <= 4; i++) { const y = t + (H - t - b) * (1 - i / 4); s += `<line x1="${l}" x2="${W - r}" y1="${y}" y2="${y}" style="stroke:var(--line)"/><text x="${l - 8}" y="${y + 4}" text-anchor="end" font-size="11" style="fill:var(--ink-3)">${Math.round(max * i / 4)}</text>`; }
     vals.forEach((v, i) => {
       const x = l + i * bw + bw * 0.18, w = bw * 0.64, bh = (H - t - b) * v / max, y = H - b - bh, last = i === vals.length - 1, dt = new Date(d - (vals.length - 1 - i) * 864e5);
-      s += `<rect x="${x}" y="${y}" width="${w}" height="${bh}" rx="5" fill="${last ? '#0A8A47' : '#C9CBE0'}"><title>${dt.toDateString()}: ${v}k</title></rect>`;
-      if (i % 2 === (vals.length - 1) % 2) s += `<text x="${x + w / 2}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#6A7190">${dt.getDate()} ${dt.toLocaleString('en', { month: 'short' })}</text>`;
-      if (last) s += `<text x="${x + w / 2}" y="${y - 6}" text-anchor="middle" font-size="12" font-weight="700" fill="#00793A">${v}k</text>`;
+      s += `<rect x="${x}" y="${y}" width="${w}" height="${bh}" rx="5" style="fill:${last ? 'var(--green)' : 'var(--brand-m)'}"><title>${dt.toDateString()}: ${v}k</title></rect>`;
+      if (i % 2 === (vals.length - 1) % 2) s += `<text x="${x + w / 2}" y="${H - 8}" text-anchor="middle" font-size="11" style="fill:var(--ink-3)">${dt.getDate()} ${dt.toLocaleString('en', { month: 'short' })}</text>`;
+      if (last) s += `<text x="${x + w / 2}" y="${y - 6}" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--green-d)">${v}k</text>`;
     });
     return `<svg class="chart" viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Revenue per day in thousand taka">${s}</svg>`;
   }
@@ -297,6 +297,7 @@
     $app.innerHTML = `<aside class="side ${ui.menu ? 'open' : ''}"><div class="brand">${AC.logo.tile(42, false)}<div>${AC.brand.name}<small>Admin panel</small></div></div><nav class="nav">${nav.map(g => [g[0], g[1].filter(i => v || !PAGE_PERM[i[0]] || can(PAGE_PERM[i[0]]))]).filter(g => g[1].length).map(g => `<div class="nav-g"><span class="eyebrow">${g[0]}</span>${g[1].map(i => `<a class="${ui.page === i[0] ? 'on' : ''}" data-a="go" data-v="${i[0]}">${icon(i[2], 18)}${i[1]}${cnt[i[0]] ? `<span class="cnt">${cnt[i[0]]}</span>` : ''}</a>`).join('')}</div>`).join('')}</nav>
       <div class="side-foot"><div class="vbox">${v ? `<b>${esc(v.name)}</b><br>${esc(v.addr)}` : '<b>Dhaka operations</b><br>9 technicians, 3 vendors, 12 areas'}</div></div></aside>
       <div class="main"><header class="topbar"><button class="icon-btn menu-btn" data-a="menu" aria-label="Menu">${icon('menu', 22)}</button><label class="search">${icon('search', 18)}<input id="gq" data-b="gq" placeholder="Search bookings, customers, orders" autocomplete="off" value="${esc(ui.q)}"></label><span class="grow"></span><label class="who"><span class="muted" style="font-size:12px;font-weight:700">Signed in as</span><select class="select" id="staffsel" aria-label="Signed in as">${s.staff.map(u => `<option value="${u.id}" ${u.id === ui.staff ? 'selected' : ''}>${esc(u.name)} . ${esc((s.roles.find(r => r.id === u.role) || {}).name || '')}</option>`).join('')}</select></label>
+<button class="icon-btn" data-theme-set="${AC.theme.isDark() ? 'light' : 'dark'}" aria-label="${AC.theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'}" title="${AC.theme.isDark() ? 'Light mode' : 'Dark mode'}">${icon(AC.theme.isDark() ? 'sun' : 'moon', 20)}</button>
 ${av(v ? v.name : 'Admin User', 'ink')}</header>
       <main class="content" id="content">${PAGES[ui.page]()}</main></div>${D}`;
     const c = document.getElementById('content'); c.scrollTop = key === ui.key ? (ui.scroll[key] || 0) : 0; ui.key = key;

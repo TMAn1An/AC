@@ -1,6 +1,6 @@
 /* NEW technician app prototype. Default user: Rakib Hasan (T1, own staff). Switch to a vendor technician from Profile. */
 (function () {
-  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app'); AC.ui.dedupe($app);
+  const S = AC.store, money = AC.fmt.money, $app = document.getElementById('app'); AC.ui.dedupe($app); AC.theme.on(() => render());
   const ui = { me: 'T1', tab: 'jobs', stack: [], sheet: null, signed: true, extra: {}, d: {}, done: { cash: false, ck: [true, true, false], photos: 1, err: false }, key: '', scroll: {}, map: null };
   try { if (sessionStorage.getItem('tech.me')) ui.me = sessionStorage.getItem('tech.me'); if (sessionStorage.getItem('tech.out')) ui.signed = false; } catch (e) { }
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -99,6 +99,7 @@
     const t = T();
     return `${top('Profile', { back: false })}<div class="stack">
       <div class="cardx row" style="gap:14px"><div class="avatar lg">${AC.fmt.ini(t.name)}</div><div class="grow"><b style="font-size:17px">${esc(t.name)}</b><div class="muted">${t.phone}</div><div class="muted" style="font-size:13px">${t.jobs} jobs completed</div></div></div>
+      <div class="cardx"><div class="row between" style="margin-bottom:10px"><b>Appearance</b><span class="muted" style="font-size:13px">Light, dark or follow the phone</span></div>${AC.theme.seg()}</div>
       <div class="cardx lrow">${icon('store', 20)}<div class="grow"><b>${t.vendor ? esc(AC.vendById[t.vendor].name) : 'NEW (direct)'}</b><small>${t.vendor ? 'Vendor partner' : 'Company technician'} . ${AC.areas[t.area].n}</small></div></div>
       <div class="cardx"><b>Switch demo technician</b><div class="col" style="gap:8px;margin-top:12px">${AC.techs.map(x => `<button class="me-row ${x.id === ui.me ? 'on' : ''}" data-a="who" data-v="${x.id}"><span class="avatar sm">${AC.fmt.ini(x.name)}</span><span class="grow"><b style="font-size:14px">${esc(x.name)}</b><div class="muted" style="font-size:12px">${x.vendor ? esc(AC.vendById[x.vendor].name) : 'NEW direct'} . ${AC.areas[x.area].n}</div></span>${x.id === ui.me ? icon('check', 18) : ''}</button>`).join('')}</div></div>
       <button class="cardx lrow" data-a="history">${icon('clock', 20)}<div class="grow"><b>History</b><small>Your updates, saved on this phone</small></div>${icon('right', 18)}</button>

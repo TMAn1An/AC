@@ -1,6 +1,6 @@
 /* NEW customer app prototype. Signed in as Nadia Rahman (C1). */
 (function () {
-  const S = AC.store, ME = 'C1', me = AC.custById[ME], money = AC.fmt.money, $app = document.getElementById('app'); AC.ui.dedupe($app);
+  const S = AC.store, ME = 'C1', me = AC.custById[ME], money = AC.fmt.money, $app = document.getElementById('app'); AC.ui.dedupe($app); AC.theme.on(() => render());
   const ui = { tab: 'home', stack: [], sheet: null, cat: 'all', cart: [], d: {}, ot: 'book', key: '', pdraft: null, buy: [], buyMode: false, promo: null, promoOff: false, promoOpen: false, promoErr: '', undo: null, wish: {}, sort: 'popular', added: false, book: null, map: null, scroll: {} };
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const myJobs = () => S.get().jobs.filter(j => j.cust.id === ME);
@@ -58,9 +58,9 @@
     ${banner}
     <div class="hero"><div><div class="eyebrow">First purchase</div><h2>15% off your first order</h2><span class="code">${icon('tag', 14)} FIRST15</span></div><div class="art">${Art.draw('split', 1)}</div></div>
     <div class="sec"><div class="sec-h"><h2>Shop by category</h2></div>
-      <div class="cats"><button class="cat cat-ac" style="background:#ECECF3" data-a="shopcat" data-v="ac"><div class="art">${Art.draw('split', 0)}</div><span><div>Air conditioners<small>Buy and get serviced</small></div>${icon('right', 16)}</span></button>
-      <button class="cat" style="background:#E1EEE5" data-a="shopcat" data-v="bag"><div class="art">${Art.draw('tote', 2)}</div><span><div>Bags</div>${icon('right', 16)}</span></button>
-      <button class="cat" style="background:#F0E6D8" data-a="shopcat" data-v="cos"><div class="art">${Art.draw('bottle', 1)}</div><span><div>Cosmetics<small>Made locally</small></div>${icon('right', 16)}</span></button></div></div>
+      <div class="cats"><button class="cat cat-ac" style="background:${Art.tints[0].bg}" data-a="shopcat" data-v="ac"><div class="art">${Art.draw('split', 0)}</div><span><div>Air conditioners<small>Buy and get serviced</small></div>${icon('right', 16)}</span></button>
+      <button class="cat" style="background:${Art.tints[2].bg}" data-a="shopcat" data-v="bag"><div class="art">${Art.draw('tote', 2)}</div><span><div>Bags</div>${icon('right', 16)}</span></button>
+      <button class="cat" style="background:${Art.tints[1].bg}" data-a="shopcat" data-v="cos"><div class="art">${Art.draw('bottle', 1)}</div><span><div>Cosmetics<small>Made locally</small></div>${icon('right', 16)}</span></button></div></div>
     <div class="sec"><div class="sec-h"><h2>Book a service</h2><button data-a="tab" data-v="services">See all</button></div>
       <div class="hscroll">${AC.services.map(s => `<button class="svc-chip" style="background:${Art.tints[s.tone || 0].bg}" data-a="book" data-v="${s.id}"><span class="svc-ic" style="color:${Art.tints[s.tone || 0].fg}">${icon(s.icon, 22)}</span><b>${s.name}</b><small>From ${money(s.price)}</small></button>`).join('')}</div></div>
     <div class="sec"><div class="sec-h"><h2>Air conditioners</h2><button data-a="shopcat" data-v="ac">See all</button></div><div class="hscroll">${P('ac').map(pcard).join('')}</div></div>
@@ -243,6 +243,7 @@
     const w = myOrders().filter(o => o.install && o.status === 'delivered');
     return `${top('Account', { back: false })}<div class="stack">
       <div class="cardx row" style="gap:14px"><div class="avatar lg">${AC.fmt.ini(me.name)}</div><div class="grow"><b style="font-size:17px">${me.name}</b><div class="muted">${me.phone}</div></div></div>
+      <div class="cardx"><div class="row between" style="margin-bottom:10px"><b>Appearance</b><span class="muted" style="font-size:13px">Light, dark or follow the phone</span></div>${AC.theme.seg()}</div>
       <div class="cardx lrow">${icon('pin', 20)}<div class="grow"><b>Saved address</b><small>${me.addr}</small></div></div>
       <div class="cardx"><b>Warranty</b>${w.length ? w.map(o => `<div class="note ok" style="margin-top:10px">${icon('shield', 18)}<span>Order ${o.id}: 1 year free repair.</span></div>`).join('') : `<div class="muted" style="font-size:13px;margin-top:6px">Buy an AC with installation to get 1 year free repair.</div>`}</div>
       <div class="cardx"><b>Offers for you</b><div class="col" style="gap:10px;margin-top:12px">${AC.promos.filter(p => p.status === 'Active').map(p => `<div class="row"><span class="svc-ic" style="width:36px;height:36px;background:var(--accent-l);color:var(--accent-d)">${icon('tag', 18)}</span><div class="grow"><b style="font-size:13.5px">${p.title}</b><div class="muted" style="font-size:12.5px">${p.desc}</div></div></div>`).join('')}</div></div>

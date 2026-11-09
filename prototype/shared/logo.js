@@ -5,7 +5,7 @@
   window.AC = window.AC || {};
   AC.logo = {
     mark: s => svg(BLADES, s, s),
-    full: s => svg(BLADES + '<g transform="translate(' + TX + ' ' + TY + ')" fill="#111111"><path d="' + WORD + '"/></g>', s, s),
+    full: s => svg(BLADES + '<g transform="translate(' + TX + ' ' + TY + ')" style="fill:var(--logo-ink,#111111)"><path d="' + WORD + '"/></g>', s, s),
     /* White rounded tile so the blue blades stay readable on dark backgrounds */
     tile: (s, full) => '<span class="logo-tile" style="width:' + s + 'px;height:' + s + 'px;border-radius:' + Math.round(s * 0.28) + 'px">' + (full ? AC.logo.full(Math.round(s * 0.9)) : AC.logo.mark(Math.round(s * 0.78))) + '</span>'
   };
