@@ -74,6 +74,8 @@
       if (el && keyOf(el) === p.key && !el.disabled) el.click();
     }, 40);
   }, true);
+  /* Keep at most two toasts on screen. */
+  document.addEventListener('DOMContentLoaded', () => { const h = document.getElementById('toasts'); if (h) new MutationObserver(() => { while (h.children.length > 2) h.removeChild(h.firstChild); }).observe(h, { childList: true }); });
   // Drag to scroll for horizontal strips (carousels, tabs, chips). Mouse users have no horizontal wheel, so these looked stuck.
   let drag = null;
   document.addEventListener('pointerdown', e => {

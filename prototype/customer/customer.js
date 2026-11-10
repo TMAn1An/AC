@@ -88,7 +88,7 @@
       <label class="lab">Address</label><div class="field"><input class="input" id="f-addr" data-b="addr" value="${esc(b.addr)}" autocomplete="off"></div>
       <div class="field" style="margin-top:10px"><label for="f-phone">Phone number</label><input class="input" id="f-phone" data-b="phone" value="${esc(b.phone)}" inputmode="tel"></div>
       <div class="field" style="margin-top:10px"><label for="f-note">What is the problem? (optional)</label><textarea class="textarea" id="f-note" data-b="note" placeholder="Example: Water drips from the indoor unit">${esc(b.note)}</textarea></div>
-      <label class="lab">Pay after the service with</label><div class="col" style="gap:8px">${AC.payMethods.map(m => `<button class="opt ${b.method === m.id ? 'on' : ''}" data-a="bpm" data-v="${m.id}"><span class="rd"></span><span class="grow"><b>${m.name}</b><small>${m.note}</small></span>${icon(m.icon, 20)}</button>`).join('')}</div>
+      <label class="lab">Pay after the service with</label><div class="col" style="gap:8px">${AC.payMethods.map(m => `<button class="opt ${b.method === m.id ? 'on' : ''}" data-a="bpm" data-v="${m.id}"><span class="rd"></span><span class="grow"><b>${m.name}</b><small>${m.note}</small></span>${AC.payMark(m.id)}</button>`).join('')}</div>
       <div class="cardx sum" style="margin-top:20px"><div><span>${s.name} x ${b.units}</span><span>${money(price)}</span></div><div class="sv"><span>Confirmation call discount</span><span>-${money(100)}</span></div><div class="tot"><span>Estimated total</span><span>${money(total)}</span></div></div>
       <div class="note warn" style="margin-top:12px">${icon('info', 18)}<span>Our support team calls you to confirm. If the technician finds extra work, you approve the cost before anything starts.</span></div>
     </div>`;
@@ -210,7 +210,7 @@
       <label class="lab">Delivery address</label><div class="field"><input class="input" id="f-caddr" data-b="caddr" value="${esc(d.caddr != null ? d.caddr : me.addr)}"></div>
       <div class="field" style="margin-top:10px"><label for="f-cphone">Phone</label><input class="input" id="f-cphone" data-b="cphone" value="${esc(d.cphone != null ? d.cphone : me.phone)}" inputmode="tel"></div>
       <div class="note" style="margin-top:12px">${icon('truck', 18)}<span>Delivered by a courier partner (Pathao or RedX). You can follow each step in Orders.</span></div>
-      <label class="lab">Payment</label><div class="col" style="gap:8px">${AC.payMethods.map(m => `<button class="opt ${(d.pm || 'cod') === m.id ? 'on' : ''}" data-a="pm" data-v="${m.id}"><span class="rd"></span><span class="grow"><b>${m.name}</b><small>${m.note}</small></span>${icon(m.icon, 20)}</button>`).join('')}</div>
+      <label class="lab">Payment</label><div class="col" style="gap:8px">${AC.payMethods.map(m => `<button class="opt ${(d.pm || 'cod') === m.id ? 'on' : ''}" data-a="pm" data-v="${m.id}"><span class="rd"></span><span class="grow"><b>${m.name}</b><small>${m.note}</small></span>${AC.payMark(m.id)}</button>`).join('')}</div>
       <div style="margin-top:18px">${promoBlock()}</div><div style="margin-top:12px">${summary(c)}</div></div>`;
   }
 
@@ -305,7 +305,7 @@
         <button class="btn btn-ok btn-lg btn-block" style="margin-top:16px" data-a="wdo" ${(ui.d.wnote || '').trim().length >= 3 ? '' : 'disabled'}>Book free repair</button></div>`;
     }
     if (sh.t === 'gate') {
-      const m = AC.payMethods.find(x => x.id === sh.m), col = { bkash: '#D12053', nagad: '#C9232B', card: '#272B7A' }[sh.m] || '#272B7A';
+      const m = AC.payMethods.find(x => x.id === sh.m), col = { bkash: 'var(--pay-bkash)', nagad: 'var(--pay-nagad)', card: 'var(--brand)' }[sh.m] || 'var(--brand)';
       return `<div class="scrim"></div><div class="sheet"><div class="grab"></div><div class="gate">${sh.stage === 'ok' ? `<div class="okc">${icon('check', 36, 2.5)}</div><h3 style="font-size:20px">Payment received</h3><span class="muted">${money(sh.amount)} paid with ${m.name}</span>` : `<div class="logo" style="background:${col}">${sh.m === 'card' ? icon('card', 30) : m.name[0]}</div><h3 style="font-size:20px">${sh.m === 'card' ? 'Secure checkout (SSLCommerz)' : 'Confirming with ' + m.name}</h3><span class="muted">${money(sh.amount)}. Do not close this screen.</span><span class="ring"></span><span class="faint" style="font-size:12px">Demo gateway. No real payment is made.</span>`}</div></div>`;
     }
     return '';

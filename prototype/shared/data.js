@@ -110,6 +110,8 @@ window.AC = window.AC || {};
     { id: 'nagad', name: 'Nagad', note: 'Pay with your Nagad wallet', icon: 'phone' },
     { id: 'card', name: 'Card or net banking', note: 'Visa, Mastercard, DBBL via SSLCommerz', icon: 'card' }
   ];
+  /* Payment marks: a small tile per method. bKash and Nagad use their own brand colours (tokens --pay-bkash, --pay-nagad). */
+  AC.payMark = id => id === 'bkash' ? '<span class="pm-mark pm-bkash" aria-hidden="true">b</span>' : id === 'nagad' ? '<span class="pm-mark pm-nagad" aria-hidden="true">N</span>' : id === 'card' ? '<span class="pm-mark pm-card" aria-hidden="true"><svg class="i" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20M6 15h4"/></svg></span>' : '<span class="pm-mark pm-cash" aria-hidden="true"><svg class="i" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v.01M18 14.5v.01"/></svg></span>';
   AC.payName = id => (AC.payMethods.find(m => m.id === id) || {}).name || id;
 
   /* Shop promo codes. rule: pct (percent) or flat, optional cap, min subtotal, first (first order only), cat (only for that category) */
