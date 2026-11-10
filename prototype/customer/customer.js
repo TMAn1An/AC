@@ -53,18 +53,17 @@
       banner = `<button class="live-banner fade" data-a="track" data-v="${aj.id}"><span class="pulse-dot"></span><span class="grow"><b>${esc(aj.svcName)}</b><small>${S.META[aj.status].cust}${t && aj.status === 'ontheway' ? ' . ' + S.etaMin(aj) + ' min away' : ''}</small></span>${icon('right', 18)}</button>`;
     }
     const care = S.careFor(ME), cm = care ? Math.max(1, Math.round(care.days / 30)) : 0;
-    const careCard = care ? `<button class="care ${care.overdue ? 'due' : care.soon ? 'soon' : ''}" data-a="book" data-v="ac-service"><span class="svc-ic">${icon('snow', 20)}</span><span class="grow"><b>${care.overdue ? 'AC servicing is overdue' : care.soon ? 'AC servicing due in ' + care.days + ' days' : 'Next AC servicing in about ' + cm + ' month' + (cm > 1 ? 's' : '')}</b><small>Last serviced ${new Date(care.at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}. ${care.overdue || care.soon ? 'Book now to keep it cooling well.' : 'We will remind you when it is time.'}</small></span><span class="care-cta">${care.overdue || care.soon ? 'Book' : 'Book early'}</span></button>` : '';
+    const careCard = care ? `<button class="care ${care.overdue ? 'due' : care.soon ? 'soon' : ''}" data-a="book" data-v="ac-service"><span class="svc-ic">${icon('snow', 20)}</span><span class="grow"><b>${care.overdue ? 'AC servicing is overdue' : care.soon ? 'AC servicing due in ' + care.days + ' days' : 'Servicing due in ' + cm + ' month' + (cm > 1 ? 's' : '')}</b><small>Last serviced ${new Date(care.at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}. ${care.overdue || care.soon ? 'Book now to keep it cooling well.' : 'We will remind you when it is time.'}</small></span><span class="care-cta">${care.overdue || care.soon ? 'Book' : 'Book early'}</span></button>` : '';
     return `<div class="band"><div class="top">${AC.logo.tile(40, false)}<div class="loc" style="margin-left:2px">${icon('pin', 20)}<div><small>Service and delivery</small>Banani, Dhaka</div></div>${cartBtn()}<button class="icon-btn" data-a="notifs" aria-label="Notifications">${icon('bell', 22)}${S.notifUnread('cust:' + ME) ? `<span class="badge-n">${S.notifUnread('cust:' + ME)}</span>` : ''}</button></div>
-    <div class="pad"><h1 class="greet">Hello, ${esc(firstName)}</h1><p class="greet-s">Cool air, fixed fast. Shop or book a technician.</p></div>
-    <button class="search" style="margin-top:16px" data-a="tab" data-v="shop">${icon('search', 18)}<span>Search ACs, bags, cosmetics</span></button></div>
-    ${banner}${careCard}
-    <div class="hero"><div><div class="eyebrow">First purchase</div><h2>15% off your first order</h2><span class="code">${icon('tag', 14)} FIRST15</span></div><div class="art">${Art.draw('split', 1)}</div></div>
-    <div class="sec"><div class="sec-h"><h2>Shop by category</h2></div>
-      <div class="cats"><button class="cat cat-ac" style="background:${Art.tints[0].bg}" data-a="shopcat" data-v="ac"><div class="art">${Art.draw('split', 0)}</div><span><div>Air conditioners<small>Buy and get serviced</small></div>${icon('right', 16)}</span></button>
-      <button class="cat" style="background:${Art.tints[2].bg}" data-a="shopcat" data-v="bag"><div class="art">${Art.draw('tote', 2)}</div><span><div>Bags</div>${icon('right', 16)}</span></button>
-      <button class="cat" style="background:${Art.tints[1].bg}" data-a="shopcat" data-v="cos"><div class="art">${Art.draw('bottle', 1)}</div><span><div>Cosmetics<small>Made locally</small></div>${icon('right', 16)}</span></button></div></div>
+    <div class="pad"><h1 class="greet">Hello, ${esc(firstName)}</h1><p class="greet-s">What does your AC need today?</p></div>
+    <button class="search" style="margin-top:14px" data-a="tab" data-v="shop">${icon('search', 18)}<span>Search ACs, bags, cosmetics</span></button></div>
+    ${banner}
     <div class="sec"><div class="sec-h"><h2>Book a service</h2><button data-a="tab" data-v="services">See all</button></div>
-      <div class="hscroll">${AC.services.map(s => `<button class="svc-chip" style="background:${Art.tints[s.tone || 0].bg}" data-a="book" data-v="${s.id}"><span class="svc-ic" style="color:${Art.tints[s.tone || 0].fg}">${icon(s.icon, 22)}</span><b>${s.name}</b><small>From ${money(s.price)}</small></button>`).join('')}</div></div>
+      <div class="svc-grid">${AC.services.map(s => `<button class="svc-tile" data-a="book" data-v="${s.id}"><span class="svc-ic" style="background:${Art.tints[s.tone || 0].bg};color:${Art.tints[s.tone || 0].fg}">${icon(s.icon, 22)}</span><b>${s.name}</b><small>${money(s.price)}</small></button>`).join('')}</div></div>
+    ${careCard}
+    <button class="offer-strip" data-a="tab" data-v="shop"><span class="os-ic">${icon('gift', 20)}</span><span class="grow"><b>15% off your first order</b><small>Use code FIRST15 at checkout</small></span><span class="os-code">FIRST15</span></button>
+    <div class="sec"><div class="sec-h"><h2>Shop by category</h2></div>
+      <div class="cats3">${[['ac', 'Air conditioners', 'split', 0], ['bag', 'Bags', 'tote', 2], ['cos', 'Cosmetics', 'bottle', 1]].map(x => `<button class="cat3" data-a="shopcat" data-v="${x[0]}"><span class="cat3-art" style="background:${Art.tints[x[3]].bg}">${Art.draw(x[2], x[3])}</span><b>${x[1]}</b></button>`).join('')}</div></div>
     <div class="sec"><div class="sec-h"><h2>Air conditioners</h2><button data-a="shopcat" data-v="ac">See all</button></div><div class="hscroll">${P('ac').map(pcard).join('')}</div></div>
     <div class="sec"><div class="sec-h"><h2>Bags</h2><button data-a="shopcat" data-v="bag">See all</button></div><div class="hscroll">${P('bag').map(pcard).join('')}</div></div>
     <div class="sec"><div class="sec-h"><h2>Local cosmetics</h2><button data-a="shopcat" data-v="cos">See all</button></div><div class="hscroll">${P('cos').map(pcard).join('')}</div></div>
@@ -83,7 +82,7 @@
     return `${top(s.name)}
     <div class="pad">
       <div class="cardx" style="display:flex;gap:14px;align-items:center"><span class="svc-ic" style="width:48px;height:48px;${tone(s)}">${icon(s.icon, 24)}</span><div class="grow"><b>${s.name}</b><div class="muted" style="font-size:13px">${s.desc}</div></div></div>
-      <label class="lab">Type of AC</label><div class="seg" style="margin:0">${['Split', 'Window', 'Cassette'].map(t => `<button class="${b.ac === t ? 'on' : ''}" data-a="bac" data-v="${t}">${t}</button>`).join('')}</div>
+      <label class="lab">Type of AC</label><div class="choice" style="margin:0">${['Split', 'Window', 'Cassette'].map(t => `<button class="${b.ac === t ? 'on' : ''}" data-a="bac" data-v="${t}">${t}</button>`).join('')}</div>
       <div class="row between" style="margin-top:16px"><b>Number of units</b><div class="step"><button data-a="bunits" data-v="-1" aria-label="Fewer">${icon('minus', 16)}</button><b>${b.units}</b><button data-a="bunits" data-v="1" aria-label="More">${icon('plus', 16)}</button></div></div>
       <label class="lab">When should we come?</label><div class="optgrid">${AC.slots.map(t => `<button class="slot ${b.slot === t ? 'on' : ''}" data-a="bslot" data-v="${t}">${t}</button>`).join('')}</div>
       <label class="lab">Address</label><div class="field"><input class="input" id="f-addr" data-b="addr" value="${esc(b.addr)}" autocomplete="off"></div>

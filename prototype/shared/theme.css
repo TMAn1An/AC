@@ -195,3 +195,101 @@ header.nav { background: var(--bg); }
 .sheet { max-height: 88%; overflow-y: auto; }
 .sheet .photo { height: 52px; aspect-ratio: auto; display: flex; align-items: center; justify-content: center; }
 .verif { display: flex; width: fit-content; }
+
+/* ==================================================================================================
+   Design v2. One control system for every app, service-first customer home, red only for errors.
+   Sizes follow platform guidance: 44 to 52 px tall primary actions on phones, 36 px compact actions
+   with a 44 px hit area, label sizes 14 / 15 / 16 px at weight 600, one icon size per button size.
+   ================================================================================================== */
+
+/* ---- Buttons: three sizes, identical on every screen */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; line-height: 1; font-weight: 600; letter-spacing: 0; white-space: nowrap; flex-shrink: 0; text-align: center; }
+.btn .i { flex: none; width: 18px; height: 18px; }
+/* phone */
+.screen .btn { height: 44px; padding: 0 18px; border-radius: 12px; font-size: 15px; }
+.screen .btn-sm { height: 36px; padding: 0 14px; border-radius: 10px; font-size: 14px; }
+.screen .btn-sm .i { width: 16px; height: 16px; }
+.screen .btn-lg, .screen .btn-big { height: 52px; padding: 0 22px; border-radius: 14px; font-size: 16px; }
+.screen .btn-lg .i, .screen .btn-big .i { width: 20px; height: 20px; }
+.screen .btn-block { width: 100%; }
+/* desktop (admin web, hub) */
+.btn { height: 40px; padding: 0 16px; border-radius: 10px; font-size: 14px; }
+.btn-sm { height: 32px; padding: 0 12px; border-radius: 8px; font-size: 13px; }
+.btn-lg { height: 44px; padding: 0 20px; font-size: 15px; }
+/* rows of actions share the width evenly and never clip their labels */
+.actions .btn, .cta-bar.two .btn, .row > .btn.grow { min-width: 0; flex: 1 1 0; padding-inline: 10px; }
+.cta-bar > .btn { flex: 1.5 1 0; min-width: 0; padding-inline: 12px; } .cta-bar.two > .btn, .cta-bar > .btn + .btn, .cta-bar > .btn:has(+ .btn) { flex: 1 1 0; }
+.btn-g { color: var(--brand); } .btn-g[style*="--bad"] { color: var(--bad); }
+
+/* ---- Chips, choices, steppers, inputs */
+.screen .chip { height: 36px; padding: 0 14px; font-size: 14px; font-weight: 600; line-height: 1; }
+.screen .chip.sm { height: 32px; font-size: 13px; padding: 0 12px; }
+.screen .slot { height: 44px; font-size: 13px; font-weight: 600; line-height: 1.15; padding: 0 8px; }
+.choice { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
+.choice button { height: 44px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--surface); font-weight: 600; font-size: 14px; color: var(--ink-2); }
+.choice button.on { border-color: var(--brand); background: var(--brand-l); color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand); }
+.screen .input, .screen .select { height: 48px; font-size: 15px; } .screen .textarea { font-size: 15px; }
+.screen .lab { font-size: 13px; font-weight: 600; color: var(--ink-2); letter-spacing: 0; text-transform: none; margin: 18px 0 8px; display: block; }
+
+/* ---- Tabs: one label size, weight changes only with selection */
+.screen .tabbar .tab { font-size: 11px; font-weight: 600; letter-spacing: .01em; gap: 4px; }
+.screen .tabbar .tab.on { font-weight: 700; }
+.screen .tabbar .tab svg, .screen .tabbar .tab.on svg { width: 22px; height: 22px; }
+.seg button, .screen .seg button { font-size: 14px; height: 46px; }
+.tabs button { font-size: 14px; }
+
+/* ---- Type scale on phones */
+.screen .top h1 { font-size: 20px; } .screen .greet { font-size: 24px; letter-spacing: -.02em; } .screen .greet-s { font-size: 14px; margin-top: 2px; }
+.screen .sec { margin-top: 28px; } .screen .sec-h { margin-bottom: 12px; align-items: center; } .screen .sec-h h2 { font-size: 18px; }
+.screen .sec-h h2::before { display: none; }
+.screen .sec-h button { font-size: 14px; font-weight: 600; }
+.screen .cardx { padding: 16px; border-radius: 16px; }
+
+/* ---- Red is for errors and destructive actions only. Counts and unread marks use the brand blue. */
+.tab .dot, .nav a .cnt, .badge-n, .ucount, .pill-n, .un, tr.unread .udot { background: var(--brand); color: #fff; }
+.side .nav a .cnt { background: #fff; color: var(--deep); }
+.kgrid .kcard:nth-child(4) { background: var(--warn-l) !important; } .kgrid .kcard:nth-child(4) small .i, .kpi:nth-child(4) small .i { color: var(--warn); }
+.delta.bad, .needs { color: var(--warn); }
+.side .nav a.on { box-shadow: inset 3px 0 0 var(--green); }
+
+/* ---- Customer home: services first */
+.svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 20px; }
+.svc-tile { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 6px 12px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); text-align: center; min-height: 118px; }
+.svc-tile .svc-ic { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; flex: none; }
+.svc-tile b { font-size: 13px; font-weight: 600; line-height: 1.2; min-height: 31px; display: flex; align-items: center; }
+.svc-tile small { font-size: 12.5px; font-weight: 600; color: var(--ink-3); }
+.svc-tile:active { transform: scale(.98); }
+.offer-strip { margin: 14px 20px 0; width: calc(100% - 40px); display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 14px; border-radius: 16px; background: var(--deep); color: #fff; }
+.offer-strip small { display: block; font-size: 12.5px; color: #C9CBE0; margin-top: 1px; } .offer-strip b { font-size: 15px; }
+.os-ic { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,.12); display: grid; place-items: center; flex: none; }
+.os-code { flex: none; font-family: var(--f-mono); font-size: 12.5px; font-weight: 500; background: #fff; color: var(--deep); border-radius: 8px; padding: 6px 10px; }
+.care { margin-top: 14px; border-radius: 16px; } .care b { font-size: 14px; line-height: 1.25; display: block; } .care-cta { font-size: 13px; padding: 7px 12px; }
+.cats3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 20px; }
+.cat3 { display: flex; flex-direction: column; gap: 8px; text-align: center; align-items: stretch; }
+.cat3-art { display: block; aspect-ratio: 1; border-radius: 16px; overflow: hidden; } .cat3-art svg { width: 100%; height: 100%; display: block; }
+.cat3 b { font-size: 13px; font-weight: 600; line-height: 1.2; }
+
+/* ---- Product cards: equal heights, aligned prices and actions */
+.pc { border-radius: 16px; display: flex; flex-direction: column; }
+.pc .ptext { flex: 1; display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+.pc .pn { font-size: 14px; font-weight: 600; line-height: 1.3; min-height: 36.4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pc .pp { margin-top: auto; padding-top: 6px; } .pc .pp b { font-size: 16px; }
+.screen .pact { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.screen .pact .pbtn { height: 36px; padding: 0 6px; gap: 5px; font-size: 13px; border-radius: 10px; min-width: 0; }
+.screen .pact .pbtn .i { width: 15px; height: 15px; }
+.screen .pact .step { height: 36px; width: 100%; } .screen .pact .step button { height: 34px; width: 34px; min-width: 34px; }
+.heart { width: 32px; height: 32px; } .heart svg { width: 16px; height: 16px; }
+.phero .back svg, .phero .cartb svg { width: 22px; height: 22px; }
+.phero .back, .cartb { width: 40px; height: 40px; border-radius: 12px; }
+
+/* ---- Small fixes found by the UI audit */
+.cline .btn-sm, .lrow .btn-sm, .arow .btn-sm, .pick .btn-sm { flex: none; }
+.wcard .btn { margin-top: 12px; }
+.screen .cta-bar { gap: 12px; align-items: center; } .screen .cta-bar .btn { min-width: 0; }
+.screen .actions { gap: 8px; }
+.screen .actions .btn { flex-direction: row; height: 44px; font-size: 14px; gap: 6px; padding-inline: 6px; }
+.screen .actions .btn .i { width: 18px; height: 18px; }
+/* Stat cards: white with a hairline; only the card that needs action is tinted (amber, not red) */
+.kgrid .kcard, .statrow .stat, .trust div { background: var(--surface) !important; border: 1px solid var(--line) !important; }
+.kgrid .kcard:nth-child(4) { background: var(--warn-l) !important; border-color: transparent !important; }
+.kgrid .kcard:nth-child(4) span { color: var(--warn); }
