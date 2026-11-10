@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NEW Costs and Payments</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<script src="shared/theme.js"></script>
+<link rel="stylesheet" href="shared/base.css">
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="assets/new-mark.svg">
+<style>
+html, body { height: auto; }
+.w { max-width: 1080px; margin: 0 auto; padding: 0 max(20px, env(safe-area-inset-right, 0px)) 0 max(20px, env(safe-area-inset-left, 0px)); }
+.bar { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 94%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.bar .w { display: flex; align-items: center; gap: 16px; height: 60px; }
+.bar .logo { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: 20px; letter-spacing: -.02em; }
+.bar nav { margin-left: auto; display: flex; gap: 20px; font-weight: 600; font-size: 14px; color: var(--ink-2); } .bar nav a:hover { color: var(--brand); }
+.themectl .theme-seg { min-width: 180px; } .themectl .theme-seg button { height: 30px; font-size: 12.5px; }
+@media (max-width: 860px) { .bar nav { display: none; } .bar .w { justify-content: space-between; } }
+.hero { padding: 56px 0 28px; } .hero h1 { font-size: clamp(34px, 5.4vw, 58px); letter-spacing: -.035em; max-width: 21ch; margin: 10px 0 14px; } .hero p { font-size: 17px; color: var(--ink-2); max-width: 62ch; }
+.sec { padding: 52px 0 8px; } .sec > h2 { font-size: clamp(26px, 3.4vw, 36px); letter-spacing: -.025em; margin: 6px 0 10px; } .sec > .intro { color: var(--ink-2); max-width: 66ch; font-size: 16px; margin-bottom: 22px; }
+.eyebrow { font-size: 12px; }
+.g { display: grid; gap: 16px; } .g2 { grid-template-columns: repeat(2, 1fr); } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) { .g3, .g4 { grid-template-columns: 1fr 1fr; } } @media (max-width: 620px) { .g2, .g3, .g4 { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+.card h3 { font-size: 19px; margin: 12px 0 6px; } .card p { color: var(--ink-2); font-size: 14.5px; }
+.ic { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: var(--brand-l); color: var(--brand); }
+.ic.g1 { background: var(--green-l); color: var(--green-d); } .ic.a1 { background: var(--warn-l); color: var(--warn); } .ic.s1 { background: var(--bg-2); color: var(--ink-2); border: 1px solid var(--line); }
+.tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; border-radius: 99px; padding: 3px 10px; background: var(--brand-l); color: var(--brand-d); }
+.tag.g1 { background: var(--green-l); color: var(--green-d); } .tag.a1 { background: var(--warn-l); color: var(--warn); } .tag.n1 { background: var(--bg-2); color: var(--ink-3); border: 1px solid var(--line); }
+/* three kinds of cost */
+.kinds .card { position: relative; overflow: hidden; } .kinds .num { font-family: var(--f-display); font-size: 40px; letter-spacing: -.03em; color: var(--ink-4); position: absolute; right: 18px; top: 10px; }
+.kinds ul { list-style: none; padding: 0; margin-top: 12px; display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); } .kinds li::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); margin-right: 8px; vertical-align: middle; }
+/* excluded grid */
+.ex { display: flex; gap: 14px; align-items: flex-start; } .ex b { font-size: 15.5px; display: block; } .ex span { color: var(--ink-3); font-size: 13.5px; display: block; margin-top: 2px; }
+/* running costs table */
+.tw { overflow-x: auto; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 720px; } th { text-align: left; font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); background: var(--bg-2); padding: 12px 16px; border-bottom: 1px solid var(--line); }
+td { padding: 14px 16px; border-bottom: 1px solid var(--line); vertical-align: top; } tr:last-child td { border-bottom: 0; } td b { display: block; font-size: 14.5px; } td small { color: var(--ink-3); display: block; margin-top: 2px; font-size: 12.5px; }
+.money { font-family: var(--f-display); font-weight: 600; white-space: nowrap; }
+/* calculator */
+.calc { display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px; align-items: start; } @media (max-width: 900px) { .calc { grid-template-columns: 1fr; } }
+.field { display: grid; gap: 6px; margin-bottom: 16px; } .field .row { display: flex; justify-content: space-between; align-items: baseline; } .field label { font-weight: 600; font-size: 14px; } .field output { font-family: var(--f-display); font-weight: 600; font-size: 16px; color: var(--brand); }
+.field small { color: var(--ink-3); font-size: 12.5px; }
+input[type=range] { width: 100%; accent-color: var(--brand); height: 28px; }
+.mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; } .mini .input { height: 40px; text-align: center; width: 100%; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); }
+.opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } .opts button { height: 56px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--surface); font-weight: 600; font-size: 13.5px; line-height: 1.2; padding: 0 6px; } .opts button small { display: block; color: var(--ink-3); font-weight: 500; font-size: 12px; } .opts button.on { border-color: var(--brand); background: var(--brand-l); color: var(--brand-d); }
+.total { font-family: var(--f-display); font-size: 44px; letter-spacing: -.03em; font-weight: 600; line-height: 1; } .total small { font-size: 15px; letter-spacing: 0; color: var(--ink-3); font-family: var(--f-body); font-weight: 500; }
+.stack { display: flex; height: 18px; border-radius: 9px; overflow: hidden; margin: 16px 0 10px; background: var(--line); } .stack i { display: block; height: 100%; transition: width .35s cubic-bezier(.2,.8,.2,1); }
+.leg { display: grid; gap: 8px; } .leg div { display: flex; align-items: center; gap: 10px; font-size: 14px; } .leg i { width: 10px; height: 10px; border-radius: 3px; flex: none; } .leg b { margin-left: auto; font-family: var(--f-display); font-weight: 600; }
+.c1 { background: var(--brand); } .c2 { background: var(--green); } .c3 { background: var(--warn); } .c4 { background: var(--sky); } .c5 { background: var(--ink-4); }
+/* payment methods */
+.pm { display: grid; gap: 14px; } .pm .head { display: flex; align-items: center; gap: 14px; } .pm .head h3 { margin: 0; font-size: 19px; } .pm .fee { margin-left: auto; text-align: right; font-family: var(--f-display); font-weight: 600; font-size: 20px; line-height: 1.1; } .pm .fee small { display: block; font-family: var(--f-body); font-weight: 500; font-size: 12px; color: var(--ink-3); }
+.pm .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; } @media (max-width: 620px) { .pm .cols { grid-template-columns: 1fr; } }
+.pm h4 { font-size: 12px; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 6px; } .pm .pro h4 { color: var(--green-d); } .pm .con h4 { color: var(--warn); }
+.pm ul { list-style: none; padding: 0; display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); } .pm li { padding-left: 18px; position: relative; } .pm .pro li::before, .pm .con li::before { content: ''; position: absolute; left: 0; top: 8px; width: 8px; height: 8px; border-radius: 50%; } .pm .pro li::before { background: var(--green); } .pm .con li::before { background: var(--warn); }
+.pm .best { border-top: 1px dashed var(--line-2); padding-top: 12px; font-size: 14px; color: var(--ink-2); } .pm .best b { color: var(--ink); }
+.mk { width: 56px; height: 40px; border-radius: 10px; display: grid; place-items: center; flex: none; font-weight: 800; font-size: 18px; color: #fff; background: var(--ink-bg); position: relative; overflow: hidden; } .mk img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 5px 7px; background: #fff; border: 1px solid var(--line); border-radius: 10px; }
+.mk.cash { background: var(--green-l); color: var(--green-d); } .mk.card { background: var(--brand-l); color: var(--brand); } .mk.agg { background: var(--bg-2); color: var(--ink-2); border: 1px solid var(--line); font-size: 13px; }
+.feetab td, .feetab th { text-align: right; } .feetab td:first-child, .feetab th:first-child { text-align: left; } .feetab { min-width: 520px; }
+.rec { border: 1.5px solid var(--green); background: var(--green-l); border-radius: 18px; padding: 22px; } .rec h3 { font-size: 21px; margin-bottom: 8px; } .rec ol { padding-left: 22px; display: grid; gap: 8px; color: var(--ink-2); font-size: 15px; }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; counter-reset: s; } @media (max-width: 900px) { .steps { grid-template-columns: 1fr 1fr; } } @media (max-width: 560px) { .steps { grid-template-columns: 1fr; } }
+.steps .card { counter-increment: s; } .steps .card::before { content: counter(s); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 700; font-size: 14px; margin-bottom: 10px; }
+.steps .card b { font-size: 15.5px; } .steps .card p { margin-top: 4px; }
+.src { font-size: 13px; color: var(--ink-3); display: grid; gap: 6px; } .src a { color: var(--brand); text-decoration: underline; text-underline-offset: 2px; }
+.note { background: var(--warn-l); border-radius: 14px; padding: 14px 16px; color: var(--ink-2); font-size: 14px; display: flex; gap: 12px; align-items: flex-start; } .note .i { color: var(--warn); margin-top: 2px; }
+footer { padding: 56px 0 90px; color: var(--ink-3); font-size: 13.5px; }
+</style>
+</head>
+<body>
+<header class="bar"><div class="w"><a class="logo" href="index.html"><span id="mk"></span>NEW</a><nav><a href="#kinds">Overview</a><a href="#outside">Not in the price</a><a href="#running">Running costs</a><a href="#pay">Payment methods</a><a href="#need">What we need</a></nav><span class="themectl" id="themectl"></span><a class="btn btn-s btn-sm" href="index.html">Prototype</a></div></header>
+
+<main class="w">
+<section class="hero">
+  <span class="eyebrow">Costs and payments</span>
+  <h1>What you pay for, and what you pay as you run it</h1>
+  <p>The development price covers building and launching the five apps. Hosting, SMS, payment fees and a few other services are paid to the providers, not to us. This page shows each one, roughly what it costs in taka, and how the payment methods compare. All amounts are estimates to plan with. Providers confirm the final rates.</p>
+</section>
+
+<section class="sec" id="kinds">
+  <span class="eyebrow">Three kinds of cost</span><h2>One build, then a small monthly bill, then a small cut of each online payment</h2>
+  <div class="g g3 kinds" style="margin-top:18px">
+    <div class="card"><span class="num">1</span><div class="ic" id="k1"></div><h3>Development</h3><p>Paid once, in phases, as agreed with us. Quoted separately.</p><ul><li>Five apps and the admin panel</li><li>Backend, realtime, maps, chat</li><li>Testing, store release, handover</li></ul></div>
+    <div class="card"><span class="num">2</span><div class="ic g1" id="k2"></div><h3>Running costs</h3><p>Paid monthly or yearly to the providers once the apps are live.</p><ul><li>Hosting and database</li><li>SMS codes, push, storage</li><li>Domain, store accounts</li></ul></div>
+    <div class="card"><span class="num">3</span><div class="ic a1" id="k3"></div><h3>Per transaction</h3><p>Taken by the payment provider and the courier on each order.</p><ul><li>bKash, Nagad and card fees</li><li>Courier charge per parcel</li><li>Cash handling for cash on delivery</li></ul></div>
+  </div>
+</section>
+
+<section class="sec" id="outside">
+  <span class="eyebrow">Not included in the development price</span><h2>Things you pay for directly or provide</h2>
+  <p class="intro">These are real costs of running the business. We set them up with you, but the accounts and bills are in your name.</p>
+  <div class="g g3" id="outside-grid"></div>
+</section>
+
+<section class="sec" id="running">
+  <span class="eyebrow">Running costs</span><h2>What the monthly bill looks like</h2>
+  <p class="intro">Amounts are indicative ranges. Dollar amounts are US dollars, and the calculator below converts them to taka at the rate you set. Use it to see your own numbers.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Service</th><th>What it does</th><th>Typical cost</th><th>When</th></tr></thead>
+    <tbody id="run-body"></tbody>
+  </table></div>
+
+  <div class="card" style="margin-top:22px"><div class="calc">
+    <div>
+      <h3 style="margin-top:0">Monthly cost calculator</h3><p style="margin-bottom:18px">Move the sliders to match your expected volume.</p>
+      <div class="field"><div class="row"><label for="c-new">New customers per month</label><output id="o-new"></output></div><input type="range" id="c-new" min="100" max="20000" step="100" value="1500"><small>Each new number gets a verification code by SMS.</small></div>
+      <div class="field"><div class="row"><label for="c-book">Service bookings per month</label><output id="o-book"></output></div><input type="range" id="c-book" min="50" max="10000" step="50" value="800"></div>
+      <div class="field"><div class="row"><label for="c-ord">Shop orders per month</label><output id="o-ord"></output></div><input type="range" id="c-ord" min="0" max="5000" step="50" value="400"></div>
+      <div class="field"><div class="row"><label for="c-tk">Average service ticket</label><output id="o-tk"></output></div><input type="range" id="c-tk" min="800" max="4000" step="100" value="1400"></div>
+      <div class="field"><div class="row"><label for="c-ot">Average shop order</label><output id="o-ot"></output></div><input type="range" id="c-ot" min="500" max="70000" step="500" value="6000"><small>Bags and cosmetics are small. One AC is about ৳65,000, so the average moves a lot.</small></div>
+      <div class="field"><div class="row"><label for="c-on">Paid online (not cash)</label><output id="o-on"></output></div><input type="range" id="c-on" min="0" max="100" step="5" value="45"></div>
+      <div class="field"><label>Online split: bKash, Nagad, card (percent)</label><div class="mini"><input class="input" id="s-b" type="number" value="60" min="0" max="100" aria-label="bKash share"><input class="input" id="s-n" type="number" value="20" min="0" max="100" aria-label="Nagad share"><input class="input" id="s-c" type="number" value="20" min="0" max="100" aria-label="Card share"></div></div>
+      <div class="field"><label>Hosting size</label><div class="opts" id="tiers"><button data-t="0" class="on">Start<small>pilot</small></button><button data-t="1">Growth<small>city scale</small></button><button data-t="2">Scale<small>many cities</small></button></div></div>
+      <div class="field"><div class="row"><label for="c-fx">Taka per US dollar</label><output id="o-fx"></output></div><input type="range" id="c-fx" min="100" max="140" step="1" value="120"><small>Assumption. Check the current rate.</small></div>
+    </div>
+    <div class="card" style="background: var(--bg-2); position: sticky; top: 76px">
+      <span class="eyebrow">Estimated per month</span>
+      <div class="total" id="t-total">৳0</div>
+      <div class="stack" id="t-stack"></div>
+      <div class="leg" id="t-leg"></div>
+      <div style="border-top:1px solid var(--line);margin-top:16px;padding-top:14px;display:grid;gap:8px;font-size:14px">
+        <div class="row between"><span class="muted">Fixed (hosting, maps, storage, monitoring)</span><b class="money" id="t-fixed"></b></div>
+        <div class="row between"><span class="muted">Grows with usage (SMS, payment fees)</span><b class="money" id="t-var"></b></div>
+        <div class="row between"><span class="muted">Cost per booking or order</span><b class="money" id="t-per"></b></div>
+        <div class="row between"><span class="muted">Share of revenue</span><b class="money" id="t-share"></b></div>
+      </div>
+      <p style="margin-top:14px;font-size:13px;color:var(--ink-3)">Payment fees are taken from what the customer pays, so they reduce your income rather than adding a bill. Courier charges are added to the order and paid by the customer.</p>
+    </div>
+  </div></div>
+</section>
+
+<section class="sec" id="pay">
+  <span class="eyebrow">Payment methods</span><h2>Which methods to offer, and what each one costs you</h2>
+  <p class="intro">Customers in Bangladesh pay in cash, with bKash, with Nagad and with cards. Each has trade-offs. Rates below come from provider pages and third-party listings and differ by source, so treat them as a guide until the merchant agreement is signed.</p>
+  <div class="g g2" id="pm-grid"></div>
+
+  <h3 style="font-size:21px;margin:34px 0 6px">What the fee means in taka</h3>
+  <p class="muted" style="margin-bottom:12px;font-size:14.5px">A percentage fee is small on a service and large on an air conditioner. This is why high-value orders need another route.</p>
+  <div class="tw"><table class="feetab"><thead><tr><th>Payment</th><th>Rate</th><th id="f-h1"></th><th id="f-h2"></th><th>Paid on a ৳65,000 AC</th></tr></thead><tbody id="fee-body"></tbody></table></div>
+
+  <div class="rec" style="margin-top:24px">
+    <span class="tag g1">Recommended</span><h3 style="margin-top:10px">Start with cash plus one gateway, then go direct</h3>
+    <ol>
+      <li><b>Day one:</b> cash on delivery and SSLCommerz. One agreement and one integration give you bKash, Nagad, Rocket and cards. The apps already treat the gateway as a swappable part.</li>
+      <li><b>When the bKash agreement is ready:</b> add the direct bKash API behind the same switch. A direct contract usually costs less per payment and gives one-tap tokenised checkout, so repeat customers pay faster.</li>
+      <li><b>For air conditioners:</b> offer bank transfer and card instalments or a deposit, because a percentage fee on ৳65,000 is real money.</li>
+      <li><b>Offers:</b> bKash and Nagad run cashback campaigns that they fund. Ask for them in the agreement instead of paying for discounts yourself.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec" id="need">
+  <span class="eyebrow">What we need from you</span><h2>The slow parts are paperwork, so start early</h2>
+  <p class="intro">Technology is the fast part. These items take days or weeks and sit with you or the providers. Starting them in the first month keeps launch on time.</p>
+  <div class="steps" id="need-grid"></div>
+</section>
+
+<section class="sec" id="src">
+  <span class="eyebrow">Sources and caveats</span><h2>Where the numbers come from</h2>
+  <div class="note"><span id="ni"></span><div>Rates change and differ by contract. Nothing here is an offer from a provider. Before signing, get written quotes for SMS, the payment gateway, courier, hosting and any identity verification.</div></div>
+  <div class="src" style="margin-top:16px">
+    <div>SMS prices: <a href="https://sms.net.bd/Pricing" target="_blank" rel="noopener">Alpha SMS pricing</a> (non-masking about ৳0.31 to 0.40, masking about ৳0.56 to 0.64 per SMS, by recharge size).</div>
+    <div>Payment fees: card about 2.5% and mobile wallets about 1.2% to 2.1% depending on the source, for example <a href="https://medium.com/@sharminakter.digitalmarketer/best-12-online-payment-gateways-in-bangladesh-fa2cd3fa995a" target="_blank" rel="noopener">this gateway comparison</a>. bKash publishes its checkout terms at <a href="https://www.bkash.com/page/tokenized_checkout" target="_blank" rel="noopener">bkash.com</a> but not a merchant rate.</div>
+    <div>Domain: BTCL announced a cut of the .com.bd fee, see <a href="https://thefinancialexpress.com.bd/trade/price-of-bd-domain-cut-by-36pc" target="_blank" rel="noopener">The Financial Express</a>. Resellers charge more.</div>
+    <div>Identity checks against the NID record are optional and paid. Access is reported to be limited to approved entities, see <a href="https://didit.me/solutions/countries/bangladesh/" target="_blank" rel="noopener">this provider note</a> (a vendor claim). The launch plan checks identity with photos, a live selfie and human review, which costs nothing per check.</div>
+    <div>Hosting, push and store fees follow the providers' public price lists in US dollars.</div>
+  </div>
+</section>
+</main>
+<footer><div class="w">NEW design prototype. Costs page for client discussion. Not a contract.</div></footer>
+
+<script src="shared/logo.js"></script>
+<script src="shared/icons.js"></script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id), fmt = n => '৳' + Math.round(n).toLocaleString('en-US'), usd = n => '$' + n;
+  $('mk').innerHTML = AC.logo.mark(28); $('ni').innerHTML = icon('info', 20);
+  $('k1').innerHTML = icon('briefcase', 24); $('k2').innerHTML = icon('layers', 24); $('k3').innerHTML = icon('card', 24);
+  const draw = () => { $('themectl').innerHTML = AC.theme.seg(); }; draw(); AC.theme.on(draw);
+
+  const OUT = [
+    ['store', 'Hosting and database', 'Servers, database, file storage and backups. Billed monthly by the cloud provider in your name.', ''],
+    ['sparkle', 'Domain name', 'For example newac.com.bd for the website and the API. Renewed every year or two.', 'g1'],
+    ['chat', 'SMS credits', 'Verification codes for every new phone number. You top up an SMS gateway account.', ''],
+    ['card', 'Payment gateway fees', 'A percentage of each online payment, plus any set-up or yearly fee in the merchant agreement.', 'a1'],
+    ['truck', 'Courier charges', 'Per parcel to Pathao or RedX. Added to the order and paid by the customer.', ''],
+    ['phone', 'Store accounts', 'Google Play one-time registration. An Apple developer account yearly when iOS is added.', 'g1'],
+    ['map', 'Maps beyond the free tier', 'Free map tiles are enough for a pilot. Heavy use needs a paid or self-hosted tile service.', ''],
+    ['shield', 'Identity check by NID (optional)', 'Launch uses photos, selfie and human review at no per-check cost. An official match is paid per check.', 'a1'],
+    ['zap', 'Support and maintenance', 'Fixes, updates, monitoring and small changes after launch. A monthly retainer, agreed separately.', ''],
+    ['box', 'Product photos and content', 'Photos, descriptions and prices for the catalogue. We provide the layout, you provide the content.', 'g1'],
+    ['megaphone', 'Marketing and offers', 'Campaigns, discounts and partner offers. The apps support promo codes, the budget is yours.', ''],
+    ['list', 'Legal and licences', 'Trade licence, privacy policy, terms and the paperwork for merchant accounts.', 'a1'],
+    ['users', 'Features after sign-off', 'Anything not in the agreed scope, such as a marketplace of third-party sellers or an iOS release, is quoted as a change.', ''],
+    ['wallet', 'Cash handling', 'Cash on delivery means technicians and couriers hold company money. The wallet and deposit flow tracks it, your team accepts deposits.', 'a1']
+  ];
+  $('outside-grid').innerHTML = OUT.map(o => `<div class="card ex"><span class="ic ${o[3]}" style="flex:none">${icon(o[0], 22)}</span><div><b>${o[1]}</b><span>${o[2]}</span></div></div>`).join('');
+
+  /* editable assumptions: US dollar prices are converted at the calculator rate */
+  const TIERS = [{ n: 'Start', host: 25 + 12, maps: 0, store: 3, mon: 0 }, { n: 'Growth', host: 120 + 60, maps: 25, store: 15, mon: 29 }, { n: 'Scale', host: 380 + 150, maps: 100, store: 45, mon: 80 }];
+  const RUN = [
+    ['Hosting and database', 'API server, Postgres with location search, realtime, backups', () => `${usd(25)} to ${usd(50)} to start, ${usd(150)} to ${usd(250)} when busy`, 'Monthly'],
+    ['Map tiles', 'Street map behind live tracking. Free tier for the pilot, self-hosted or paid later', () => `Free to start, then about ${usd(25)} to ${usd(100)}`, 'Monthly'],
+    ['File storage', 'Before and after photos, NID images (encrypted), invoices', () => `${usd(3)} to ${usd(45)} by volume`, 'Monthly'],
+    ['SMS verification', 'One code per new phone number, resends and rate limits included', () => '৳0.31 to 0.64 per SMS by route and recharge size', 'As used'],
+    ['Push notifications and crash reports', 'Firebase, free at this scale', () => 'Free', 'None'],
+    ['Domain', '.com.bd or .com for the website, API and email', () => '৳700 to 2,500 per year', 'Yearly'],
+    ['Google Play account', 'Needed once to publish the Android apps', () => usd(25) + ' one time', 'Once'],
+    ['Apple developer account', 'Only when the iOS apps are released', () => usd(99) + ' per year', 'Yearly, later'],
+    ['Monitoring and alerts', 'Uptime, error tracking, log retention beyond the free tier', () => `Free to ${usd(80)}`, 'Monthly'],
+    ['Identity check by NID (optional)', 'Match against the Election Commission record', () => 'About $0.30 per check claimed by one provider, unverified', 'Per check']
+  ];
+  $('run-body').innerHTML = RUN.map(r => `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td class="money">${r[2]()}</td><td><span class="tag ${r[3] === 'None' ? 'g1' : r[3].startsWith('Once') ? 'n1' : ''}">${r[3]}</span></td></tr>`).join('');
+
+  /* payment methods */
+  const RATE = { cod: 0, bkash: 1.8, nagad: 1.3, card: 2.5 };
+  const PM = [
+    ['cash', 'Cash on delivery', 'Cash', 'No gateway fee', 'courier may charge to collect',
+      ['Most trusted way to pay in Bangladesh, no new habit to teach', 'No gateway contract, works on day one', 'Good for first-time customers who do not know the brand'],
+      ['Technicians and couriers carry company cash, so deposits and audits are needed', 'Fake or refused orders cost a delivery run', 'Money arrives days later, not at once'],
+      'Services and small shop orders. Keep it on, with the OTP and the wallet flow that are already built.'],
+    ['bkash', 'bKash', 'b', 'About 1.5% to 2%', 'varies by contract',
+      ['Largest mobile wallet, most customers already have it', 'One-tap tokenised checkout after the first payment', 'Fast confirmation for the customer and for admin'],
+      ['Merchant onboarding takes weeks and needs business papers', 'Per-payment fee that adds up on large orders', 'Refunds go back through the wallet and need handling'],
+      'Everyday online payment. The direct API is the main upgrade you are already discussing with bKash.'],
+    ['nagad', 'Nagad', 'N', 'About 1.2% to 1.3%', 'varies by contract',
+      ['Lower fee than bKash in most listings', 'Well known, and popular with first-time online buyers', 'Good second option so customers can pick'],
+      ['Smaller share of customers than bKash', 'Integration quality and onboarding speed vary', 'Another agreement to manage if done directly'],
+      'A second wallet through the gateway at first, direct later if volume justifies it.'],
+    ['card', 'Cards (Visa, Mastercard, bank cards)', 'Card', 'About 2.5% or more', 'highest of the four',
+      ['Works for customers without a wallet, and for corporate buyers', 'Suits larger baskets and instalment offers from banks', 'Familiar checkout page through the gateway'],
+      ['Highest fee, painful on a ৳65,000 AC', 'Extra security step lowers completion on phones', 'Chargebacks and card fraud rules apply'],
+      'Larger orders and customers who prefer cards. Offer it, but do not push it.'],
+    ['agg', 'SSLCommerz (one gateway for all)', 'SSL', 'Wallet or card rate plus a gateway margin', 'confirm in the agreement',
+      ['One contract, one integration and one webhook for bKash, Nagad, Rocket and cards', 'Fastest way to go online with several methods', 'Our apps keep the gateway swappable'],
+      ['Usually a little dearer than a direct contract', 'Settlement passes through the gateway', 'Set-up or yearly fees may apply'],
+      'The launch choice. Replace or supplement with direct APIs once volume is steady.'],
+    ['agg', 'Bank transfer and instalments', 'Bank', 'Bank charge only', 'often free or small',
+      ['Best for high-value AC sales and corporate customers', 'No percentage fee on the big ticket', 'Bank instalment offers can lift sales'],
+      ['Manual matching of payments, so slower', 'Needs an admin step to confirm receipt', 'Not suited to small amounts'],
+      'ACs above a set price. Admin confirms the transfer and the order moves on.']
+  ];
+  const MK = { cash: 'wallet', card: 'card', agg: 'shield' };
+  const mark = p => p[0] === 'bkash' ? `<span class="mk"><b>b</b><img src="assets/pay/bkash.svg" alt="" onerror="this.remove()"></span>` : p[0] === 'nagad' ? `<span class="mk"><b>N</b><img src="assets/pay/nagad.svg" alt="" onerror="this.remove()"></span>` : `<span class="mk ${p[0]}">${icon(p[1].startsWith('Bank') ? 'store' : MK[p[0]], 22)}</span>`;
+  $('pm-grid').innerHTML = PM.map(p => `<div class="card pm"><div class="head">${mark(p)}<h3>${p[1]}</h3><div class="fee">${p[3]}<small>${p[4]}</small></div></div><div class="cols"><div class="pro"><h4>Good</h4><ul>${p[5].map(x => `<li>${x}</li>`).join('')}</ul></div><div class="con"><h4>Watch out</h4><ul>${p[6].map(x => `<li>${x}</li>`).join('')}</ul></div></div><div class="best"><b>Best for.</b> ${p[7]}</div></div>`).join('');
+  const fee = (rate, v) => rate ? fmt(v * rate / 100) : '৳0';
+  const drawFees = () => { $('f-h1').textContent = 'Paid on a ' + fmt(+$('c-tk').value) + ' service'; $('f-h2').textContent = 'Paid on a ' + fmt(+$('c-ot').value) + ' order';
+    $('fee-body').innerHTML = [['Cash on delivery', 0], ['Nagad', RATE.nagad], ['bKash', RATE.bkash], ['Cards', RATE.card]].map(r => `<tr><td>${r[0]}</td><td>${r[1] ? r[1] + '%' : 'none'}</td><td>${fee(r[1], +$('c-tk').value)}</td><td>${fee(r[1], +$('c-ot').value)}</td><td><b>${fee(r[1], 65000)}</b></td></tr>`).join(''); };
+
+  const NEED = [
+    ['Trade licence and company papers', 'Needed for the bKash, Nagad and gateway merchant accounts. Start in week one.'],
+    ['Merchant accounts', 'SSLCommerz first, bKash direct in parallel. Approval takes days to weeks.'],
+    ['SMS sender ID', 'Register a sender name with the SMS gateway so codes arrive as NEW, not a random number.'],
+    ['Google Play account', 'A company account needs identity checks that can take days.'],
+    ['Courier agreements', 'Pathao and RedX merchant accounts. Confirm whether API access is included.'],
+    ['Catalogue and prices', 'Products, photos, stock and the service price list in a shared sheet.'],
+    ['Technicians and vendors', 'Names, phones and NID photos for the first group, and the areas they cover.'],
+    ['An owner for operations', 'Someone who runs dispatch, accepts deposits and answers the agent chat from the pilot.']
+  ];
+  $('need-grid').innerHTML = NEED.map(n => `<div class="card"><b>${n[0]}</b><p>${n[1]}</p></div>`).join('');
+
+  /* calculator */
+  let tier = 0; const num = id => +$(id).value;
+  const out = (id, v) => { $(id).textContent = v; };
+  function calc() {
+    const fx = num('c-fx'), nw = num('c-new'), bk = num('c-book'), od = num('c-ord'), tk = num('c-tk'), ot = num('c-ot'), on = num('c-on') / 100;
+    out('o-new', nw.toLocaleString('en-US')); out('o-book', bk.toLocaleString('en-US')); out('o-ord', od.toLocaleString('en-US')); out('o-tk', fmt(tk)); out('o-ot', fmt(ot)); out('o-on', Math.round(on * 100) + '%'); out('o-fx', '৳' + fx);
+    const sb = num('s-b'), sn = num('s-n'), sc = num('s-c'), sum = (sb + sn + sc) || 1, T = TIERS[tier];
+    const revenue = bk * tk + od * ot, online = revenue * on;
+    const fees = online * (sb * RATE.bkash + sn * RATE.nagad + sc * RATE.card) / sum / 100;
+    const sms = nw * 2 * 0.45; // two SMS per new customer (code and one resend) at an average of 0.45 per SMS
+    const host = T.host * fx, maps = T.maps * fx, store = T.store * fx, mon = T.mon * fx;
+    const parts = [['Hosting and database', host, 'c1'], ['Payment fees', fees, 'c3'], ['SMS verification', sms, 'c2'], ['Maps, storage, monitoring', maps + store + mon, 'c4']];
+    const total = parts.reduce((a, p) => a + p[1], 0);
+    $('t-total').innerHTML = fmt(total) + ' <small>per month</small>';
+    $('t-stack').innerHTML = parts.map(p => `<i class="${p[2]}" style="width:${total ? p[1] / total * 100 : 0}%"></i>`).join('');
+    $('t-leg').innerHTML = parts.map(p => `<div><i class="${p[2]}"></i>${p[0]}<b>${fmt(p[1])}</b></div>`).join('');
+    out('t-fixed', fmt(host + maps + store + mon)); out('t-var', fmt(fees + sms)); out('t-per', fmt(total / Math.max(1, bk + od))); out('t-share', revenue ? (total / revenue * 100).toFixed(1) + '%' : '0%');
+    drawFees();
+  }
+  document.querySelectorAll('input').forEach(i => i.addEventListener('input', calc));
+  $('tiers').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; tier = +b.dataset.t; document.querySelectorAll('#tiers button').forEach(x => x.classList.toggle('on', x === b)); calc(); });
+  calc();
+})();
+</script>
+</body>
+</html>

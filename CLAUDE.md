@@ -51,6 +51,7 @@ Phase 0 is done: a clickable design prototype in `prototype/` (plain HTML, CSS, 
 
 - Serve with `./scripts/serve.sh` and open `http://localhost:8080`.
 - Shared code: `prototype/shared/store.js` is the single source of truth and the live sync layer (BroadcastChannel, localStorage, postMessage relay through the hub). Add new behaviour as an action there, then render it in each app. Do not keep job or order state inside an app.
+- `prototype/costs.html` is the client-facing page for costs outside development, running costs with a calculator, and payment method trade-offs. Update its numbers from provider quotes; it never shows our development price.
 - `prototype/shared/data.js` holds static reference data (areas, services, catalog, technicians, vendors, customers, promos).
 - Rules to keep passing: `npm run smoke` includes 32 checks for timeouts, completion code, override, extra work, wallet, KYC visibility, unread, job chat, dispatch help, reschedule, service report and warranty.
 - Smoke test: `npm install && npm run smoke` loads every page in headless Chromium and fails on console errors.
