@@ -10,6 +10,7 @@ const APPS = [['customer', 430, 880], ['technician', 430, 880], ['vendor', 430, 
 const SKIP = new Set(['reset', 'cancelall', 'clearhistory']);
 const browser = await chromium.launch();
 const ctx = await browser.newContext();
+if (process.env.THEME) await ctx.addInitScript(t => { try { localStorage.setItem('new.theme', t); } catch (e) { } }, process.env.THEME);
 const report = { errors: [], dead: {}, covered: {}, total: 0 };
 
 async function seedJobs(page) {

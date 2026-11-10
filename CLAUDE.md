@@ -54,6 +54,7 @@ Phase 0 is done: a clickable design prototype in `prototype/` (plain HTML, CSS, 
 - `prototype/shared/data.js` holds static reference data (areas, services, catalog, technicians, vendors, customers, promos).
 - Rules to keep passing: `npm run smoke` includes 32 checks for timeouts, completion code, override, extra work, wallet, KYC visibility, unread, job chat, dispatch help, reschedule, service report and warranty.
 - Smoke test: `npm install && npm run smoke` loads every page in headless Chromium and fails on console errors.
+- Before a release run `npm run check` (smoke rules, UI audit, and `scripts/e2e.mjs`: 24 end to end journeys with real clicks across all five apps). `npm run crawl` clicks every control at random, `THEME=dark npm run crawl` does it in dark mode.
 - After UI changes, take screenshots (Playwright) and check them before declaring done.
 
 ## Working on the Flutter build
