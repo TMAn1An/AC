@@ -110,9 +110,7 @@ header.nav { background: var(--bg); }
 .screen .view { padding-bottom: 24px; }
 .screen .tabbar .tab { min-height: 48px; gap: 3px; font-size: 10.5px; font-weight: 600; color: var(--ink-3); border-radius: 0; background: none !important; }
 .screen .tabbar .tab svg, .screen .tabbar .tab.on svg { width: 20px; height: 20px; padding: 0; background: none; box-shadow: none; }
-.screen .tabbar .tab.on { color: var(--brand); font-weight: 700; }
-.screen .tabbar .tab.on svg { animation: tabpop .38s cubic-bezier(.3,1.6,.5,1); }
-@keyframes tabpop { 0% { transform: translateY(2px) scale(.8); } 60% { transform: translateY(-3px) scale(1.12); } 100% { transform: none; } }
+.screen .tabbar .tab.on { color: var(--brand); }
 .screen .tabbar .tab .dot { right: calc(50% - 18px); top: 0; }
 .tabbar, .seg, .tabs { position: relative; }
 .glass-ind { position: absolute; z-index: 0; pointer-events: none; background: var(--brand); border-radius: 3px;
@@ -142,11 +140,8 @@ header.nav { background: var(--bg); }
 
 /* Press feedback: a soft tint flashes under the tapped tab, then the active tab keeps the tinted pill and a coloured icon */
 .screen .tabbar .tab { transition: color .2s, transform .12s; -webkit-tap-highlight-color: transparent; }
-.screen .tabbar .tab:active { transform: scale(.92); }
 .screen .tabbar .tab:active svg { color: var(--brand); }
 .screen .tabbar .tab.on svg { color: var(--brand); }
-.screen .tabbar .tab:not(.on):active::after { content: ''; position: absolute; inset: 2px 8px; border-radius: 16px; background: var(--brand-l); z-index: -1; animation: tabpress .25s ease-out both; }
-@keyframes tabpress { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: none; } }
 
 /* Tab bar: no persistent pill. A colour ripple on press, then just the coloured icon. */
 .tabbar > .glass-ind { display: none; }
@@ -155,7 +150,6 @@ header.nav { background: var(--bg); }
 .glitter { position: absolute; width: 0; height: 0; pointer-events: none; }
 .glitter b { position: absolute; border-radius: 50%; background: var(--brand); opacity: 0; animation: twinkle .4s ease-in-out both; }
 @keyframes twinkle { 0% { opacity: 0; transform: scale(.3); } 40% { opacity: .55; transform: scale(1); } 100% { opacity: 0; transform: scale(.5); } }
-.screen .tabbar .tab:not(.on):active::after { display: none; }
 .ripple { position: absolute; border-radius: 50%; background: rgba(39,43,122,.16); filter: blur(5px); pointer-events: none; z-index: 0; transform: scale(0); animation: rip .8s ease-out forwards; }
 @keyframes rip { 0% { transform: scale(0); opacity: .9; } 60% { opacity: .7; } 100% { transform: scale(1); opacity: 0; } }
 .screen .tabbar .tab > svg, .screen .tabbar .tab > small { position: relative; z-index: 1; }
@@ -233,7 +227,6 @@ header.nav { background: var(--bg); }
 
 /* ---- Tabs: one label size, weight changes only with selection */
 .screen .tabbar .tab { font-size: 11px; font-weight: 600; letter-spacing: .01em; gap: 4px; }
-.screen .tabbar .tab.on { font-weight: 700; }
 .screen .tabbar .tab svg, .screen .tabbar .tab.on svg { width: 22px; height: 22px; }
 .seg button, .screen .seg button { font-size: 14px; height: 46px; }
 .tabs button { font-size: 14px; }
@@ -305,3 +298,22 @@ header.nav { background: var(--bg); }
 /* ---- Toasts sit above the bottom bars on phones and never pile up */
 .toasts { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
 .toast { font-size: 13.5px; max-width: calc(100% - 32px); }
+
+/* ---- Tab selection, smooth: a soft pill grows out from the icon centre and the colour fades in. No bounce, no scale, no weight change, so nothing moves. */
+.screen .tabbar .tab, .screen .tabbar .tab.on { font-weight: 600; transition: color .22s ease; }
+.screen .tabbar .tab::after { content: ''; position: absolute; left: 50%; top: 1px; width: 56px; height: 28px; margin-left: -28px; border-radius: 14px; background: var(--brand-l); z-index: 0; opacity: 0; transform: scaleX(.4); transform-origin: center; transition: opacity .18s ease, transform .22s cubic-bezier(.2,0,0,1); pointer-events: none; }
+.screen .tabbar .tab:not(.on):active::after { opacity: .55; transform: scaleX(.8); display: block; }
+.screen .tabbar .tab.on::after { opacity: 1; transform: scaleX(1); display: block; animation: pillIn .3s cubic-bezier(.2,0,0,1) both; }
+.screen .tabbar .tab.on svg { animation: iconTint .3s ease both; }
+.screen .tabbar .tab svg { transition: color .22s ease; }
+@keyframes pillIn { from { opacity: 0; transform: scaleX(.4); } to { opacity: 1; transform: scaleX(1); } }
+@keyframes iconTint { from { color: var(--ink-3); } to { color: var(--brand); } }
+@media (prefers-reduced-motion: reduce) { .screen .tabbar .tab::after, .screen .tabbar .tab.on::after, .screen .tabbar .tab.on svg { animation: none; transition: none; } }
+/* ---- Red is for flags and warnings: unread counts, attention cards, errors, cancel. It is the universal sign for "needs a look". */
+:root { --badge: var(--red); }
+:root[data-theme="dark"] { --badge: #E5484D; }
+.tab .dot, .nav a .cnt, .badge-n, .ucount, .pill-n, .un, tr.unread .udot { background: var(--badge); color: #fff; }
+.kgrid .kcard:nth-child(4) { background: var(--red-l) !important; } .kgrid .kcard:nth-child(4) small .i, .kpi:nth-child(4) small .i { color: var(--red); } .kgrid .kcard:nth-child(4) span { color: var(--red-d); }
+.delta.bad, .needs { color: var(--red-d); }
+/* Tab press: the pill is the only effect (the earlier ripple and sparkle are off) */
+.screen .tabbar .rip-clip { display: none; }

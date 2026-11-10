@@ -38,7 +38,7 @@
   --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
   /* Shape */
   --r-s: 8px; --r-m: 12px; --r-l: 18px; --r-xl: 26px;
-  --badge: #0A8A47; --pay-bkash: #D12053; --pay-nagad: #F37021; --ink-bg: #1E1B18; --bg-2: #FAF8F4; --seg-bg: #ECE7DE; --unread-bg: #F1F2FC; --stage: #E9E4DA; --surface-a: rgba(255,255,255,.95); --map-bg: #F1F3F9; --map-block: #E6E9F4; --map-water: #CFE1F5; --map-park: #D4EEDC; --map-case: #DDE1EF; --map-road: #FFFFFF; --map-label: #8A90AB; --map-water-label: #6B84C9; --map-route: #A9D6BC; --pin-ring: #FFFFFF;
+  --badge: #C9232B; --pay-bkash: #D12053; --pay-nagad: #F37021; --ink-bg: #1E1B18; --bg-2: #FAF8F4; --seg-bg: #ECE7DE; --unread-bg: #F1F2FC; --stage: #E9E4DA; --surface-a: rgba(255,255,255,.95); --map-bg: #F1F3F9; --map-block: #E6E9F4; --map-water: #CFE1F5; --map-park: #D4EEDC; --map-case: #DDE1EF; --map-road: #FFFFFF; --map-label: #8A90AB; --map-water-label: #6B84C9; --map-route: #A9D6BC; --pin-ring: #FFFFFF;
   --shadow-1: 0 1px 2px rgba(16, 20, 38, .06);
   --shadow-2: 0 8px 24px rgba(16, 20, 38, .10);
 }
@@ -53,7 +53,7 @@
   --green: #2FA866; --green-d: #5BD08C; --green-l: #15301F;
   --sky: #8189F0; --sky-l: #22264C; --sand: #202126;
   --ok: #4CC380; --ok-l: #15301F; --warn: #E3A93E; --warn-l: #352A10; --bad: #F2686D; --bad-l: #3A1F22; --info: #929AF5; --info-l: #23264A;
-  --badge: #1B9A5B; --ink-bg: #2B2D35; --bg-2: #14151A; --seg-bg: #23242A; --unread-bg: #1A1C3A; --stage: #08090B; --surface-a: rgba(24,25,29,.94);
+  --badge: #E5484D; --ink-bg: #2B2D35; --bg-2: #14151A; --seg-bg: #23242A; --unread-bg: #1A1C3A; --stage: #08090B; --surface-a: rgba(24,25,29,.94);
   --map-bg: #15171C; --map-block: #1D2027; --map-water: #1B2B3F; --map-park: #17281F; --map-case: #2C2F38; --map-road: #3A3E49; --map-label: #8E93A8; --map-water-label: #6F8CCB; --map-route: #2E5B43; --pin-ring: #18191D;
   --shadow-1: 0 1px 2px rgba(0, 0, 0, .5); --shadow-2: 0 8px 24px rgba(0, 0, 0, .55);
 }
