@@ -306,7 +306,7 @@
     }
     if (sh.t === 'gate') {
       const m = AC.payMethods.find(x => x.id === sh.m), col = { bkash: 'var(--pay-bkash)', nagad: 'var(--pay-nagad)', card: 'var(--brand)' }[sh.m] || 'var(--brand)';
-      return `<div class="scrim"></div><div class="sheet"><div class="grab"></div><div class="gate">${sh.stage === 'ok' ? `<div class="okc">${icon('check', 36, 2.5)}</div><h3 style="font-size:20px">Payment received</h3><span class="muted">${money(sh.amount)} paid with ${m.name}</span>` : `<div class="logo" style="background:${col}">${sh.m === 'card' ? icon('card', 30) : m.name[0]}</div><h3 style="font-size:20px">${sh.m === 'card' ? 'Secure checkout (SSLCommerz)' : 'Confirming with ' + m.name}</h3><span class="muted">${money(sh.amount)}. Do not close this screen.</span><span class="ring"></span><span class="faint" style="font-size:12px">Demo gateway. No real payment is made.</span>`}</div></div>`;
+      return `<div class="scrim"></div><div class="sheet"><div class="grab"></div><div class="gate">${sh.stage === 'ok' ? `<div class="okc">${icon('check', 36, 2.5)}</div><h3 style="font-size:20px">Payment received</h3><span class="muted">${money(sh.amount)} paid with ${m.name}</span>` : `<div class="logo gate-mark" style="background:${sh.m === 'bkash' || sh.m === 'nagad' ? 'transparent' : col}">${sh.m === 'card' ? icon('card', 30) : AC.payMark(sh.m)}</div><h3 style="font-size:20px">${sh.m === 'card' ? 'Secure checkout (SSLCommerz)' : 'Confirming with ' + m.name}</h3><span class="muted">${money(sh.amount)}. Do not close this screen.</span><span class="ring"></span><span class="faint" style="font-size:12px">Demo gateway. No real payment is made.</span>`}</div></div>`;
     }
     return '';
   }
