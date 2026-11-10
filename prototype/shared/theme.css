@@ -317,3 +317,18 @@ header.nav { background: var(--bg); }
 .pm-mark.pm-logo { width: 64px; border: 1px solid var(--line); background: #fff; } .pm-mark.pm-logo > b { visibility: hidden; }
 .gate-mark .pm-mark { width: 64px; height: 64px; border-radius: 18px; font-size: 30px; } .gate-mark .pm-mark.pm-logo { width: 96px; }
 .pm-mark.pm-logo { width: 72px; } .pm-mark img { padding: 6px 8px; } .gate-mark .pm-mark.pm-logo { width: 120px; height: 72px; } .gate-mark .pm-mark img { padding: 12px 14px; }
+
+/* ==== Screen transitions ====
+   Content no longer re-fades on every live update. Only a screen that is entering animates (classes set by AC.ui.nav on #app). */
+.view > .stack > *, .view > .pad > .cardx, .fade, .cta-bar, .offer { animation: none; }
+.still .scrim, .still .dscrim, .still .sheet, .still .drawer { animation: none; }
+@keyframes navPush { from { opacity: 0; transform: translateX(36px); } to { opacity: 1; transform: none; } }
+@keyframes navPop { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+@keyframes navTab { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes navBar { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.nav-push .view, .nav-push .content { animation: navPush .32s cubic-bezier(.2,.8,.2,1) both; }
+.nav-pop .view, .nav-pop .content { animation: navPop .3s cubic-bezier(.2,.8,.2,1) both; }
+.nav-tab .view, .nav-tab .content { animation: navTab .26s cubic-bezier(.2,.8,.2,1) both; }
+.nav-push .cta-bar, .nav-pop .cta-bar, .nav-tab .cta-bar { animation: navBar .3s cubic-bezier(.2,.8,.2,1) both; }
+.nav-push .view, .nav-pop .view, .nav-tab .view { will-change: transform, opacity; }
+@media (prefers-reduced-motion: reduce) { .nav-push .view, .nav-pop .view, .nav-tab .view, .nav-push .content, .nav-pop .content, .nav-tab .content, .nav-push .cta-bar, .nav-pop .cta-bar, .nav-tab .cta-bar { animation: none; } }

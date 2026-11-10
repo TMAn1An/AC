@@ -76,6 +76,21 @@
   }, true);
   /* Keep at most two toasts on screen. */
   document.addEventListener('DOMContentLoaded', () => { const h = document.getElementById('toasts'); if (h) new MutationObserver(() => { while (h.children.length > 2) h.removeChild(h.firstChild); }).observe(h, { childList: true }); });
+  /* Screen transitions. Each app calls AC.ui.nav() after a render with the current screen key and stack depth.
+     A deeper stack slides in from the right, a shallower one from the left, a tab or page change fades up. A render that keeps the same screen
+     (a live update) animates nothing, and an open sheet or drawer is not re-animated either. Only the entering screen animates. */
+  const navState = new WeakMap();
+  AC.ui.nav = function (app, key, depth) {
+    const s = navState.get(app), open = !!app.querySelector('.sheet, .drawer');
+    app.classList.toggle('still', !!(s && s.open && open));
+    let timer = s && s.timer;
+    if (s && s.key !== key) {
+      const dir = depth > s.depth ? 'push' : depth < s.depth ? 'pop' : 'tab';
+      app.classList.remove('nav-push', 'nav-pop', 'nav-tab'); app.classList.add('nav-' + dir);
+      clearTimeout(timer); timer = setTimeout(() => app.classList.remove('nav-push', 'nav-pop', 'nav-tab'), 380);
+    }
+    navState.set(app, { key, depth, open, timer });
+  };
   // Drag to scroll for horizontal strips (carousels, tabs, chips). Mouse users have no horizontal wheel, so these looked stuck.
   let drag = null;
   document.addEventListener('pointerdown', e => {

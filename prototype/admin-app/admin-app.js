@@ -106,6 +106,7 @@
     if (t) { if (t.s === 'job') body = Job(t.id); else if (t.s === 'tech') body = Tech(t.id); else if (t.s === 'kyc') body = KycScreen(); else if (t.s === 'chat') { const c = Chat(t.id); body = c.body; cta = c.cta; } else body = List(t.id); } else body = { home: Home, jobs: Jobs, map: MapTab, inbox: Inbox, more: More }[ui.tab]();
     const att = attention().length, UN = S.unread('admin');
     $app.innerHTML = `<div class="statusbar"><span>${clock()}</span></div><div class="view" id="view">${body}</div>${cta}${t ? '' : `<nav class="tabbar">${TABS.map(x => { const n = x[0] === 'home' ? att : x[0] === 'jobs' ? UN.jobs.length : x[0] === 'inbox' ? UN.threads.length : x[0] === 'more' ? UN.orders.length : 0; return `<button class="tab ${ui.tab === x[0] ? 'on' : ''}" data-a="tab" data-v="${x[0]}">${icon(x[2], 22, ui.tab === x[0] ? 2.1 : 1.7)}${x[1]}${n ? `<span class="dot">${n}</span>` : ''}</button>`; }).join('')}</nav>`}${Sheet()}`;
+    AC.ui.nav($app, key, ui.stack.length);
     const v = document.getElementById('view'); v.scrollTop = key === ui.key ? (ui.scroll[key] || 0) : 0; if (t && t.s === 'chat') v.scrollTop = 99999; ui.key = key;
     if (afId) { const e = document.getElementById(afId); if (e) { e.focus(); try { e.setSelectionRange(sel, sel); } catch (x) { } } }
     mountMap();

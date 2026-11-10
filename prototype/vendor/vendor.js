@@ -91,6 +91,7 @@
     const t = ui.stack[ui.stack.length - 1], key = t ? t.s + (t.id || '') : ui.tab, old = document.getElementById('view'); if (old) ui.scroll[ui.key] = old.scrollTop;
     const body = t && t.s === 'history' ? top('History') + `<div class="pad">${AC.history.html('vendor:' + ui.v)}</div>` : t && t.s === 'kyc' ? top('Add technician') + `<div class="pad">${AC.kyc.html(ui.kyc)}</div>` : t && t.s === 'tech' ? TechView(t.id) : t && t.s === 'notifs' ? top('Notifications') + `<div class="pad"><div class="cardx" style="padding:4px 16px">${AC.notifUI.html('vendor:' + ui.v, 'job')}</div></div>` : t ? Job(t.id) : { jobs: Jobs, team: Team, map: Map, earn: Earn, me: Me }[ui.tab](), UNv = S.unread('vendor:' + ui.v, 'jobs'), nNew = UNv.length;
     $app.innerHTML = `<div class="statusbar${!t ? ' dk' : ''}"><span>${clock()}</span></div><div class="view" id="view">${body}</div>${t ? '' : `<nav class="tabbar">${TABS.map(x => `<button class="tab ${ui.tab === x[0] ? 'on' : ''}" data-a="tab" data-v="${x[0]}">${icon(x[2], 22, ui.tab === x[0] ? 2.1 : 1.7)}${x[1]}${x[0] === 'jobs' && nNew ? `<span class="dot">${nNew}</span>` : ''}</button>`).join('')}</nav>`}${Sheet()}`;
+    AC.ui.nav($app, key, ui.stack.length);
     const v = document.getElementById('view'); v.scrollTop = key === ui.key ? (ui.scroll[key] || 0) : 0; ui.key = key; if (afId) { const e = document.getElementById(afId); if (e && e !== document.activeElement) { e.focus(); try { e.setSelectionRange(afSel, afSel); } catch (x) { } } } mountMap(t);
   }
   function mountMap(t) {

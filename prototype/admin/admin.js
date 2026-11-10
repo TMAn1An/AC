@@ -309,6 +309,7 @@
 <button class="icon-btn" data-theme-set="${AC.theme.isDark() ? 'light' : 'dark'}" aria-label="${AC.theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'}" title="${AC.theme.isDark() ? 'Light mode' : 'Dark mode'}">${icon(AC.theme.isDark() ? 'sun' : 'moon', 20)}</button>
 ${av(v ? v.name : 'Admin User', 'ink')}</header>
       <main class="content" id="content">${PAGES[ui.page]()}</main></div>${D}`;
+    AC.ui.nav($app, key, 0);
     const c = document.getElementById('content'); c.scrollTop = key === ui.key ? (ui.scroll[key] || 0) : 0; ui.key = key;
     const cb = document.getElementById('convb'); if (cb) cb.scrollTop = 99999;
     if (afId) { const e = document.getElementById(afId); if (e) { e.focus(); try { e.setSelectionRange(afSel, afSel); } catch (x) { } } }
