@@ -349,3 +349,12 @@ All P0 features done and tested on real devices. Crash-free sessions above 99.5%
 - Dispatch state per technician: `bot`, `waiting` (needs an agent) or `agent`. Handoff happens on an explicit request, on an urgent keyword, or after two unmatched messages. An agent can take over, reply and resolve, which returns the thread to the assistant.
 - The assistant sits behind an interface (`reply(text, missCount, job) -> { text, handoff }`). The prototype uses keyword rules from data. Production can swap in a language model with the same contract and the same handoff rule.
 - Realtime delivery and unread counts use the same channel as job events. Push notifications (FCM) wake the other side. Admin can read job chats for accountability. Chat retention and report-a-message rules are open questions for the client.
+
+
+## Service report, reschedule, warranty and care reminder
+
+- Service report: stored on the job at completion (`checks`, `total`, `before`, `after` photo counts, `note`, `by`, `at`, `nextDue`). Checklists are per service and editable by admin. Photos upload to object storage; the report keeps their keys. A skipped step needs a note. Admin dashboards count jobs closed with a report.
+- Reschedule: allowed while the job is requested, forwarded, assigned or accepted. Writes a `rescheduled` timeline event and notifies the technician, vendor and admin.
+- Warranty: one year from a completed installation by NEW. A claim creates an AC Repair booking with `warrantyOf` set and the labour discounted to zero. Parts still need the customer's approval as extra work. Open question for the client: exact warranty terms in writing, and whether a claim limit applies.
+- Care reminder: `nextDue` is the report date plus 180 days. The customer home shows it; a push reminder is sent 14 days before and on the day (phase 3).
+- Dashboard service quality: time to assign, time to complete, average rating and report rate are computed from job timelines, so they need no extra data entry.

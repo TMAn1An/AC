@@ -2,7 +2,7 @@
    BroadcastChannel + localStorage + postMessage relay, so an action in one app shows up in the others in real time.
    In the Flutter build this layer becomes the backend API + realtime channel (see docs/ARCHITECTURE.md). */
 (function () {
-  const KEY = 'shital.demo.v2', MIN = 60000, CHAT_OPEN = ['accepted', 'ontheway', 'arrived', 'working'];
+  const KEY = 'shital.demo.v3', MIN = 60000, CHAT_OPEN = ['accepted', 'ontheway', 'arrived', 'working'], RESCHEDULE_OK = ['requested', 'forwarded', 'assigned', 'accepted'];
   let S = null; const subs = [];
 
   /* ---------- Geometry ---------- */
@@ -88,7 +88,8 @@
     const L = (k, m, by, note) => ({ k, at: ago(m), by, note: note || '' });
     const jobs = [
       mk({ id: 'J-2020', cust: 'C1', svc: 'ac-service', status: 'completed', techId: 'T1', createdAt: ago(60 * 24 * 40), slot: 'Past booking', pay: { method: 'bkash', status: 'paid' }, rating: { overall: 5, work: 5, behavior: 5, punctuality: 5, text: 'Rakib was on time and very tidy.' }, deposited: true,
-        tl: [L('requested', 60 * 24 * 40, 'Customer'), L('assigned', 60 * 24 * 40 - 4, 'Admin'), L('completed', 60 * 24 * 40 - 160, 'Rakib Hasan')], warranty: true }),
+        tl: [L('requested', 60 * 24 * 40, 'Customer'), L('assigned', 60 * 24 * 40 - 4, 'Admin'), L('completed', 60 * 24 * 40 - 160, 'Rakib Hasan')], warranty: true,
+        report: { checks: AC.checklistFor('ac-service'), total: AC.checklistFor('ac-service').length, before: 2, after: 2, note: 'Filters were heavily clogged. Cooling is back to normal.', by: 'Rakib Hasan', at: ago(60 * 24 * 40 - 160), nextDue: ago(60 * 24 * 40 - 160) + AC.config.SERVICE_INTERVAL_DAYS * 86400000 } }),
       mk({ id: 'J-2043', cust: 'C9', svc: 'ac-gas', status: 'completed', techId: 'T1', createdAt: ago(300), pay: { method: 'cod', status: 'paid' }, rating: { overall: 5, work: 5, behavior: 5, punctuality: 5, text: 'Cooling is back. Fast and honest.' },
         tl: [L('requested', 300, 'Customer'), L('assigned', 296, 'Admin'), L('completed', 215, 'Rakib Hasan')] }),
       mk({ id: 'J-2045', cust: 'C10', svc: 'ac-repair', status: 'completed', techId: 'T1', createdAt: ago(230), pay: { method: 'cod', status: 'paid' }, rating: { overall: 4, work: 4, behavior: 4, punctuality: 3, text: 'Good work, arrived a little late.' },
@@ -187,6 +188,7 @@
       case 'extra_no': staff('Extra work declined on ' + id + ' by ' + e.by); add(tech, 'Extra work declined. Finish the original job only.'); add(cust, 'Extra work declined.'); break;
       case 'completed': staff(tn + ' completed ' + id + (e.note ? ' (' + e.note + ')' : '')); add(cust, 'Your job is completed. Thank you.'); break;
       case 'paid': staff('Payment received for ' + id); add(tech, 'Customer paid for ' + id); break;
+      case 'rescheduled': staff(id + ' moved by ' + e.by + ': ' + e.note); add(tech, id + ' was moved to a new time: ' + j.slot); if (e.by !== 'Customer') add(cust, 'Your booking ' + id + ' was moved to ' + j.slot + '.'); break;
       case 'cancelled': staff(id + ' was cancelled by ' + e.by); add(tech, id + ' was cancelled.'); add(cust, 'Booking ' + id + ' is cancelled.'); break;
     }
     return out.map((x, i) => Object.assign({ id: id + ':' + e.k + ':' + e.at + ':' + i, at: e.at, job: id }, x));
@@ -265,9 +267,13 @@
           price: sv.price * (d.units || 1), discount: d.discount || 0, extra: { items: [], status: 'none' }, pay: { method: d.method || 'cod', status: 'unpaid' }, status: 'requested', techId: null, vendorId: null, trip: null, rating: null, deposited: false,
           createdAt: Date.now(), tl: [], linkedOrder: d.linkedOrder || null, verified: !!d.verified, otp: String(1000 + Math.floor(Math.random() * 9000)), tried: { vendors: [], techs: [] }
         };
-        push(j, 'requested', 'Customer'); s.jobs.unshift(j); return id;
+        /* Warranty claim: repair labour is free. Parts still go through the normal extra work approval. */
+        if (d.warrantyOf) { j.warrantyOf = d.warrantyOf; j.discount = j.price; }
+        push(j, 'requested', 'Customer', d.warrantyOf ? 'Warranty claim (' + d.warrantyOf + '). Labour is free.' : ''); s.jobs.unshift(j); return id;
       });
     },
+    /* The customer (or admin) can move the time slot until the technician sets off. Everyone on the job is told. */
+    reschedule(id, slot, by) { const j0 = job(id); if (!j0 || !RESCHEDULE_OK.includes(j0.status) || !slot || slot === j0.slot) return false; commit(s => { const j = s.jobs.find(x => x.id === id), was = j.slot; j.slot = slot; push(j, 'rescheduled', by || 'Customer', was + ' to ' + slot); }); return true; },
     assign(id, techId, by) {
       commit(s => {
         const j = s.jobs.find(x => x.id === id), t = AC.techById[techId], was = j.techId; j.tried = j.tried || { vendors: [], techs: [] };
@@ -312,13 +318,15 @@
     proposeExtra(id, items) { commit(s => { const j = s.jobs.find(x => x.id === id); j.extra = { items, status: 'proposed', at: Date.now() }; push(j, 'extra', AC.techById[j.techId].name, 'Extra work proposed: ' + AC.fmt.money(items.reduce((a, i) => a + i.price, 0))); }); },
     resolveExtra(id, ok, by) { commit(s => { const j = s.jobs.find(x => x.id === id); j.extra.status = ok ? 'approved' : 'declined'; push(j, ok ? 'extra_ok' : 'extra_no', by, ok ? 'Extra work approved' : 'Extra work declined'); }); },
     /* Technician completes with the customer's code. Admin can override from the admin panel; the source is logged. */
-    complete(id, cashCollected, code, via, reason) {
+    complete(id, cashCollected, code, via, reason, report) {
       const j0 = job(id); if (!j0) return false;
       if (via !== 'admin' && String(code) !== String(j0.otp)) return false;
       commit(s => {
         const j = s.jobs.find(x => x.id === id); const who = via === 'admin' ? 'Admin' : AC.techById[j.techId].name;
         j.status = 'completed'; push(j, 'completed', who, via === 'admin' ? 'via Admin panel. Override: ' + (reason || 'no reason given') : 'via Technician app. Customer code verified');
-        if (cashCollected && j.pay.method === 'cod') { j.pay.status = 'paid'; j.pay.paidAt = Date.now(); }
+        if ((cashCollected && j.pay.method === 'cod') || jobTotal(j) === 0) { j.pay.status = 'paid'; j.pay.paidAt = Date.now(); }
+        /* Service report: what was checked, photo counts and a note. The customer and admin can read it; it also sets the next service date. */
+        if (report) j.report = { checks: report.checks || [], total: report.total || (report.checks || []).length, before: report.before || 0, after: report.after || 0, note: String(report.note || '').trim(), by: who, at: Date.now(), nextDue: Date.now() + AC.config.SERVICE_INTERVAL_DAYS * 86400000 };
         credit(s, j);
       });
       return true;
@@ -492,6 +500,16 @@
     notifUnread: aud => (S.notifs || []).filter(n => n.aud === aud && n.at > ((S.nread || {})[aud] || 0)).length,
     watch: (aud, cb) => subs.push((s, p) => { const a = typeof aud === 'function' ? aud() : aud, seen = new Set((p.notifs || []).map(n => n.id)); (s.notifs || []).filter(n => n.aud === a && !seen.has(n.id)).forEach(cb); }),
     threadMsgs: t => S.msgs.filter(m => m.thread === t),
+    canReschedule: j => !!j && RESCHEDULE_OK.includes(j.status),
+    /* Warranties: one year of free repair labour after an AC is installed by NEW. Derived from installation jobs and delivered AC orders. */
+    warranties(custId) {
+      const out = [], day = 86400000, len = AC.config.WARRANTY_DAYS * day;
+      S.jobs.forEach(j => { if (j.cust.id === custId && j.status === 'completed' && (j.warranty || j.svc === 'ac-install')) { const e = j.tl.filter(x => x.k === 'completed').pop(), start = e ? e.at : j.createdAt; out.push({ id: 'W-' + j.id.slice(2), ref: j.id, title: j.svc === 'ac-install' ? 'AC installation' : 'Split AC', start, end: start + len }); } });
+      (S.orders || []).forEach(o => { if (o.cust === custId && o.install && o.status === 'delivered' && !o.jobId) { const e = o.tl.filter(x => x.k === 'delivered').pop(), start = e ? e.at : Date.now(); out.push({ id: 'W-' + o.id.slice(2), ref: o.id, title: (o.items.find(i => (AC.catById[i.pid] || {}).cat === 'ac') || { name: 'Air conditioner' }).name || 'Air conditioner', start, end: start + len }); } });
+      return out.map(w => Object.assign(w, { daysLeft: Math.max(0, Math.ceil((w.end - Date.now()) / day)), active: w.end > Date.now(), claims: S.jobs.filter(j => j.warrantyOf === w.id).length })).sort((a, b) => b.start - a.start);
+    },
+    /* AC care: the latest service report tells the customer when the next servicing is due. */
+    careFor(custId) { const j = S.jobs.filter(x => x.cust.id === custId && x.report && x.report.nextDue).sort((a, b) => b.report.at - a.report.at)[0]; if (!j) return null; const days = Math.ceil((j.report.nextDue - Date.now()) / 86400000); return { job: j.id, svcName: j.svcName, at: j.report.at, due: j.report.nextDue, days, overdue: days < 0, soon: days <= 30 }; },
     chatMsgs: t => (S.chat || []).filter(m => m.thread === t).sort((a, b) => a.at - b.at),
     chatOpen: j => !!j && CHAT_OPEN.includes(j.status),
     dispatchOf: id => (S.dispatch || {})[id] || { mode: 'bot', miss: 0, agent: null },

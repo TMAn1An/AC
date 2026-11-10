@@ -177,3 +177,21 @@ header.nav { background: var(--bg); }
 .toast, .snack { background: var(--ink-bg); color: #fff; }
 .logo-tile { --logo-ink: #111111; }
 :root[data-theme="dark"] { --logo-ink: #F2EFEA; }
+
+/* Service report, warranty, care reminder, verified badge */
+.verif { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; font-size: 12px; font-weight: 700; color: var(--green-d); background: var(--green-l); border-radius: 99px; padding: 2px 8px 2px 6px; }
+.rchecks { display: grid; gap: 8px; margin-top: 12px; } .rchecks div { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; } .rchecks .i { flex: none; margin-top: 2px; }
+.rchecks .ok .i { color: var(--green); } .rchecks .no { color: var(--ink-3); } .rchecks .no .i { color: var(--ink-4); }
+.pchip { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); background: var(--bg); border: 1px solid var(--line); border-radius: 99px; padding: 4px 10px; }
+.wcard { margin-top: 12px; padding: 12px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--bg-2); } .wcard > .row > .i { color: var(--green); margin-top: 2px; } .wcard.off { opacity: .6; } .wcard.off > .row > .i { color: var(--ink-4); }
+.wdays { font-family: var(--f-display); font-size: 17px; color: var(--green-d); white-space: nowrap; }
+.wbar { height: 6px; border-radius: 3px; background: var(--line); margin-top: 10px; overflow: hidden; } .wbar i { display: block; height: 100%; border-radius: 3px; background: var(--green); }
+.care { margin: 14px 20px 0; width: calc(100% - 40px); display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 14px; border-radius: var(--r-m); background: var(--surface); border: 1px solid var(--line); }
+.care small { display: block; color: var(--ink-3); font-size: 12.5px; margin-top: 1px; } .care .svc-ic { background: var(--brand-l); color: var(--brand); flex: none; }
+.care-cta { flex: none; font-weight: 700; font-size: 13px; color: var(--brand); border: 1px solid var(--brand-m); border-radius: 99px; padding: 6px 12px; }
+.care.soon { border-color: var(--warn); background: var(--warn-l); } .care.due { border-color: var(--bad); background: var(--bad-l); }
+.care.soon .care-cta, .care.due .care-cta { background: var(--brand); color: #fff; border-color: var(--brand); }
+.screen .sheet .slot[disabled] { opacity: .45; }
+.sheet { max-height: 88%; overflow-y: auto; }
+.sheet .photo { height: 52px; aspect-ratio: auto; display: flex; align-items: center; justify-content: center; }
+.verif { display: flex; width: fit-content; }

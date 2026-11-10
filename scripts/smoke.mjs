@@ -84,6 +84,20 @@ const r2 = await page.evaluate(async () => {
   S.act.dispatchAgent('T2', 'Hi, how can I help?', 'Joy Das'); out.agentJoins = S.dispatchOf('T2').mode === 'agent' && S.chatMsgs('D:T2').slice(-1)[0].from === 'agent' && S.chatUnread('tech:T2').includes('D:T2');
   S.act.dispatchResolve('T2', 'Joy Das'); out.resolved = S.dispatchOf('T2').mode === 'bot';
   S.act.dispatchSend('T4', 'urgent accident'); out.urgentHandoff = S.dispatchOf('T4').mode === 'waiting';
+  // reschedule: allowed until the technician sets off, logged, technician told; blocked afterwards
+  const rj = mkJob(); S.act.assign(rj, 'T1', 'Admin'); S.act.respond(rj, 'T1', true);
+  out.reschedOk = S.act.reschedule(rj, 'Tomorrow, 2-4 PM', 'Customer') === true && S.job(rj).slot === 'Tomorrow, 2-4 PM' && S.job(rj).tl.some(e => e.k === 'rescheduled');
+  S.act.startTrip(rj); out.reschedBlocked = S.act.reschedule(rj, 'Today, 2-4 PM', 'Customer') === false && S.job(rj).slot === 'Tomorrow, 2-4 PM';
+  // service report: saved at completion, sets the next service date, feeds the care reminder
+  S.act.arrive(rj); S.act.startWork(rj); S.act.complete(rj, true, S.job(rj).otp, 'technician', '', { checks: ['a', 'b'], total: 3, before: 1, after: 2, note: 'Skipped one step' });
+  const rr = S.job(rj).report; out.reportSaved = !!rr && rr.checks.length === 2 && rr.total === 3 && rr.after === 2 && rr.nextDue > Date.now();
+  out.careReminder = !!S.careFor(S.job(rj).cust.id) && S.careFor(S.job(rj).cust.id).job === rj;
+  // warranty: one year from the covered job, claim is free labour, total is zero and paid on completion
+  const wr = S.warranties('C1')[0]; out.warrantyActive = !!wr && wr.active && wr.daysLeft > 300 && wr.daysLeft <= 365;
+  const wj = S.act.createJob({ svc: 'ac-repair', cust: 'C1', slot: 'Today, 4-6 PM', verified: true, warrantyOf: wr.id });
+  out.warrantyFree = S.jobTotal(S.job(wj)) === 0 && S.job(wj).warrantyOf === wr.id && S.warranties('C1')[0].claims === 1;
+  S.act.assign(wj, 'T1', 'Admin'); S.act.respond(wj, 'T1', true); S.act.startTrip(wj); S.act.arrive(wj); S.act.startWork(wj); S.act.complete(wj, false, S.job(wj).otp, 'technician');
+  out.warrantyPaid = S.job(wj).status === 'completed' && S.job(wj).pay.status === 'paid';
   return out;
 });
 const bad = Object.entries(r2).filter(([, v]) => v !== true).map(([k]) => k);

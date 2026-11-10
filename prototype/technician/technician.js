@@ -132,14 +132,20 @@
         <div class="note warn" style="margin-top:14px">${icon('alert', 18)}<span>Do not start extra work until the customer approves. NEW is not responsible for work outside the order.</span></div></div>`;
     }
     if (sh.t === 'finish') {
-      const cod = j.pay.method === 'cod', tot = S.jobTotal(j), d = ui.done;
-      return `<div class="scrim" data-a="close"></div><div class="sheet"><div class="grab"></div><h2 style="font-size:20px">Complete job</h2>
-        <div class="col" style="gap:8px;margin-top:14px">${['Tested cooling and airflow', 'Cleaned the work area', 'Explained the work to the customer'].map((x, i) => `<button class="chk ${d.ck[i] ? 'on' : ''}" data-a="ck" data-v="${i}"><span class="ck" style="${d.ck[i] ? 'background:var(--brand);border-color:var(--brand)' : ''}">${d.ck[i] ? icon('check', 14, 3) : ''}</span><b>${x}</b></button>`).join('')}</div>
-        <div class="lab">After photos</div><div class="row" style="gap:10px">${[0, 1, 2].map(i => `<button class="photo grow ${i < d.photos ? 'has' : ''}" data-a="photo">${icon(i < d.photos ? 'check' : 'camera', 22)}</button>`).join('')}</div>
+      const tot = S.jobTotal(j), cod = j.pay.method === 'cod' && tot > 0, d = ui.done, CL = AC.checklistFor(j.svc), nOk = CL.filter((x, i) => d.ck[i]).length, allOk = nOk === CL.length, note = (ui.d.rnote || '').trim();
+      const ready = (allOk || note.length >= 5) && d.after >= 1 && (ui.d.code || '').length === 4 && (!cod || d.cash);
+      const ph = (k, label) => `<div class="grow"><div class="mini" style="margin-bottom:6px">${label}</div><button class="photo ${d[k] ? 'has' : ''}" style="width:100%" data-a="photo" data-v="${k}">${icon(d[k] ? 'check' : 'camera', 20)}<span style="font-size:12.5px;font-weight:700;margin-left:6px">${d[k] ? d[k] + ' photo' + (d[k] > 1 ? 's' : '') : 'Add'}</span></button></div>`;
+      return `<div class="scrim" data-a="close"></div><div class="sheet"><div class="grab"></div><h2 style="font-size:20px">Service report</h2><div class="muted" style="font-size:13px;margin-top:2px">The customer and NEW get this report when the job closes.</div>
+        <div class="row between" style="margin-top:14px"><span class="lab" style="margin:0">Checklist</span><span class="badge ${allOk ? 'b-ok' : 'b-n'} nodot">${nOk} of ${CL.length}</span></div>
+        <div class="col" style="gap:8px;margin-top:8px">${CL.map((x, i) => `<button class="chk ${d.ck[i] ? 'on' : ''}" data-a="ck" data-v="${i}"><span class="ck" style="${d.ck[i] ? 'background:var(--green);border-color:var(--green)' : ''}">${d.ck[i] ? icon('check', 14, 3) : ''}</span><b>${x}</b></button>`).join('')}</div>
+        <div class="lab">Photos</div><div class="row" style="gap:10px;align-items:flex-end">${ph('before', 'Before')}${ph('after', 'After (required)')}</div>
+        <div class="lab">Note for the customer${allOk ? ' (optional)' : ''}</div><textarea class="textarea" id="f-rnote" data-b="rnote" rows="2" placeholder="${allOk ? 'What you found and fixed' : 'Say why a step was skipped'}">${esc(ui.d.rnote || '')}</textarea>
         <div class="lab">Customer's completion code</div><input class="input otp-in" id="f-code" data-b="code" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="off" value="${esc(ui.d.code || '')}">${d.err ? `<div class="err" style="color:var(--bad);font-weight:600;font-size:13px;margin-top:8px">That code does not match. Ask the customer to check the NEW app.</div>` : `<div class="muted" style="font-size:12.5px;margin-top:6px">The customer sees this code in their app. The job closes when you enter it.</div>`}
-        ${cod ? `<div class="lab">Payment</div><button class="chk ${d.cash ? 'on' : ''}" data-a="cash"><span class="ck" style="${d.cash ? 'background:var(--brand);border-color:var(--brand)' : ''}">${d.cash ? icon('check', 14, 3) : ''}</span><span class="grow"><b>I collected ${money(tot)} in cash</b></span></button>` : `<div class="note" style="margin-top:16px">${icon('info', 18)}<span>The customer pays ${money(tot)} online through ${AC.payName(j.pay.method)}.</span></div>`}
-        <button class="btn btn-ok btn-lg btn-block" style="margin-top:16px" data-a="complete" data-id="${j.id}" ${(cod && !d.cash) || d.ck.filter(Boolean).length < 2 || (ui.d.code || '').length !== 4 ? 'disabled' : ''}>Mark as completed</button></div>`;
+        ${cod ? `<div class="lab">Payment</div><button class="chk ${d.cash ? 'on' : ''}" data-a="cash"><span class="ck" style="${d.cash ? 'background:var(--brand);border-color:var(--brand)' : ''}">${d.cash ? icon('check', 14, 3) : ''}</span><span class="grow"><b>I collected ${money(tot)} in cash</b></span></button>` : `<div class="note" style="margin-top:16px">${icon('info', 18)}<span>${tot > 0 ? 'The customer pays ' + money(tot) + ' online through ' + AC.payName(j.pay.method) + '.' : 'Nothing to collect. This job is covered by warranty.'}</span></div>`}
+        ${ready ? '' : `<div class="muted" style="font-size:12.5px;margin-top:12px">${!allOk && note.length < 5 ? 'Tick every step, or add a note about what was skipped. ' : ''}${d.after < 1 ? 'Add an after photo. ' : ''}</div>`}
+        <button class="btn btn-ok btn-lg btn-block" style="margin-top:12px" data-a="complete" data-id="${j.id}" ${ready ? '' : 'disabled'}>Send report and complete</button></div>`;
     }
+
     return '';
   }
 
@@ -226,9 +232,9 @@
     xpart(el) { ui.extra[el.dataset.v] = !ui.extra[el.dataset.v]; render(); },
     sendextra() { const id = ui.sheet.id; S.act.proposeExtra(id, S.get().extraCatalog.filter(p => ui.extra[p.id]).map(p => ({ label: p.label, price: p.price }))); ui.sheet = null; toast('Sent to the customer. NEW is informed.', 'send'); render(); },
     xask() { const id = ui.sheet.id; S.act.requestExtraItem(id, ui.d.xtext.trim()); ui.d.xtext = ''; ui.sheet = null; toast('Price requested from NEW', 'send'); render(); },
-    finish(el) { ui.d.code = ''; ui.done = { cash: false, ck: [true, true, false], photos: 1, err: false }; ui.sheet = { t: 'finish', id: el.dataset.id }; render(); },
-    ck(el) { const i = +el.dataset.v; ui.done.ck[i] = !ui.done.ck[i]; render(); }, cash() { ui.done.cash = !ui.done.cash; render(); }, photo() { ui.done.photos = Math.min(3, ui.done.photos + 1); render(); },
-    complete(el) { const ok = S.act.complete(el.dataset.id, ui.done.cash, (ui.d.code || '').trim()); if (!ok) { ui.done.err = true; ui.d.code = ''; render(); return; } ui.sheet = null; ui.d.code = ''; toast('Job completed. Nice work.'); render(); },
+    finish(el) { ui.d.code = ''; ui.d.rnote = ''; ui.done = { cash: false, ck: [], before: 0, after: 0, err: false }; ui.sheet = { t: 'finish', id: el.dataset.id }; render(); },
+    ck(el) { const i = +el.dataset.v; ui.done.ck[i] = !ui.done.ck[i]; render(); }, cash() { ui.done.cash = !ui.done.cash; render(); }, photo(el) { const k = el.dataset.v === 'before' ? 'before' : 'after'; ui.done[k] = ui.done[k] >= 3 ? 0 : ui.done[k] + 1; if (ui.done[k]) toast('Photo added (camera opens in the real app)', 'camera'); render(); },
+    complete(el) { const jj = S.job(el.dataset.id), CL = AC.checklistFor(jj.svc), rep = { checks: CL.filter((x, i) => ui.done.ck[i]), total: CL.length, before: ui.done.before, after: ui.done.after, note: ui.d.rnote || '' }; const ok = S.act.complete(el.dataset.id, ui.done.cash, (ui.d.code || '').trim(), undefined, undefined, rep); if (!ok) { ui.done.err = true; ui.d.code = ''; render(); return; } ui.sheet = null; ui.d.code = ''; ui.d.rnote = ''; toast('Report sent. Job completed.'); render(); },
     who(el) { ui.me = el.dataset.v; try { sessionStorage.setItem('tech.me', ui.me); } catch (e) { } ui.tab = 'jobs'; ui.stack = []; render(); toast('Signed in as ' + T().name, 'user'); },
     sim() {
       const pool = ['C10', 'C9', 'C1', 'C5'].map(id => AC.custById[id]).sort((a, b) => S.dist(a, T()) - S.dist(b, T()));
@@ -239,7 +245,7 @@
   };
   $app.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el || el.disabled) return; const f = A[el.dataset.a]; if (f) f(el); });
 
-  $app.addEventListener('input', e => { const k = e.target.dataset.b; if (!k) return; ui.d[k] = e.target.value; if (k === 'code' && e.target.value.length === 4) { ui.done.err = false; render(); } if (k === 'xtext' || k === 'amt' || k === 'ref' || k === 'wamt' || k === 'num') render(); });
+  $app.addEventListener('input', e => { const k = e.target.dataset.b; if (!k) return; ui.d[k] = e.target.value; if (k === 'code' && e.target.value.length === 4) { ui.done.err = false; render(); } if (k === 'rnote' || k === 'xtext' || k === 'amt' || k === 'ref' || k === 'wamt' || k === 'num') render(); });
   $app.addEventListener('keydown', e => { if (e.key !== 'Enter') return; if (e.target.id === 'f-jchat') A.jsend(); if (e.target.id === 'f-dm') A.dsend(); });
   S.subscribe((s, prev) => {
     const lc = (s.chat || []).slice(-1)[0], pc = (prev.chat || []).slice(-1)[0], x = ui.stack[ui.stack.length - 1];

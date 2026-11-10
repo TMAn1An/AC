@@ -93,3 +93,7 @@ body { overflow: hidden; }
 .link { color: var(--brand); font-weight: 700; cursor: pointer; text-decoration: underline; }
 .conv-b .chat { padding: 0; }
 .chat { display: flex; flex-direction: column; gap: 8px; }
+
+.qgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } .qcell { border: 1px solid var(--line); border-radius: var(--r-m); padding: 14px; display: grid; gap: 4px; background: var(--bg-2); }
+.qcell small { display: flex; align-items: center; gap: 6px; color: var(--ink-3); font-weight: 600; font-size: 12.5px; } .qcell b { font-family: var(--f-display); font-size: 22px; font-weight: 600; letter-spacing: -.02em; } .qcell span { font-size: 12.5px; }
+.pick.best { border-color: var(--green); background: var(--green-l); }

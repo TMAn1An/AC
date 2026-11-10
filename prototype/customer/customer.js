@@ -52,10 +52,12 @@
       const t = AC.techById[aj.techId];
       banner = `<button class="live-banner fade" data-a="track" data-v="${aj.id}"><span class="pulse-dot"></span><span class="grow"><b>${esc(aj.svcName)}</b><small>${S.META[aj.status].cust}${t && aj.status === 'ontheway' ? ' . ' + S.etaMin(aj) + ' min away' : ''}</small></span>${icon('right', 18)}</button>`;
     }
+    const care = S.careFor(ME), cm = care ? Math.max(1, Math.round(care.days / 30)) : 0;
+    const careCard = care ? `<button class="care ${care.overdue ? 'due' : care.soon ? 'soon' : ''}" data-a="book" data-v="ac-service"><span class="svc-ic">${icon('snow', 20)}</span><span class="grow"><b>${care.overdue ? 'AC servicing is overdue' : care.soon ? 'AC servicing due in ' + care.days + ' days' : 'Next AC servicing in about ' + cm + ' month' + (cm > 1 ? 's' : '')}</b><small>Last serviced ${new Date(care.at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}. ${care.overdue || care.soon ? 'Book now to keep it cooling well.' : 'We will remind you when it is time.'}</small></span><span class="care-cta">${care.overdue || care.soon ? 'Book' : 'Book early'}</span></button>` : '';
     return `<div class="band"><div class="top">${AC.logo.tile(40, false)}<div class="loc" style="margin-left:2px">${icon('pin', 20)}<div><small>Service and delivery</small>Banani, Dhaka</div></div>${cartBtn()}<button class="icon-btn" data-a="notifs" aria-label="Notifications">${icon('bell', 22)}${S.notifUnread('cust:' + ME) ? `<span class="badge-n">${S.notifUnread('cust:' + ME)}</span>` : ''}</button></div>
     <div class="pad"><h1 class="greet">Hello, ${esc(firstName)}</h1><p class="greet-s">Cool air, fixed fast. Shop or book a technician.</p></div>
     <button class="search" style="margin-top:16px" data-a="tab" data-v="shop">${icon('search', 18)}<span>Search ACs, bags, cosmetics</span></button></div>
-    ${banner}
+    ${banner}${careCard}
     <div class="hero"><div><div class="eyebrow">First purchase</div><h2>15% off your first order</h2><span class="code">${icon('tag', 14)} FIRST15</span></div><div class="art">${Art.draw('split', 1)}</div></div>
     <div class="sec"><div class="sec-h"><h2>Shop by category</h2></div>
       <div class="cats"><button class="cat cat-ac" style="background:${Art.tints[0].bg}" data-a="shopcat" data-v="ac"><div class="art">${Art.draw('split', 0)}</div><span><div>Air conditioners<small>Buy and get serviced</small></div>${icon('right', 16)}</span></button>
@@ -111,7 +113,7 @@
     const vend = t && t.vendor ? AC.vendById[t.vendor].name : '';
     const jc = S.chatMsgs('J:' + j.id), jOpen = S.chatOpen(j), jUn = S.chatUnread('cust:' + ME).includes('J:' + j.id);
     const msgBtn = t && (jOpen || jc.length) ? `<button class="btn ${jOpen ? 'btn-p' : 'btn-s'} btn-block" style="margin-top:12px" data-a="jchat" data-v="${j.id}">${icon('chat', 18)}${jOpen ? 'Message ' + esc(t.name.split(' ')[0]) : 'Chat history'}${jUn ? '<span class="pill-n">New</span>' : ''}</button>` : '';
-    const techCard = t && j.status !== 'cancelled' ? `<div class="cardx"><div class="techcard"><div class="avatar lg">${AC.fmt.ini(t.name)}</div><div class="grow"><b>${esc(t.name)}</b><div class="muted" style="font-size:13px">${vend ? 'Partner: ' + esc(vend) : 'NEW technician'}</div><div class="rate" style="font-weight:600;color:var(--ink-3)">${t.jobs} jobs completed</div></div></div>
+    const techCard = t && j.status !== 'cancelled' ? `<div class="cardx"><div class="techcard"><div class="avatar lg">${AC.fmt.ini(t.name)}</div><div class="grow"><b>${esc(t.name)}</b><div class="muted" style="font-size:13px">${vend ? 'Partner: ' + esc(vend) : 'NEW technician'}</div>${t.kyc && t.kyc.status === 'verified' ? `<div class="verif">${icon('shield', 14)}Identity verified by NEW</div>` : ''}<div class="rate" style="font-weight:600;color:var(--ink-3)">${t.jobs} jobs completed</div></div></div>
       ${msgBtn}<div class="actions"><button class="btn btn-s" data-a="toast" data-v="Calling ${esc(t.name)} (opens the phone dialer in the real app)">${icon('phone', 18)}Call</button><button class="btn btn-s" data-a="toast" data-v="Opening WhatsApp chat with ${esc(t.name)}">${icon('chat', 18)}WhatsApp</button><button class="btn btn-s" data-a="chat">${icon('send', 18)}Support</button></div></div>` : '';
     let extra = '';
     if (j.extra.status === 'proposed') {
@@ -133,6 +135,14 @@
       rate = `<div class="cardx"><b style="font-size:16px">How was ${esc(t ? t.name.split(' ')[0] : 'the technician')}?</b><div class="muted" style="font-size:13px;margin:2px 0 8px">Your review goes to NEW only. The technician does not see it.</div>${pick('overall', 'Overall')}<hr class="divider" style="margin:6px 0">${pick('work', 'Quality of work')}${pick('behavior', 'Behaviour')}${pick('punctuality', 'Punctuality')}
         <textarea class="textarea" id="f-rev" data-b="rev" placeholder="Anything else you would like us to know? (optional)" style="margin-top:10px">${esc(ui.d.rev || '')}</textarea><button class="btn btn-p btn-block" style="margin-top:10px" data-a="rate" data-id="${j.id}" ${rt.overall ? '' : 'disabled'}>Submit review</button></div>`;
     } else if (j.rating) rate = `<div class="cardx row">${starRow(S.ratingOf(j), 16)}<span class="muted grow">Thanks for your review</span></div>`;
+    const R = j.report, fmtD = ts => new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    const reportCard = R ? `<div class="cardx report"><div class="row between"><b style="font-size:16px">Service report</b><span class="badge b-ok">${R.checks.length} of ${R.total} checks</span></div><div class="muted" style="font-size:13px;margin-top:2px">By ${esc(R.by)} . ${fmtD(R.at)}</div>
+      <div class="rchecks">${AC.checklistFor(j.svc).map(x => { const ok = R.checks.includes(x); return `<div class="${ok ? 'ok' : 'no'}">${icon(ok ? 'check' : 'x', 14, 2.6)}<span>${x}</span></div>`; }).join('')}</div>
+      ${R.note ? `<div class="note" style="margin-top:12px">${icon('info', 18)}<span>${esc(R.note)}</span></div>` : ''}
+      <div class="row" style="gap:8px;margin-top:12px"><span class="pchip">${icon('camera', 14)}${R.before} before</span><span class="pchip">${icon('camera', 14)}${R.after} after</span></div>
+      ${R.nextDue ? `<div class="lrow" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">${icon('calendar', 20)}<div class="grow"><b>Next servicing due ${fmtD(R.nextDue)}</b><small>Regular servicing keeps cooling strong and bills low.</small></div></div>` : ''}</div>` : '';
+    const resched = S.canReschedule(j) ? `<button class="cardx lrow" data-a="resopen" data-v="${j.id}">${icon('calendar', 20)}<div class="grow"><b>${esc(j.slot)}</b><small>Change the time. Free until the technician sets off.</small></div>${icon('right', 18)}</button>` : '';
+    const wNote = j.warrantyOf ? `<div class="note ok">${icon('shield', 18)}<span><b>Warranty claim.</b> Repair labour is free. Any parts are shown to you for approval first.</span></div>` : '';
     const codeCard = ['arrived', 'working'].includes(j.status) ? `<div class="cardx code-card"><div class="row" style="gap:10px;align-items:flex-start">${icon('lock', 20)}<div class="grow"><b>Completion code</b><div class="muted" style="font-size:13px;margin-top:2px">When you are happy with the work, tell this code to the technician. The job closes only after they enter it.</div></div></div><div class="otp-show" aria-label="Completion code ${j.otp.split('').join(' ')}">${j.otp.split('').map(x => `<span>${x}</span>`).join('')}</div></div>` : '';
     const prog = `<div class="prog">${[0, 1, 2, 3, 4, 5].map(i => `<i class="${i <= idx ? 'on' : ''}"></i>`).join('')}</div>`;
     const searching = !t && S.isActive(j) ? `<div class="searching"><span class="gate" style="padding:0"><span class="ring"></span></span><span class="grow">${j.status === 'forwarded' ? 'A partner is assigning a technician' : 'Finding the closest technician'}<div class="muted" style="font-weight:500;font-size:12.5px">Usually under 10 minutes</div></span></div>` : '';
@@ -140,7 +150,7 @@
     return `${top('Booking ' + j.id, { right: `<button class="icon-btn" data-a="chat" aria-label="Chat with support">${icon('chat', 22)}</button>` })}
     <div class="trackmap" id="trackmap">${searching}</div>
     <div class="statuscard fade"><div class="eyebrow">${esc(j.svcName)} . ${esc(j.slot)}</div><h2 style="margin-top:4px">${head[0]}</h2><div class="eta">${head[1]}</div>${j.status === 'cancelled' ? '' : prog}</div>
-    <div class="stack" style="margin-top:14px">${codeCard}${techCard}${extra}
+    <div class="stack" style="margin-top:14px">${codeCard}${wNote}${reportCard}${techCard}${extra}${resched}
       <div class="cardx"><h3 style="font-size:16px;margin-bottom:14px">Progress</h3><div class="tl">${tlHtml}</div></div>
       ${payBox}${rate}
       <div class="cardx"><div class="lrow">${icon('pin', 20)}<div class="grow"><b>${esc(j.cust.addr)}</b><small>${esc(j.cust.phone)}</small></div></div>${j.note ? `<div class="muted" style="margin-top:10px;font-size:13px">Note: ${esc(j.note)}</div>` : ''}</div>
@@ -240,12 +250,12 @@
   }
 
   function Account() {
-    const w = myOrders().filter(o => o.install && o.status === 'delivered');
+    const W = S.warranties(ME);
     return `${top('Account', { back: false })}<div class="stack">
       <div class="cardx row" style="gap:14px"><div class="avatar lg">${AC.fmt.ini(me.name)}</div><div class="grow"><b style="font-size:17px">${me.name}</b><div class="muted">${me.phone}</div></div></div>
       <div class="cardx"><div class="row between" style="margin-bottom:10px"><b>Appearance</b><span class="muted" style="font-size:13px">Light, dark or follow the phone</span></div>${AC.theme.seg()}</div>
       <div class="cardx lrow">${icon('pin', 20)}<div class="grow"><b>Saved address</b><small>${me.addr}</small></div></div>
-      <div class="cardx"><b>Warranty</b>${w.length ? w.map(o => `<div class="note ok" style="margin-top:10px">${icon('shield', 18)}<span>Order ${o.id}: 1 year free repair.</span></div>`).join('') : `<div class="muted" style="font-size:13px;margin-top:6px">Buy an AC with installation to get 1 year free repair.</div>`}</div>
+      <div class="cardx"><div class="row between"><b>Warranty</b>${W.length ? `<span class="badge b-ok">${W.filter(x => x.active).length} active</span>` : ''}</div>${W.length ? W.map(x => `<div class="wcard ${x.active ? '' : 'off'}"><div class="row" style="align-items:flex-start">${icon('shield', 20)}<div class="grow"><b>${esc(x.title)}</b><div class="muted" style="font-size:12.5px">${x.id} . ${x.active ? 'valid until ' + new Date(x.end).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'expired'}${x.claims ? ' . ' + x.claims + ' claim' + (x.claims > 1 ? 's' : '') : ''}</div></div><b class="wdays">${x.active ? x.daysLeft + ' d' : ''}</b></div><div class="wbar"><i style="width:${Math.round(100 * x.daysLeft / AC.config.WARRANTY_DAYS)}%"></i></div>${x.active ? `<button class="btn btn-s btn-sm btn-block" style="margin-top:10px" data-a="wclaim" data-v="${x.id}">Claim free repair</button>` : ''}</div>`).join('') : `<div class="muted" style="font-size:13px;margin-top:6px">Buy an AC with installation to get 1 year free repair.</div>`}</div>
       <div class="cardx"><b>Offers for you</b><div class="col" style="gap:10px;margin-top:12px">${AC.promos.filter(p => p.status === 'Active').map(p => `<div class="row"><span class="svc-ic" style="width:36px;height:36px;background:var(--accent-l);color:var(--accent-d)">${icon('tag', 18)}</span><div class="grow"><b style="font-size:13.5px">${p.title}</b><div class="muted" style="font-size:12.5px">${p.desc}</div></div></div>`).join('')}</div></div>
       <button class="cardx lrow" data-a="history">${icon('clock', 20)}<div class="grow"><b>History</b><small>Everything you did, saved on this phone</small></div>${icon('right', 18)}</button>
       <button class="cardx lrow" data-a="chat">${icon('chat', 20)}<div class="grow"><b>Chat with support</b><small>Replies from our team in minutes</small></div>${icon('right', 18)}</button>
@@ -281,6 +291,19 @@
       const rows = sh.t === 'cats' ? [['all', 'All products'], ['ac', 'Air conditioners'], ['bag', 'Bags'], ['cos', 'Cosmetics']].map(x => `<button class="sheet-opt ${ui.cat === x[0] ? 'on' : ''}" data-a="shopcat" data-v="${x[0]}"><span>${x[1]}</span><small>${cc[x[0]]}</small>${ui.cat === x[0] ? icon('check', 18, 2.5) : ''}</button>`).join('')
         : [['popular', 'Popular'], ['low', 'Price: low to high'], ['high', 'Price: high to low'], ['rating', 'Top rated']].map(x => `<button class="sheet-opt ${ui.sort === x[0] ? 'on' : ''}" data-a="sort" data-v="${x[0]}"><span>${x[1]}</span>${ui.sort === x[0] ? icon('check', 18, 2.5) : ''}</button>`).join('');
       return `<div class="scrim" data-a="closesheet"></div><div class="sheet"><div class="grab"></div><h3 style="font-size:18px;margin-bottom:6px">${sh.t === 'cats' ? 'Categories' : 'Sort by'}</h3>${rows}</div>`;
+    }
+    if (sh.t === 'resched') {
+      const j = S.job(sh.id);
+      return `<div class="scrim" data-a="closesheet"></div><div class="sheet"><div class="grab"></div><h3 style="font-size:18px">Change the time</h3><div class="muted" style="font-size:13px;margin:2px 0 12px">Now: ${esc(j.slot)}. Your technician and NEW are told at once.</div>
+        <div class="optgrid">${AC.slots.concat(['Day after tomorrow, 10 AM-12 PM', 'Day after tomorrow, 4-6 PM']).map(x => `<button class="slot ${sh.slot === x ? 'on' : ''}" ${x === j.slot ? 'disabled' : ''} data-a="respick" data-v="${x}">${x}</button>`).join('')}</div>
+        <button class="btn btn-p btn-lg btn-block" style="margin-top:16px" data-a="resdo" ${sh.slot ? '' : 'disabled'}>Confirm new time</button></div>`;
+    }
+    if (sh.t === 'wclaim') {
+      const w = S.warranties(ME).find(x => x.id === sh.id);
+      return `<div class="scrim" data-a="closesheet"></div><div class="sheet"><div class="grab"></div><h3 style="font-size:18px">Claim free repair</h3><div class="muted" style="font-size:13px;margin:2px 0 12px">${esc(w.title)} . warranty ${w.id} . ${w.daysLeft} days left. Labour is free; parts need your approval.</div>
+        <label class="lab" style="margin-top:0">What is wrong?</label><textarea class="textarea" id="f-wnote" data-b="wnote" rows="2" placeholder="For example: not cooling, water leaking, noise">${esc(ui.d.wnote || '')}</textarea>
+        <label class="lab">When should we come?</label><div class="optgrid">${AC.slots.map(x => `<button class="slot ${sh.slot === x ? 'on' : ''}" data-a="wslot" data-v="${x}">${x}</button>`).join('')}</div>
+        <button class="btn btn-ok btn-lg btn-block" style="margin-top:16px" data-a="wdo" ${(ui.d.wnote || '').trim().length >= 3 ? '' : 'disabled'}>Book free repair</button></div>`;
     }
     if (sh.t === 'gate') {
       const m = AC.payMethods.find(x => x.id === sh.m), col = { bkash: '#D12053', nagad: '#C9232B', card: '#272B7A' }[sh.m] || '#272B7A';
@@ -398,6 +421,11 @@
     jchat(el) { ui.d.jchat = ''; push('jchat', { id: el.dataset.v }); S.act.markSeen('cust:' + ME, 'c:J:' + el.dataset.v); },
     jsend() { const t = ui.stack[ui.stack.length - 1]; if (!t || t.s !== 'jchat') return; const v = (ui.d.jchat || '').trim(); if (!v) return; S.act.jobChat(t.p.id, 'customer', v); ui.d.jchat = ''; render(); },
     jquick(el) { const t = ui.stack[ui.stack.length - 1]; if (!t || t.s !== 'jchat') return; S.act.jobChat(t.p.id, 'customer', el.dataset.v); },
+    resopen(el) { ui.sheet = { t: 'resched', id: el.dataset.v, slot: null }; render(); }, respick(el) { ui.sheet.slot = el.dataset.v; render(); },
+    resdo() { const sh = ui.sheet; if (!sh || !sh.slot) return; const ok = S.act.reschedule(sh.id, sh.slot, 'Customer'); ui.sheet = null; render(); toast(ok ? 'Time changed. Your technician is told.' : 'This booking can no longer be moved.', ok ? 'calendar' : 'info'); },
+    wclaim(el) { ui.d.wnote = ''; ui.sheet = { t: 'wclaim', id: el.dataset.v, slot: AC.slots[1] }; render(); }, wslot(el) { ui.sheet.slot = el.dataset.v; render(); },
+    wdo() { const sh = ui.sheet, note = (ui.d.wnote || '').trim(); if (!sh || note.length < 3) return; const id = S.act.createJob({ svc: 'ac-repair', cust: ME, slot: sh.slot, note, method: 'cod', verified: true, warrantyOf: sh.id }); ui.sheet = null; ui.d.wnote = ''; ui.tab = 'orders'; ui.ot = 'book'; ui.stack = [{ s: 'track', p: { id } }]; render(); toast('Free repair booked under warranty', 'shield'); },
+    rebook(el) { A.book({ dataset: { v: el.dataset.v } }); },
     track(el) { ui.d.rt = {}; ui.d.rev = ''; push('track', { id: el.dataset.v }); S.act.markSeen('cust:' + ME, 'j:' + el.dataset.v); },
     extra(el) { S.act.resolveExtra(el.dataset.id, el.dataset.v === 'yes', 'Customer'); toast(el.dataset.v === 'yes' ? 'Extra work approved' : 'Extra work declined'); },
     cancel(el) { S.act.cancel(el.dataset.id, 'Customer'); toast('Booking cancelled', 'info'); },
@@ -431,7 +459,7 @@
   function gate(m, amount, done) { ui.sheet = { t: 'gate', m, amount, stage: 'wait' }; render(); setTimeout(() => { ui.sheet.stage = 'ok'; render(); setTimeout(done, 1000); }, 1700); }
 
   $app.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el || el.disabled) return; const f = A[el.dataset.a]; if (f) f(el); });
-  $app.addEventListener('input', e => { const k = e.target.dataset.b; if (!k) return; if (['addr', 'phone', 'note'].includes(k)) ui.book[k] = e.target.value; else ui.d[k] = e.target.value; if (k === 'otp' && e.target.value.length === 4) setTimeout(checkOtp, 120); if (k === 'q') render(); });
+  $app.addEventListener('input', e => { const k = e.target.dataset.b; if (!k) return; if (['addr', 'phone', 'note'].includes(k)) ui.book[k] = e.target.value; else ui.d[k] = e.target.value; if (k === 'otp' && e.target.value.length === 4) setTimeout(checkOtp, 120); if (k === 'q' || k === 'wnote') render(); });
   $app.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'f-chat') A.send(); if (e.key === 'Enter' && e.target.id === 'f-jchat') A.jsend(); });
 
   /* Notifications on live changes from admin / vendor / technician */

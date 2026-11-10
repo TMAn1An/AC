@@ -25,7 +25,7 @@ window.AC = window.AC || {};
     dhanmondi: { n: 'Dhanmondi', x: 355, y: 420 }, motijheel: { n: 'Motijheel', x: 650, y: 490 }, olddhaka: { n: 'Old Dhaka', x: 450, y: 548 }
   };
   /* Business rules live here so they can change without touching app code. */
-  AC.config = { SERVICE_RADIUS: 160, OFFER_SECONDS: 60, VENDOR_MINUTES: 15, INSTALL_FEE: 1800, INSTALL_DISCOUNT: 0.2, INCENTIVE_RATE: 0.12, CONFIRM_DISCOUNT: 100 };
+  AC.config = { SERVICE_RADIUS: 160, OFFER_SECONDS: 60, VENDOR_MINUTES: 15, INSTALL_FEE: 1800, INSTALL_DISCOUNT: 0.2, INCENTIVE_RATE: 0.12, CONFIRM_DISCOUNT: 100, SERVICE_INTERVAL_DAYS: 180, WARRANTY_DAYS: 365 };
   AC.SERVICE_RADIUS = AC.config.SERVICE_RADIUS; // map units, about 4 km
 
   AC.services = [
@@ -123,6 +123,17 @@ window.AC = window.AC || {};
   AC.courierLinks = { 'Pathao Courier': id => 'https://merchant.pathao.com/tracking?consignment_id=' + id, 'RedX': id => 'https://redx.com.bd/track-global-parcel/?trackingId=' + id };
 
 
+
+  /* Service report: what the technician confirms before closing a job. Per service, editable here. The customer and admin see the result. */
+  AC.checklists = {
+    'default': ['Tested cooling and airflow', 'Cleaned the work area', 'Explained the work to the customer'],
+    'ac-service': ['Washed filters and indoor coil', 'Cleaned the outdoor unit', 'Cleared the drain line', 'Checked gas pressure', 'Tested cooling and airflow'],
+    'ac-gas': ['Checked for leaks', 'Refilled gas to the rated pressure', 'Tested cooling and airflow', 'Explained the work to the customer'],
+    'ac-install': ['Mounted indoor and outdoor units', 'Vacuumed and connected the piping', 'Checked the drain slope', 'Tested cooling and airflow', 'Showed the customer how to use the remote'],
+    'ac-cooling': ['Found and explained the fault', 'Cleaned filters and coil', 'Checked gas pressure', 'Tested cooling and airflow'],
+    'ac-repair': ['Found and explained the fault', 'Replaced or repaired the faulty part', 'Tested cooling and airflow', 'Cleaned the work area']
+  };
+  AC.checklistFor = svc => AC.checklists[svc] || AC.checklists['default'];
   /* Dispatch assistant (technician help). Rules are plain data so wording and topics can change without touching code.
      Each rule lists keywords (any match counts, the rule with most matches wins). `handoff` sends the chat to a human agent at once.
      No rule matched twice in a row also hands off. In production the same interface can be backed by a language model. */
