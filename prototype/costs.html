@@ -85,14 +85,12 @@ footer { padding: 36px 0 50px; color: var(--ink-3); font-size: 13.5px; }
   <h2>2. Fixed costs</h2>
   <p class="lead">Paid to providers in your name. Same cost whether you have 10 customers or 10,000.</p>
   <div class="tw"><table><thead><tr><th>Item</th><th>Need</th><th>When</th><th class="n">Cost</th></tr></thead><tbody id="fix-body"></tbody></table></div>
-  <p class="note">Server prices follow the Hostinger KVM price list at ৳120 per US dollar: KVM 4 is $12.99 now and $28.99 on renewal, KVM 8 is $25.99 now and $49.99 on renewal. Confirm with the host you choose.</p>
-  <div class="box" style="margin-top:14px"><h3>Hosting for smooth apps</h3><p>A good VPS is enough to start. Example: Hostinger KVM 4 (4 vCPU, 16 GB RAM, 200 GB NVMe). Pick the Singapore or India data centre, the closest to Dhaka.</p><ul>
-    <li><b>Price:</b> ৳1,600 a month for the first 24 months if paid up front, about ৳3,500 a month when it renews. We budget the range.</li>
-    <li><b>Launch:</b> one KVM 4 runs the app, database and photos. With backup: ৳2,100 to 5,000 a month.</li>
-    <li><b>Growing:</b> two KVM 8 servers, one for the app and one for the database. About ৳6,700 to 13,500 a month.</li>
-    <li><b>Backup:</b> a daily copy kept at a second place. ৳500 to 1,500 a month. Do not skip it.</li>
+  <p class="note">Server prices follow Bangladesh dedicated hosting price lists (about ৳6,500 to ৳14,000 a month for a good server). Confirm with the host you choose.</p>
+  <div class="box" style="margin-top:14px"><h3>Hosting for smooth apps</h3><p>One good dedicated server in Bangladesh is enough to start. It is close to your customers, so the live map, chat and notifications answer fast.</p><ul>
+    <li><b>Launch:</b> one dedicated server (Ryzen class, NVMe disk) runs the app, database and photos. ৳10,000 to 14,000 a month.</li>
+    <li><b>Backup:</b> a daily copy kept at a second place. ৳500 to 1,500 a month. One server alone is a risk, so do not skip this.</li>
+    <li><b>Growing:</b> a second server so the database has its own machine. ৳20,000 to 30,000 a month.</li>
     <li><b>CDN:</b> not needed. A CDN keeps copies of photos near users. At this size the server is fast enough. If photos load slowly later, add Cloudflare, its free plan is enough.</li>
-    <li><b>Option:</b> a dedicated server in Bangladesh costs ৳10,000 to 14,000 a month. Choose it only if you later need guaranteed CPU.</li>
     <li><b>Before launch:</b> a load test with thousands of simulated users, included in development.</li></ul></div>
 </section>
 
@@ -187,11 +185,11 @@ footer { padding: 36px 0 50px; color: var(--ink-3); font-size: 13.5px; }
   $('dev-body').innerHTML = DEV.map(d => `<tr><td><b>${d[0]}</b></td><td>${d[1]}</td><td class="n">${rng(d[2], d[3])}</td></tr>`).join('') + `<tr class="sum"><td>Total, paid once</td><td></td><td class="n">${rng(DEVR[0], DEVR[1])}</td></tr>`;
 
   const FX = () => +$('c-fx').value || 120;
-  const TIERS = [{ n: 'Launch', bdt: [2100, 5000] }, { n: 'Growing', bdt: [6700, 13500] }, { n: 'Busy', bdt: [19500, 29000] }];
+  const TIERS = [{ n: 'Launch', bdt: [10500, 15500] }, { n: 'Growing', bdt: [20000, 30000] }, { n: 'Busy', bdt: [45000, 70000] }];
   const DOMAIN = [1000, 2500], SMS = [0.31, 0.64], PLAY = 25, GATEWAY_SETUP = [0, 25500];
   const FIX = [
     ['Domain name (.com.bd)', 'req', 'Yearly', () => rng(DOMAIN[0], DOMAIN[1]) + ' a year'],
-    ['Server (VPS, 4 vCPU, 16 GB, 200 GB NVMe): app, database, photos', 'req', 'Monthly', () => rng(1600, 3500)],
+    ['Dedicated server in Bangladesh (app, database, photos)', 'req', 'Monthly', () => rng(10000, 14000)],
     ['Offsite daily backup', 'req', 'Monthly', () => rng(500, 1500)],
     ['Google Play account', 'req', 'Once', () => IN(PLAY * 120) + ' ($25)'],
     ['Apple developer account (iOS later)', 'opt', 'Yearly', () => IN(99 * 120) + ' ($99)']
