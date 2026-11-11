@@ -10,7 +10,7 @@ Source: `Client_Requirements.pdf` (client notes plus developer Q&A). Where the b
 | --- | --- | --- |
 | Apps | Customer, technician, vendor, admin (mobile) and admin web. Vendors get their own app, scoped to their jobs. Production plan: `docs/PRODUCTION_PLAN.md`. | Client reply 1 and later decision |
 | Platforms | Flutter. Android and iOS for the two mobile apps. Web for admin. Desktop possible later. | Client |
-| Selling model | Single seller. NEW buys from vendors and sells. No marketplace of third-party sellers. | Client reply 2 |
+| Selling model | Multi-vendor marketplace (changed after a client call; replaces the earlier single-seller decision). Vendors sell their own products, admin approves new products and can remove any, NEW earns a commission on vendor sales. | Client call, later change |
 | Vendor role | Field service only, in areas without a NEW technician. Admin stores name, address and phone. Commission amount decided later. | Client reply 2 |
 | Routing | Admin assigns a nearby NEW technician. Otherwise forwards to a vendor who assigns their own technician. | Client reply 1 (second round) |
 | Extra work | Technician picks a priced item and the customer decides. Admin is informed only, no approval. Missing items are priced by admin or the vendor. | Client review round 3 |

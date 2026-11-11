@@ -332,3 +332,7 @@ header.nav { background: var(--bg); }
 .nav-push .cta-bar, .nav-pop .cta-bar, .nav-tab .cta-bar { animation: navBar .3s cubic-bezier(.2,.8,.2,1) both; }
 .nav-push .view, .nav-pop .view, .nav-tab .view { will-change: transform, opacity; }
 @media (prefers-reduced-motion: reduce) { .nav-push .view, .nav-pop .view, .nav-tab .view, .nav-push .content, .nav-pop .content, .nav-tab .content, .nav-push .cta-bar, .nav-pop .cta-bar, .nav-tab .cta-bar { animation: none; } }
+
+/* Stepper: a small count control (helpers needed). */
+.stepper { display: inline-flex; align-items: center; gap: 8px; }
+.stepper .btn { padding: 0; width: 36px; min-width: 36px; }

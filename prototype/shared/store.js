@@ -2,7 +2,7 @@
    BroadcastChannel + localStorage + postMessage relay, so an action in one app shows up in the others in real time.
    In the Flutter build this layer becomes the backend API + realtime channel (see docs/ARCHITECTURE.md). */
 (function () {
-  const KEY = 'shital.demo.v3', MIN = 60000, CHAT_OPEN = ['accepted', 'ontheway', 'arrived', 'working'], RESCHEDULE_OK = ['requested', 'forwarded', 'assigned', 'accepted'];
+  const KEY = 'shital.demo.v4', MIN = 60000, CHAT_OPEN = ['accepted', 'ontheway', 'arrived', 'working'], RESCHEDULE_OK = ['requested', 'forwarded', 'assigned', 'accepted'];
   let S = null; const subs = [];
 
   /* ---------- Geometry ---------- */
@@ -68,11 +68,16 @@
     const remM = (total - p * total) * M;
     return { arrived: false, remM, remTxt: remM < 1000 ? Math.round(remM / 10) * 10 + ' m' : (remM / 1000).toFixed(1) + ' km', etaMin: Math.max(1, Math.round(remM / 1000 * 3.2)), text, rot, next: fmt(rem) };
   }
+  /* Helpers (sub-technicians) on a job: invited or accepted. A technician is lead or helper on a job, never both. */
+  const helps = (j, id) => (j.crew || []).some(c => c.id === id && c.status !== 'declined' && c.status !== 'removed');
+  const crewOn = j => (j.crew || []).filter(c => c.status === 'accepted');
+  const needsHelper = j => isActive(j) && ['accepted', 'ontheway', 'arrived', 'working'].includes(j.status) && (j.helpersNeeded || 0) > (j.crew || []).filter(c => c.status === 'accepted' || c.status === 'invited').length;
+  const engaged = (id, except) => S.jobs.some(j => j.id !== except && isActive(j) && ['accepted', 'ontheway', 'arrived', 'working'].includes(j.status) && (j.techId === id || helps(j, id)));
   function nearbyTechs(pt, opts) {
     opts = opts || {};
     return AC.techs
       .filter(t => (opts.vendor === undefined ? true : t.vendor === opts.vendor))
-      .map(t => ({ t, d: dist(t, pt), online: S.online[t.id] !== false, busy: S.jobs.some(j => j.techId === t.id && isActive(j) && ['ontheway', 'arrived', 'working'].includes(j.status)) }))
+      .map(t => ({ t, d: dist(t, pt), online: S.online[t.id] !== false, busy: S.jobs.some(j => isActive(j) && ['ontheway', 'arrived', 'working'].includes(j.status) && (j.techId === t.id || helps(j, t.id))) }))
       .sort((a, b) => a.d - b.d);
   }
 
@@ -150,7 +155,7 @@
       { id: 'r2', cust: 'C2', pid: 'cs2', stars: 4, text: 'Light scent and my hair feels softer.', at: ago(1400) }
     ];
     return {
-      rev: n, seq: { job: 2054, order: 1039, msg: 10 }, jobs, orders, msgs, chat, dispatch: { T3: { mode: 'waiting', miss: 0, agent: null, at: ago(6) } }, reviews,
+      rev: n, seq: { job: 2054, order: 1039, msg: 10, prod: 1, ren: 1 }, products: seedProducts(), vendorState: {}, renames: [], jobs, orders, msgs, chat, dispatch: { T3: { mode: 'waiting', miss: 0, agent: null, at: ago(6) } }, reviews,
       online: { T1: true, T2: true, T3: true, T4: true, T5: true, T6: true, T7: true, T8: true, T9: true },
       readAt: { C1: n, admin: ago(20) }, nread: {}, seen: {}, wallets, deposits: [], withdrawals: [], ledger: [], baseline: n - 15 * MIN, newTechs: [], roles: JSON.parse(JSON.stringify(AC.defaultRoles)), staff: JSON.parse(JSON.stringify(AC.defaultStaff)),
       extraCatalog: AC.parts.map((p, i) => ({ id: 'X' + (i + 1), label: p.label, price: p.price })), seq2: { tech: 10, x: 10 },
@@ -164,6 +169,28 @@
   }
 
 
+  /* ---------- Marketplace: products belong to a vendor. A vendor's new product waits for admin approval. ---------- */
+  const BASE_CATALOG = JSON.parse(JSON.stringify(AC.catalog));
+  function seedProducts() {
+    const list = BASE_CATALOG.map(p => Object.assign({}, p, { status: 'live', available: true, note: '', createdAt: Date.now() - 20 * 86400000 }));
+    list.find(p => p.id === 'bg3').available = false;
+    list.push({ id: 'ac5', vendorId: 'V4', cat: 'ac', brand: 'Hima', name: 'Portable AC 1 Ton', price: 36500, was: 0, rating: 0, kind: 'window', tint: 2, tag: 'Portable', variants: ['1 Ton'], stock: 12, sold: 0, status: 'pending', available: true, note: '', createdAt: Date.now() - 3 * 3600000 });
+    list.push({ id: 'cs6', vendorId: 'V6', cat: 'cos', brand: 'Nodi', name: 'Aloe Vera Gel', price: 290, was: 0, rating: 0, kind: 'tube', tint: 2, tag: 'Local', variants: ['150 ml'], stock: 80, sold: 0, status: 'pending', available: true, note: '', createdAt: Date.now() - 50 * 60000 });
+    return list;
+  }
+  function notifP(s, aud, text, kind) { s.notifs = s.notifs || []; const at = Date.now(); s.notifs.push({ id: 'P:' + aud + ':' + at + ':' + s.notifs.length, aud, text, kind: kind || 'product', at }); }
+  const isLive = p => p.status === 'live';
+  const canBuy = p => p.status === 'live' && p.available !== false && (p.stock == null || p.stock > 0);
+  function syncCatalog() {
+    const src = (S.products || []);
+    AC.catalog.length = 0; src.forEach(p => AC.catalog.push(p));
+    AC.catById = Object.fromEntries(AC.catalog.map(p => [p.id, p]));
+  }
+  function syncVendors() {
+    const st = S.vendorState || {};
+    AC.partners.forEach(v => { if (v.__name0 == null) v.__name0 = v.name; const n = (st[v.id] || {}).name; v.name = n || v.__name0; });
+  }
+
   /* ---------- Notifications: one entry per recipient, derived from timeline events ---------- */
   const sumExtra = j => j.extra.items.reduce((a, i) => a + i.price, 0);
   function mkNotifs(j, e) {
@@ -176,8 +203,13 @@
       case 'forwarded': add('admin', id + ' forwarded to ' + (j.vendorId ? AC.vendById[j.vendorId].name : 'a vendor')); add(vend, 'New job forwarded to you: ' + svc + ' in ' + area + ' (' + id + ')'); add(cust, 'Your request is with a partner team. They will assign a technician shortly.'); break;
       case 'assigned': staff(tn + ' assigned to ' + id + ' by ' + e.by); add(tech, 'New job offer: ' + svc + ' in ' + area + ' (' + id + ')'); add(cust, tn + ' is assigned to your booking.'); break;
       case 'accepted': staff(tn + ' accepted ' + id); add(cust, tn + ' accepted your booking.'); break;
-      case 'declined': staff(e.by + ' declined ' + id + '. It needs to be reassigned.'); break;
-      case 'timeout': staff(e.by + ' did not respond to ' + id + ' in time. Reassign it.'); break;
+      case 'declined': staff(e.by + ' declined ' + id + '. It needs to be reassigned.'); add(cust, 'The technician is not available. We are finding another technician for ' + id + '.'); break;
+      case 'timeout': staff(e.by + ' did not respond to ' + id + ' in time. Reassign it.'); add(cust, 'The technician did not respond. We are finding another technician for ' + id + '.'); break;
+      case 'crew_need': staff(e.by + ': ' + e.note + ' (' + id + ')'); if (e.by !== tn) add(tech, e.note + ' on ' + id + '. Admin will add a helper.'); break;
+      case 'crew_invited': { const h = (j.crew || []).filter(c => c.status === 'invited').pop(); staff(e.note + ' on ' + id); if (h) add('tech:' + h.id, 'You are invited as a helper on ' + id + ': ' + svc + ' in ' + area); add(tech, e.note + ' on ' + id); break; }
+      case 'crew_joined': staff(e.by + ' joined ' + id + ' as helper'); add(tech, e.by + ' joined your job as helper.'); add(cust, e.by + ' will help ' + tn + ' on your booking.'); break;
+      case 'crew_declined': staff(e.by + ' declined to help on ' + id + '. Find another helper.'); add(tech, e.by + ' declined to help.'); break;
+      case 'crew_removed': staff(e.note + ' (' + id + ')'); break;
       case 'vendor_timeout': add('admin', e.by + ' has not assigned a technician for ' + id + '. Forward it to another vendor.'); break;
       case 'extra_req': staff(tn + ' needs a price for extra work on ' + id + ': ' + e.note); break;
       case 'ontheway': staff(tn + ' is on the way for ' + id); add(cust, tn + ' is on the way to you.'); break;
@@ -223,14 +255,15 @@
     try { document.querySelectorAll('iframe').forEach(f => f.contentWindow && f.contentWindow.postMessage(msg, '*')); } catch (e) { }
   }
   function notify(prev) { subs.forEach(f => { try { f(S, prev); } catch (e) { console.error(e); } }); }
-  function receive(st) { if (st && st.rev > S.rev) { const p = S; S = st; syncTechs(); notify(p); } }
+  function receive(st) { if (st && st.rev > S.rev) { const p = S; S = st; syncTechs(); syncCatalog(); syncVendors(); notify(p); } }
   if (CH) CH.onmessage = e => e.data && e.data.shital && receive(e.data.state);
   window.addEventListener('message', e => { if (e.data && e.data.shital) receive(e.data.state); });
   window.addEventListener('storage', e => { if (e.key === KEY && e.newValue) { try { receive(JSON.parse(e.newValue)); } catch (x) { } } });
   S = load() || seed();
   if (!S.jobs || !S.seq) S = seed();
   S.notifs = S.notifs || []; S.nread = S.nread || {}; S.newTechs = S.newTechs || []; S.seen = S.seen || {}; S.wallets = S.wallets || {}; S.deposits = S.deposits || []; S.withdrawals = S.withdrawals || []; S.ledger = S.ledger || []; S.baseline = S.baseline || (S.rev - 15 * MIN); S.roles = S.roles || JSON.parse(JSON.stringify(AC.defaultRoles)); S.staff = S.staff || JSON.parse(JSON.stringify(AC.defaultStaff)); S.extraCatalog = S.extraCatalog || AC.parts.map((p, i) => ({ id: 'X' + (i + 1), label: p.label, price: p.price })); S.seq2 = S.seq2 || { tech: 10, x: 10 };
-  syncTechs();
+  S.products = S.products || seedProducts(); S.vendorState = S.vendorState || {}; S.renames = S.renames || []; S.seq.prod = S.seq.prod || 1; S.seq.ren = S.seq.ren || 1;
+  syncTechs(); syncCatalog(); syncVendors();
 
   function syncTechs() {
     const mine = new Set((S.newTechs || []).map(t => t.id));
@@ -239,7 +272,7 @@
   }
   function commit(fn) {
     const prev = S; const next = JSON.parse(JSON.stringify(S)); S = next;
-    const out = fn(next); derive(prev, next); syncTechs(); next.rev = Math.max(prev.rev + 1, Date.now());
+    const out = fn(next); derive(prev, next); syncTechs(); syncCatalog(); syncVendors(); next.rev = Math.max(prev.rev + 1, Date.now());
     emit(); notify(prev); return out;
   }
   const job = id => S.jobs.find(j => j.id === id);
@@ -275,13 +308,29 @@
     /* The customer (or admin) can move the time slot until the technician sets off. Everyone on the job is told. */
     reschedule(id, slot, by) { const j0 = job(id); if (!j0 || !RESCHEDULE_OK.includes(j0.status) || !slot || slot === j0.slot) return false; commit(s => { const j = s.jobs.find(x => x.id === id), was = j.slot; j.slot = slot; push(j, 'rescheduled', by || 'Customer', was + ' to ' + slot); }); return true; },
     assign(id, techId, by) {
+      const j0 = job(id); if (!j0 || !AC.techById[techId] || !['requested', 'forwarded', 'assigned'].includes(j0.status) || helps(j0, techId)) return false;
       commit(s => {
         const j = s.jobs.find(x => x.id === id), t = AC.techById[techId], was = j.techId; j.tried = j.tried || { vendors: [], techs: [] };
+        /* One lead technician per job. Only an unanswered request can be (re)assigned, and never to someone already on the crew. */
+        if (!j || !t || !['requested', 'forwarded', 'assigned'].includes(j.status) || helps(j, techId)) return;
         if (was && was !== techId && !j.tried.techs.includes(was)) j.tried.techs.push(was);
         j.techId = techId; j.vendorId = t.vendor || null; j.status = 'assigned'; j.offerAt = Date.now(); j.vendorStale = false;
         push(j, 'assigned', by || 'Admin', (was ? 'Reassigned to ' : '') + t.name + (t.vendor ? ' (' + AC.vendById[t.vendor].name + ')' : ''));
       });
+      return true;
     },
+    /* Crew: the lead technician stays one person. Extra hands join as helpers (sub-technicians). */
+    setHelpers(id, n, by) { const j0 = job(id); if (!j0 || !isActive(j0)) return false; n = Math.max(0, Math.min(AC.config.MAX_HELPERS, +n || 0)); if (n === (j0.helpersNeeded || 0)) return false; commit(s => { const j = s.jobs.find(x => x.id === id); j.helpersNeeded = n; push(j, 'crew_need', by || 'Admin', n ? n + (n > 1 ? ' helpers' : ' helper') + ' needed on this job' : 'No helper needed'); }); return true; },
+    inviteHelper(id, techId, by) {
+      const j0 = job(id), t = AC.techById[techId]; if (!j0 || !t || !isActive(j0) || !['assigned', 'accepted', 'ontheway', 'arrived', 'working'].includes(j0.status) || j0.techId === techId || helps(j0, techId)) return false;
+      if ((j0.crew || []).filter(c => c.status === 'accepted' || c.status === 'invited').length >= AC.config.MAX_HELPERS) return false;
+      commit(s => { const j = s.jobs.find(x => x.id === id); j.crew = j.crew || []; j.crew = j.crew.filter(c => c.id !== techId); j.crew.push({ id: techId, status: 'invited', at: Date.now(), by: by || 'Admin' }); if (!j.helpersNeeded || j.helpersNeeded < j.crew.filter(c => c.status !== 'declined' && c.status !== 'removed').length) j.helpersNeeded = j.crew.filter(c => c.status !== 'declined' && c.status !== 'removed').length; push(j, 'crew_invited', by || 'Admin', t.name + ' invited as helper'); }); return true;
+    },
+    helperRespond(id, techId, accept) {
+      const j0 = job(id); if (!j0 || !(j0.crew || []).some(c => c.id === techId && c.status === 'invited')) return false; const t = AC.techById[techId];
+      commit(s => { const j = s.jobs.find(x => x.id === id), c = j.crew.find(x => x.id === techId); c.status = accept ? 'accepted' : 'declined'; c.at = Date.now(); push(j, accept ? 'crew_joined' : 'crew_declined', t.name, accept ? 'Joined as helper' : 'Helper declined'); }); return true;
+    },
+    removeHelper(id, techId, by) { const j0 = job(id); if (!j0 || !helps(j0, techId)) return false; const t = AC.techById[techId]; commit(s => { const j = s.jobs.find(x => x.id === id), c = j.crew.find(x => x.id === techId); c.status = 'removed'; c.at = Date.now(); push(j, 'crew_removed', by || 'Admin', t.name + ' removed from the crew'); }); return true; },
     forward(id, vendorId, note) {
       commit(s => {
         const j = s.jobs.find(x => x.id === id); j.tried = j.tried || { vendors: [], techs: [] };
@@ -411,6 +460,7 @@
     placeOrder(o) {
       return commit(s => {
         const id = 'O-' + (s.seq.order++);
+        if (o.items) o.items = o.items.map(i => Object.assign({ vendorId: (AC.catById[i.pid] || {}).vendorId || null }, i));
         const ord = Object.assign({ id, status: 'placed', courier: null, tracking: null, createdAt: Date.now(), tl: [{ k: 'placed', at: Date.now(), by: 'Customer' }] }, o);
         s.orders.unshift(ord);
         if (o.install) {
@@ -443,7 +493,46 @@
     markSeen(aud, key) { commit(s => { (s.seen[aud] = s.seen[aud] || {})[key] = Date.now(); }); },
     markNotifs(aud) { commit(s => { s.nread[aud] = Date.now(); }); },
     markRead(who, thread) { commit(s => { s.readAt[who + ':' + thread] = Date.now(); }); },
-    reset() { const fresh = seed(); fresh.rev = Math.max(S.rev + 1, Date.now()); const prev = S; S = fresh; syncTechs(); emit(); notify(prev); }
+    /* ----- Marketplace ----- */
+    addProduct(vendorId, d) {
+      return commit(s => {
+        const id = (vendorId || 'N') + '-P' + (s.seq.prod++), by = vendorId ? AC.vendById[vendorId].name : 'NEW';
+        s.products.push({ id, vendorId: vendorId || null, cat: d.cat, brand: d.brand || by, name: d.name, price: +d.price || 0, was: +d.was || 0, rating: 0, kind: d.kind || ({ ac: 'split', bag: 'tote', cos: 'tube' })[d.cat], tint: Math.floor(Math.random() * 6), tag: d.tag || '', variants: d.variants && d.variants.length ? d.variants : ['Standard'], stock: +d.stock || 0, sold: 0, status: vendorId ? 'pending' : 'live', available: true, note: '', createdAt: Date.now() });
+        if (vendorId) { notifP(s, 'admin', by + ' submitted a new product for approval: ' + d.name, 'product'); }
+        return id;
+      });
+    },
+    /* A vendor edits only its own product. Price and stock go live at once. */
+    editProduct(pid, vendorId, patch) {
+      const p0 = S.products.find(x => x.id === pid); if (!p0 || (vendorId && p0.vendorId !== vendorId) || p0.status === 'removed') return false;
+      commit(s => { const p = s.products.find(x => x.id === pid); ['name', 'price', 'was', 'stock', 'tag', 'brand'].forEach(k => { if (patch[k] != null && patch[k] !== '') p[k] = ['price', 'was', 'stock'].includes(k) ? +patch[k] : patch[k]; }); if (p.status === 'rejected') { p.status = 'pending'; p.note = ''; notifP(s, 'admin', (AC.vendById[p.vendorId] || { name: 'A vendor' }).name + ' resubmitted ' + p.name + ' for approval', 'product'); } }); return true;
+    },
+    /* Vendors cannot delete. They mark a product unavailable (out of stock) or available again. */
+    setAvailable(pid, vendorId, on) {
+      const p0 = S.products.find(x => x.id === pid); if (!p0 || (vendorId && p0.vendorId !== vendorId) || p0.available === !!on) return false;
+      commit(s => { const p = s.products.find(x => x.id === pid); p.available = !!on; }); return true;
+    },
+    approveProduct(pid, by) { const p0 = S.products.find(x => x.id === pid); if (!p0 || p0.status === 'live') return false; commit(s => { const p = s.products.find(x => x.id === pid); p.status = 'live'; p.note = ''; p.liveAt = Date.now(); if (p.vendorId) notifP(s, 'vendor:' + p.vendorId, p.name + ' is approved and live in the store.', 'product'); }); return true; },
+    rejectProduct(pid, reason, by) { const p0 = S.products.find(x => x.id === pid); if (!p0 || p0.status !== 'pending') return false; commit(s => { const p = s.products.find(x => x.id === pid); p.status = 'rejected'; p.note = reason || 'Not approved'; if (p.vendorId) notifP(s, 'vendor:' + p.vendorId, p.name + ' was not approved: ' + p.note, 'product'); }); return true; },
+    removeProduct(pid, reason, by) { const p0 = S.products.find(x => x.id === pid); if (!p0 || p0.status === 'removed') return false; commit(s => { const p = s.products.find(x => x.id === pid); p.status = 'removed'; p.note = reason || 'Removed by admin'; p.removedAt = Date.now(); if (p.vendorId) notifP(s, 'vendor:' + p.vendorId, 'Admin removed ' + p.name + ': ' + p.note, 'product'); }); return true; },
+    restoreProduct(pid) { const p0 = S.products.find(x => x.id === pid); if (!p0 || p0.status !== 'removed') return false; commit(s => { const p = s.products.find(x => x.id === pid); p.status = 'live'; p.note = ''; if (p.vendorId) notifP(s, 'vendor:' + p.vendorId, p.name + ' is live again.', 'product'); }); return true; },
+    /* ----- Vendor name: one free change. After that a vendor asks admin and gives a reason. ----- */
+    renameVendor(vid, name) {
+      name = String(name || '').trim(); const st = (S.vendorState || {})[vid] || {}, used = st.changes || 0;
+      if (!name || name === AC.vendById[vid].name || used >= AC.config.VENDOR_NAME_CHANGES) return false;
+      commit(s => { const v = (s.vendorState[vid] = s.vendorState[vid] || { changes: 0, history: [] }), was = AC.vendById[vid].name; v.history = v.history || []; v.history.push({ from: was, to: name, at: Date.now(), by: 'Vendor' }); v.name = name; v.changes = (v.changes || 0) + 1; notifP(s, 'admin', was + ' changed its name to ' + name, 'vendor'); }); return true;
+    },
+    requestRename(vid, name, reason) {
+      name = String(name || '').trim(); reason = String(reason || '').trim(); if (!name || !reason || name === AC.vendById[vid].name) return false;
+      if ((((S.vendorState || {})[vid] || {}).changes || 0) < AC.config.VENDOR_NAME_CHANGES) return false;
+      if (S.renames.some(r => r.vid === vid && r.status === 'pending')) return false;
+      commit(s => { s.renames.unshift({ id: 'N' + (s.seq.ren++), vid, name, reason, status: 'pending', at: Date.now(), from: AC.vendById[vid].name }); notifP(s, 'admin', AC.vendById[vid].name + ' asks to change its name to ' + name + '. Reason: ' + reason, 'vendor'); }); return true;
+    },
+    decideRename(id, ok, by, note) {
+      const r0 = S.renames.find(x => x.id === id); if (!r0 || r0.status !== 'pending') return false;
+      commit(s => { const r = s.renames.find(x => x.id === id), v = (s.vendorState[r.vid] = s.vendorState[r.vid] || { changes: 0, history: [] }); r.status = ok ? 'approved' : 'declined'; r.decidedAt = Date.now(); r.note = note || ''; if (ok) { v.history = v.history || []; v.history.push({ from: r.from, to: r.name, at: Date.now(), by: 'Admin approved' }); v.name = r.name; v.changes = (v.changes || 0) + 1; } notifP(s, 'vendor:' + r.vid, ok ? 'Your name change to ' + r.name + ' is approved.' : 'Your name change request was declined' + (note ? ': ' + note : '.'), 'vendor'); }); return true;
+    },
+    reset() { const fresh = seed(); fresh.rev = Math.max(S.rev + 1, Date.now()); const prev = S; S = fresh; syncTechs(); syncCatalog(); syncVendors(); emit(); notify(prev); }
   };
 
   /* Autopilot: plays the admin, vendor and technician roles so one app can be demoed alone. */
@@ -481,7 +570,7 @@
 
   window.AC.store = {
     get: () => S, subscribe: f => { subs.push(f); return () => subs.splice(subs.indexOf(f), 1); },
-    act: A, job, auto, navInfo, ORDER, META, isActive, jobTotal, extraTotal, dist, route, routeLen, along, tripPoints, tripProgress, techPos, etaMin, nearbyTechs,
+    act: A, job, helps, engaged, crewOn, needsHelper, auto, navInfo, ORDER, META, isActive, jobTotal, extraTotal, dist, route, routeLen, along, tripPoints, tripProgress, techPos, etaMin, nearbyTechs,
     ordTotal: o => Math.max(0, o.subtotal + (o.inst || 0) - o.discount + o.delivery),
     notifs: aud => (S.notifs || []).filter(n => n.aud === aud).slice().reverse(),
     /* Read state: an item is unread when someone else changed it after you last opened it. Your own actions never flag it. */
@@ -502,6 +591,19 @@
     threadMsgs: t => S.msgs.filter(m => m.thread === t),
     canReschedule: j => !!j && RESCHEDULE_OK.includes(j.status),
     /* Warranties: one year of free repair labour after an AC is installed by NEW. Derived from installation jobs and delivered AC orders. */
+    /* Marketplace queries */
+    isLive, canBuy,
+    productsOf(vid) { return S.products.filter(p => p.vendorId === vid); },
+    storeProducts() { return S.products.filter(isLive); },
+    sellerName(p) { return p.vendorId ? (AC.vendById[p.vendorId] || { name: 'Vendor' }).name : 'NEW'; },
+    /* Sales lines from orders. Admin earns a commission on every vendor line; NEW own products have no commission. */
+    sales(vid) {
+      const rows = [];
+      S.orders.forEach(o => { if (o.status === 'cancelled') return; o.items.forEach(i => { const p = AC.catById[i.pid], v = i.vendorId !== undefined ? i.vendorId : (p ? p.vendorId : null); if (!v || (vid && v !== vid)) return; const gross = i.price * i.qty, rate = AC.config.GOODS_COMMISSION, fee = Math.round(gross * rate); rows.push({ order: o.id, at: o.createdAt, pid: i.pid, name: p ? p.name : i.pid, qty: i.qty, vendorId: v, gross, rate, fee, net: gross - fee, settled: o.status === 'delivered' }); }); });
+      return rows;
+    },
+    pendingRename(vid) { return S.renames.find(r => r.vid === vid && r.status === 'pending') || null; },
+    nameChangesLeft(vid) { return Math.max(0, AC.config.VENDOR_NAME_CHANGES - (((S.vendorState || {})[vid] || {}).changes || 0)); },
     warranties(custId) {
       const out = [], day = 86400000, len = AC.config.WARRANTY_DAYS * day;
       S.jobs.forEach(j => { if (j.cust.id === custId && j.status === 'completed' && (j.warranty || j.svc === 'ac-install')) { const e = j.tl.filter(x => x.k === 'completed').pop(), start = e ? e.at : j.createdAt; out.push({ id: 'W-' + j.id.slice(2), ref: j.id, title: j.svc === 'ac-install' ? 'AC installation' : 'Split AC', start, end: start + len }); } });

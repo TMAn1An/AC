@@ -98,6 +98,33 @@ const r2 = await page.evaluate(async () => {
   out.warrantyFree = S.jobTotal(S.job(wj)) === 0 && S.job(wj).warrantyOf === wr.id && S.warranties('C1')[0].claims === 1;
   S.act.assign(wj, 'T1', 'Admin'); S.act.respond(wj, 'T1', true); S.act.startTrip(wj); S.act.arrive(wj); S.act.startWork(wj); S.act.complete(wj, false, S.job(wj).otp, 'technician');
   out.warrantyPaid = S.job(wj).status === 'completed' && S.job(wj).pay.status === 'paid';
+  // one lead per job: an accepted job cannot be reassigned, a helper cannot be lead, and a declined technician can be assigned again
+  const dj = mkJob(); S.act.assign(dj, 'T1', 'Admin'); S.act.respond(dj, false);
+  out.declineNotifiesCustomer = S.get().notifs.some(n => n.job === dj && n.aud === 'cust:C1' && n.kind === 'declined');
+  out.assignAgainAfterDecline = S.act.assign(dj, 'T1', 'Admin') === true && S.job(dj).techId === 'T1';
+  S.act.respond(dj, true); out.noDoubleAssign = S.act.assign(dj, 'T2', 'Admin') === false && S.job(dj).techId === 'T1';
+  // crew: helpers join by invitation, lead cannot be a helper, needs-helper clears when the helper joins
+  S.act.setHelpers(dj, 1, 'Sumon'); out.needsHelper = S.needsHelper(S.job(dj)) === true;
+  out.leadNotHelper = S.act.inviteHelper(dj, 'T1', 'Admin') === false;
+  out.inviteHelper = S.act.inviteHelper(dj, 'T3', 'Admin') === true && S.get().notifs.some(n => n.aud === 'tech:T3' && n.kind === 'crew_invited');
+  S.act.helperRespond(dj, 'T3', true); out.helperJoins = S.crewOn(S.job(dj)).length === 1 && !S.needsHelper(S.job(dj)) && S.get().notifs.some(n => n.aud === 'cust:C1' && n.kind === 'crew_joined');
+  out.helperNotLead = S.act.assign(dj, 'T3', 'Admin') === false;
+  // marketplace: a vendor product waits for approval, other vendors cannot edit it, vendors cannot remove, admin can remove
+  const pid = S.act.addProduct('V4', { cat: 'ac', name: 'Smoke AC', price: 40000, stock: 3 });
+  out.productPending = AC.catById[pid].status === 'pending' && !S.storeProducts().some(p => p.id === pid) && S.get().notifs.some(n => n.aud === 'admin' && n.kind === 'product');
+  out.vendorScope = S.productsOf('V5').every(p => p.vendorId === 'V5') && S.act.editProduct(pid, 'V5', { price: 1 }) === false;
+  S.act.approveProduct(pid, 'Admin'); out.productLive = S.storeProducts().some(p => p.id === pid) && S.get().notifs.some(n => n.aud === 'vendor:V4' && /approved/.test(n.text));
+  S.act.setAvailable(pid, 'V4', false); out.unavailable = !S.canBuy(AC.catById[pid]) && S.storeProducts().some(p => p.id === pid);
+  out.vendorCannotRemove = typeof S.act.vendorRemoveProduct === 'undefined' && S.act.setAvailable(pid, 'V5', true) === false;
+  S.act.removeProduct(pid, 'Policy', 'Admin'); out.adminRemoves = !S.storeProducts().some(p => p.id === pid) && AC.catById[pid].status === 'removed';
+  // commission: admin earns the goods rate on a vendor sale
+  const oid = S.act.placeOrder({ cust: 'C1', items: [{ pid: 'ac1', qty: 1, price: AC.catById.ac1.price }], subtotal: AC.catById.ac1.price, discount: 0, delivery: 80, pay: { method: 'cod', status: 'unpaid' } });
+  const sl = S.sales('V1').find(r => r.order === oid); out.goodsCommission = !!sl && sl.fee === Math.round(sl.gross * AC.config.GOODS_COMMISSION) && sl.net === sl.gross - sl.fee;
+  // vendor name: one free change, then a request with a reason that admin decides
+  out.renameOnce = S.act.renameVendor('V5', 'Heritage Bags Ltd') === true && AC.vendById.V5.name === 'Heritage Bags Ltd' && S.act.renameVendor('V5', 'Other') === false;
+  out.renameNeedsReason = S.act.requestRename('V5', 'Heritage', '') === false;
+  out.renameRequest = S.act.requestRename('V5', 'Heritage Home', 'New brand') === true && !!S.pendingRename('V5') && S.get().notifs.some(n => n.aud === 'admin' && /asks to change/.test(n.text));
+  S.act.decideRename(S.get().renames[0].id, true, 'Admin'); out.renameApproved = AC.vendById.V5.name === 'Heritage Home' && !S.pendingRename('V5');
   return out;
 });
 const bad = Object.entries(r2).filter(([, v]) => v !== true).map(([k]) => k);

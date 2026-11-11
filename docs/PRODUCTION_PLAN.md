@@ -27,7 +27,7 @@ Division of work between the two admin surfaces. Admin app: on-the-go control (d
 | Customer | Browse, order, book, track, pay, rate, chat with support, call or WhatsApp assigned technician | See other customers or any internal data |
 | Technician (direct) | Accept or decline offered jobs, travel, work, request extra work, complete, collect cash | See jobs not assigned to them, change prices |
 | Technician (vendor) | Same as above, for jobs assigned by their vendor | See NEW internal data or other vendors |
-| Vendor owner | See jobs forwarded to them, assign own technicians, manage team and availability, view settlement | See other vendors, customer lists, shop data |
+| Vendor owner | See jobs forwarded to them, assign own technicians and helpers, manage team and availability, add and update own products (mark unavailable, never delete), view settlement and goods sales, change own name once then by request | See other vendors or their products, customer lists, other shop data |
 | Admin | Everything operational: dispatch, approve, orders, catalog, finance | Change system security settings (super admin only) |
 | Super admin | Roles, settings, audit log | |
 | Finance (admin web only) | Payments, collections, earnings, refunds | Dispatch |
@@ -358,3 +358,10 @@ All P0 features done and tested on real devices. Crash-free sessions above 99.5%
 - Warranty: one year from a completed installation by NEW. A claim creates an AC Repair booking with `warrantyOf` set and the labour discounted to zero. Parts still need the customer's approval as extra work. Open question for the client: exact warranty terms in writing, and whether a claim limit applies.
 - Care reminder: `nextDue` is the report date plus 180 days. The customer home shows it; a push reminder is sent 14 days before and on the day (phase 3).
 - Dashboard service quality: time to assign, time to complete, average rating and report rate are computed from job timelines, so they need no extra data entry.
+
+## Marketplace and crew addendum
+
+- Products carry a `vendorId` (null for NEW own stock) and a status: pending, live, rejected, removed, plus an available flag the vendor controls. Customers only see live products. A vendor product starts as pending until admin approves. Only admin can remove or restore. Vendors see and edit only their own rows (enforced in the API by vendor id from the token, never by the client).
+- Each order line stores the `vendorId` and the commission rate at the time of sale. Admin commission is `GOODS_COMMISSION` of the line total (8 percent in the prototype, a setting per vendor later). Vendor payout is the line total minus commission, settled after delivery.
+- Vendor name change: one free change, then a request with a reason that admin approves or declines. Every change is kept in a history.
+- A job has one lead technician. Helpers (sub-technicians) are invited into the job's crew from the same employer. The API rejects a second lead and rejects a technician who is already on the crew. Declined technicians can be assigned again.

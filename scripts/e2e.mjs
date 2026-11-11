@@ -127,6 +127,42 @@ await journey('admin overrides a job and it is logged', async () => {
   await A.waitForSelector('#ov-status'); await A.selectOption('#ov-status', 'cancelled'); const r = A.locator('#ov-reason'); if (await r.count()) await r.fill('Customer asked by phone'); await click(A, '[data-a=override]'); await sleep(400);
   const j = await ev(A, id => AC.store.job(id).tl.filter(e => /Override/.test(e.note || '')).length, id); check(j >= 1, 'override logged in the timeline');
 });
+await journey('decline then assign again, and add a helper to the crew', async () => {
+  await ev(C, () => AC.store.act.createJob({ cust: 'C1', svc: 'ac-repair', slot: 'Today, 4-6 PM', verified: true })); const id = await lastJob(C); await sleep(300);
+  const open = async () => { await side(A, 'Bookings'); await A.waitForSelector('tbody tr.click'); await A.evaluate(id => { [...document.querySelectorAll('tbody tr.click')].find(r => r.textContent.includes(id)).click(); }, id); };
+  await open(); await A.waitForSelector('[data-a=assign][data-v=T1]'); await click(A, '[data-a=assign][data-v=T1]'); await sleep(300); await click(A, '.d-f [data-a=close]');
+  await ev(T, () => sessionStorage.setItem('tech.me', 'T1')); await T.reload(); await T.waitForTimeout(600); await click(T, '.offer [data-a=decline]'); await sleep(400);
+  check(await ev(C, id => AC.store.get().notifs.some(n => n.job === id && n.aud === 'cust:C1' && n.kind === 'declined'), id), 'customer is told the technician declined');
+  await open(); await A.waitForSelector('[data-a=assign][data-v=T1]'); check((await A.locator('[data-a=assign][data-v=T1]').textContent()).includes('Assign again'), 'admin can assign the same technician again'); await click(A, '[data-a=assign][data-v=T1]'); await sleep(300);
+  await T.reload(); await T.waitForTimeout(600); await click(T, '.offer [data-a=accept]'); await sleep(400); check((await job(A, id)).status === 'accepted', 'accepted the second time');
+  await A.waitForSelector('[data-a=hneed][data-v="1"]'); await click(A, '[data-a=hneed][data-v="1"]'); await sleep(300); check((await A.locator('text=Needs 1 more helper').count()) > 0, 'needs a helper is shown');
+  await click(A, '[data-a=invite][data-v=T3]'); await sleep(300);
+  await ev(T, () => sessionStorage.setItem('tech.me', 'T3')); await T.reload(); await T.waitForTimeout(600); await click(T, '[data-a=hacc]'); await sleep(400);
+  check(await ev(A, id => AC.store.crewOn(AC.store.job(id)).length === 1, id), 'helper joined the crew'); check(await ev(A, id => AC.store.act.assign(id, 'T3', 'Admin') === false, id), 'the same job is never assigned to a second lead');
+  await click(A, '.d-f [data-a=close]'); await ev(T, () => sessionStorage.setItem('tech.me', 'T1')); await T.reload(); await T.waitForTimeout(500);
+});
+await journey('marketplace: vendor adds a product, admin approves, vendor marks it unavailable, admin removes it', async () => {
+  await ev(V, () => sessionStorage.setItem('vendor.v', 'V4')); await V.reload(); await V.waitForTimeout(600);
+  await click(V, '[data-a=addprod]'); await V.fill('#ap-n', 'E2E Portable Cooler'); await V.fill('#ap-p', '25000'); await V.fill('#ap-s', '5'); await click(V, '[data-a=doaddprod]'); await sleep(400);
+  const pid = await ev(V, () => AC.store.get().products.find(p => p.name === 'E2E Portable Cooler').id);
+  check(await ev(V, id => AC.catById[id].status === 'pending' && !AC.store.storeProducts().some(p => p.id === id), pid), 'new vendor product is hidden until approved');
+  await side(A, 'Products'); await click(A, '[data-a=pst][data-v=pending]'); await A.waitForSelector('tr.click'); check((await A.locator('tr.click', { hasText: 'E2E Portable Cooler' }).textContent()).includes('Cool Mart'), 'admin list shows the vendor name');
+  await A.locator('tr.click', { hasText: 'E2E Portable Cooler' }).click(); await click(A, '[data-a=appprod]'); await sleep(400);
+  check(await ev(C, id => AC.store.storeProducts().some(p => p.id === id), pid), 'approved product is live for customers');
+  await click(V, '[data-a=prodview][data-v="' + pid + '"]'); await click(V, '[data-a=avail]'); await sleep(300);
+  check(await ev(C, id => !AC.store.canBuy(AC.catById[id]) && AC.store.storeProducts().some(p => p.id === id), pid), 'unavailable shows in the store but cannot be bought'); check((await V.locator('[data-a=delprod], [data-a=rmprod]').count()) === 0, 'vendor has no delete control');
+  await side(A, 'Products'); await click(A, '[data-a=pst][data-v=unavail]'); await A.locator('tr.click', { hasText: 'E2E Portable Cooler' }).click(); await A.fill('#pr-reason', 'Not allowed to sell'); await click(A, '[data-a=rmprod]'); await sleep(400);
+  check(await ev(C, id => AC.catById[id].status === 'removed' && !AC.store.storeProducts().some(p => p.id === id), pid), 'admin removed the product from the store');
+  await ev(V, () => sessionStorage.setItem('vendor.v', 'V2')); await V.reload(); await V.waitForTimeout(500);
+});
+await journey('vendor name: one free change, then a request with a reason that admin approves', async () => {
+  await ev(V, () => sessionStorage.setItem('vendor.v', 'V6')); await V.reload(); await V.waitForTimeout(600); await tab(V, 'me');
+  await click(V, '[data-a=renamesheet]'); await V.fill('#rn-n', 'Desh Beauty Care'); await click(V, '[data-a=rename]'); await sleep(300); check(await ev(V, () => AC.vendById.V6.name === 'Desh Beauty Care'), 'first change applied');
+  await click(V, '[data-a=renamesheet]'); check((await V.locator('#rn-r').count()) === 1, 'second change asks for a reason'); await V.fill('#rn-n', 'Desh Beauty Plus'); await V.fill('#rn-r', 'We rebranded'); await click(V, '[data-a=reqrename]'); await sleep(300);
+  check(await ev(V, () => AC.vendById.V6.name === 'Desh Beauty Care' && !!AC.store.pendingRename('V6')), 'request waits for admin');
+  await side(A, 'Vendors'); await A.locator('tr.click', { hasText: 'Desh Beauty Care' }).click(); await click(A, '[data-a=decren][data-v=yes]'); await sleep(300);
+  check(await ev(V, () => AC.vendById.V6.name === 'Desh Beauty Plus'), 'admin approved the new name'); await ev(V, () => sessionStorage.setItem('vendor.v', 'V2')); await V.reload(); await V.waitForTimeout(500);
+});
 await journey('staff roles: new role, switch staff, menus follow permissions', async () => {
   await side(A, 'Team and roles'); await click(A, '[data-a=newrole]'); await A.fill('#r-name', 'Support lead'); await click(A, '[data-a=rperm][data-v=messages]'); await click(A, '[data-a=saverole]'); await sleep(300);
   await A.selectOption('#staffsel', 'U3'); await sleep(400); check(await A.locator('.side a:has-text("Payments")').count() === 1 && await A.locator('.side a:has-text("Bookings")').count() === 0, 'finance sees payments only');
@@ -142,7 +178,7 @@ await journey('admin pages: every sidebar page opens without an error', async ()
   for (const label of ['Dashboard', 'Bookings', 'Live dispatch', 'Messages', 'Services', 'Products', 'Categories', 'Promotions', 'Orders', 'Users', 'Technicians', 'Vendors', 'Payments', 'Collections', 'Earnings', 'Reviews', 'Team and roles']) { await side(A, '' + label + ''); await sleep(250); check(await A.locator('#content').count() === 1, label + ' renders'); }
 });
 await journey('admin mobile app: all tabs open', async () => { for (const v of ['home', 'jobs', 'map', 'inbox', 'more']) { await tab(M, v); await sleep(250); } });
-await journey('vendor app: all tabs open', async () => { for (const v of ['jobs', 'team', 'map', 'earn', 'me']) { await tab(V, v); await sleep(250); } });
+await journey('vendor app: all tabs open', async () => { for (const v of ['jobs', 'team', 'prod', 'earn', 'me']) { await tab(V, v); await sleep(250); } });
 await journey('technician app: all tabs open', async () => { for (const v of ['jobs', 'map', 'help', 'earn', 'me']) { await tab(T, v); await sleep(250); } });
 await journey('customer app: all tabs open', async () => { for (const v of ['home', 'services', 'shop', 'orders', 'account']) { await tab(C, v); await sleep(250); } });
 await journey('dark mode switches every app and survives a reload', async () => {

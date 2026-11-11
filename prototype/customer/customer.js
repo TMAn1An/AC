@@ -36,9 +36,9 @@
   const tone = s => { const t = Art.tints[s.tone || 0]; return 'background:' + t.bg + ';color:' + t.fg; };
   function pcard(p) {
     const off = p.was ? Math.round((1 - p.price / p.was) * 100) : 0, l = ui.cart.find(x => x.pid === p.id), q = l ? l.qty : 0;
-    return `<div class="pc ${q ? 'in' : ''} fade"><div class="pimg"><button class="plink-img" data-a="prod" data-v="${p.id}" aria-label="View ${esc(p.name)}">${art(p)}</button><span class="ptag">${esc(p.tag)}</span>${off ? `<span class="pdisc">-${off}%</span>` : ''}<button class="heart ${ui.wish[p.id] ? 'on' : ''}" data-a="wish" data-v="${p.id}" aria-label="Save ${esc(p.name)}">${icon('heart', 18)}</button></div>
+    return `<div class="pc ${q ? 'in' : ''} fade"><div class="pimg"><button class="plink-img" data-a="prod" data-v="${p.id}" aria-label="View ${esc(p.name)}">${art(p)}</button>${S.canBuy(p) ? `<span class="ptag">${esc(p.tag)}</span>` : `<span class="ptag" style="background:var(--ink);color:var(--bg)">Unavailable</span>`}${off ? `<span class="pdisc">-${off}%</span>` : ''}<button class="heart ${ui.wish[p.id] ? 'on' : ''}" data-a="wish" data-v="${p.id}" aria-label="Save ${esc(p.name)}">${icon('heart', 18)}</button></div>
       <button class="ptext" data-a="prod" data-v="${p.id}"><span class="pb">${esc(p.brand)}</span><span class="pn">${esc(p.name)}</span><span class="prate">${icon('star', 12)} ${p.rating} <i>${p.sold} sold</i></span><span class="pp"><b>${money(p.price)}</b>${p.was ? `<s>${money(p.was)}</s>` : ''}</span></button>
-      <div class="pact">${q ? `<div class="step sm" role="group" aria-label="Quantity"><button data-a="pq" data-v="${p.id}" data-d="-1" aria-label="Less">${icon('minus', 16)}</button><b>${q}</b><button data-a="pq" data-v="${p.id}" data-d="1" aria-label="More">${icon('plus', 16)}</button></div>` : `<button class="btn btn-s pbtn" data-a="quick" data-v="${p.id}" aria-label="Add ${esc(p.name)} to cart">${icon('cart', 16)}Add</button>`}<button class="btn btn-p pbtn" data-a="buynow" data-v="${p.id}">Buy now</button></div></div>`;
+      <div class="pact">${!S.canBuy(p) ? `<button class="btn btn-s pbtn" style="flex:1" data-a="prod" data-v="${p.id}">Unavailable</button>` : q ? `<div class="step sm" role="group" aria-label="Quantity"><button data-a="pq" data-v="${p.id}" data-d="-1" aria-label="Less">${icon('minus', 16)}</button><b>${q}</b><button data-a="pq" data-v="${p.id}" data-d="1" aria-label="More">${icon('plus', 16)}</button></div>` : `<button class="btn btn-s pbtn" data-a="quick" data-v="${p.id}" aria-label="Add ${esc(p.name)} to cart">${icon('cart', 16)}Add</button>`}${S.canBuy(p) ? `<button class="btn btn-p pbtn" data-a="buynow" data-v="${p.id}">Buy now</button>` : ''}</div></div>`;
   }
   const top = (title, o) => o && o.back === false ? `<div class="band sm">${top0(title, o)}</div>` : top0(title, o);
   const top0 = (title, o) => `<div class="top">${o && o.back === false ? '' : `<button class="back" data-a="back" aria-label="Back">${icon('left', 22)}</button>`}<h1>${title}</h1>${(o && o.right) || ''}</div>`;
@@ -46,7 +46,7 @@
 
   /* ---------- Screens ---------- */
   function Home() {
-    const aj = activeJob(), P = c => AC.catalog.filter(p => p.cat === c);
+    const aj = activeJob(), P = c => S.storeProducts().filter(p => p.cat === c);
     let banner = '';
     if (aj) {
       const t = AC.techById[aj.techId];
@@ -113,6 +113,7 @@
     const jc = S.chatMsgs('J:' + j.id), jOpen = S.chatOpen(j), jUn = S.chatUnread('cust:' + ME).includes('J:' + j.id);
     const msgBtn = t && (jOpen || jc.length) ? `<button class="btn ${jOpen ? 'btn-p' : 'btn-s'} btn-block" style="margin-top:12px" data-a="jchat" data-v="${j.id}">${icon('chat', 18)}${jOpen ? 'Message ' + esc(t.name.split(' ')[0]) : 'Chat history'}${jUn ? '<span class="pill-n">New</span>' : ''}</button>` : '';
     const techCard = t && j.status !== 'cancelled' ? `<div class="cardx"><div class="techcard"><div class="avatar lg">${AC.fmt.ini(t.name)}</div><div class="grow"><b>${esc(t.name)}</b><div class="muted" style="font-size:13px">${vend ? 'Partner: ' + esc(vend) : 'NEW technician'}</div>${t.kyc && t.kyc.status === 'verified' ? `<div class="verif">${icon('shield', 14)}Identity verified by NEW</div>` : ''}<div class="rate" style="font-weight:600;color:var(--ink-3)">${t.jobs} jobs completed</div></div></div>
+      ${(j.crew || []).filter(c => c.status === 'accepted').map(c => { const h = AC.techById[c.id]; return `<div class="techcard" style="margin-top:12px"><div class="avatar">${AC.fmt.ini(h.name)}</div><div class="grow"><b>${esc(h.name)}</b><div class="muted" style="font-size:13px">Helper on your job</div></div></div>`; }).join('')}
       ${msgBtn}<div class="actions"><button class="btn btn-s" data-a="toast" data-v="Calling ${esc(t.name)} (opens the phone dialer in the real app)">${icon('phone', 18)}Call</button><button class="btn btn-s" data-a="toast" data-v="Opening WhatsApp chat with ${esc(t.name)}">${icon('chat', 18)}WhatsApp</button><button class="btn btn-s" data-a="chat">${icon('send', 18)}Support</button></div></div>` : '';
     let extra = '';
     if (j.extra.status === 'proposed') {
@@ -158,7 +159,7 @@
 
   function Shop() {
     const q = (ui.d.q || '').trim().toLowerCase(), SORT = { popular: (a, b) => b.sold - a.sold, low: (a, b) => a.price - b.price, high: (a, b) => b.price - a.price, rating: (a, b) => b.rating - a.rating };
-    const list = AC.catalog.filter(p => (ui.cat === 'all' || p.cat === ui.cat) && (!q || (p.name + ' ' + p.brand + ' ' + p.tag).toLowerCase().includes(q))).sort(SORT[ui.sort]);
+    const list = S.storeProducts().filter(p => (ui.cat === 'all' || p.cat === ui.cat) && (!q || (p.name + ' ' + p.brand + ' ' + p.tag).toLowerCase().includes(q))).sort(SORT[ui.sort]);
     const cats = [['all', 'All'], ['ac', 'Air conditioners'], ['bag', 'Bags'], ['cos', 'Cosmetics']], sorts = [['popular', 'Popular'], ['low', 'Price: low to high'], ['high', 'Price: high to low'], ['rating', 'Top rated']];
     const catName = cats.find(x => x[0] === ui.cat)[1], sortName = sorts.find(x => x[0] === ui.sort)[1], nf = (ui.cat !== 'all' ? 1 : 0) + (ui.sort !== 'popular' ? 1 : 0);
     return `<div class="band sm"><div class="top"><h1>Shop</h1>${cartBtn()}</div>
@@ -174,9 +175,9 @@
   function Prod(id) {
     const p = AC.catById[id], d = ui.pdraft, off = p.was ? Math.round((1 - p.price / p.was) * 100) : 0, isAC = p.cat === 'ac', ins = Math.round(AC.INSTALL_FEE * (1 - AC.config.INSTALL_DISCOUNT)), n = cartCalc().n;
     return `<div class="phero" style="background:${Art.tints[p.tint].bg}">${art(p)}<button class="back" data-a="back" aria-label="Back">${icon('left', 22)}</button><button class="cartb" data-a="cart" aria-label="Cart">${icon('cart', 22)}${ui.cart.length ? `<span class="badge-n">${ui.cart.reduce((a, l) => a + l.qty, 0)}</span>` : ''}</button></div>
-    <div class="pbody"><div class="row between"><span class="eyebrow">${esc(p.brand)}</span><span class="rate">${icon('star', 14)} ${p.rating} <span class="muted" style="font-weight:500">. ${p.sold} sold</span></span></div><h1>${esc(p.name)}</h1>
+    <div class="pbody"><div class="row between"><span class="eyebrow">${esc(p.brand)}</span><span class="rate">${icon('star', 14)} ${p.rating} <span class="muted" style="font-weight:500">. ${p.sold} sold</span></span></div><h1>${esc(p.name)}</h1><div class="muted" style="font-size:13.5px;margin-top:-6px">Sold by <b style="color:var(--ink-2)">${esc(S.sellerName(p))}</b></div>
       <div class="price-big"><b>${money(p.price)}</b>${p.was ? `<s>${money(p.was)}</s><span class="save">Save ${money(p.was - p.price)}</span>` : ''}</div>
-      ${p.stock < 10 ? `<div class="stock">${icon('alert', 14)} Only ${p.stock} left</div>` : `<div class="stock ok">${icon('check', 14)} In stock</div>`}
+      ${!S.canBuy(p) ? `<div class="stock" style="color:var(--ink-3)">${icon('alert', 14)} Unavailable right now. The seller has marked it out of stock.</div>` : p.stock < 10 ? `<div class="stock">${icon('alert', 14)} Only ${p.stock} left</div>` : `<div class="stock ok">${icon('check', 14)} In stock</div>`}
       <label class="lab">${isAC ? 'Capacity' : 'Option'}</label><div class="row wrap" style="gap:8px">${p.variants.map(v => `<button class="chip ${d.variant === v ? 'on' : ''}" data-a="pvar" data-v="${esc(v)}">${esc(v)}</button>`).join('')}</div>
       <div class="row between" style="margin-top:18px"><b>Quantity</b><div class="step" role="group" aria-label="Quantity"><button data-a="pqty" data-v="-1" aria-label="Less">${icon('minus', 16)}</button><b>${d.qty}</b><button data-a="pqty" data-v="1" aria-label="More">${icon('plus', 16)}</button></div></div>
       ${isAC ? `<label class="lab">Add installation</label><button class="addon ${d.install ? 'on' : ''}" data-a="pinst"><span class="ck">${d.install ? icon('check', 14, 3) : ''}</span><span class="grow"><b>Professional installation</b><div class="muted" style="font-size:13px"><s>${money(AC.INSTALL_FEE)}</s> <b style="color:var(--accent-d)">${money(ins)}</b> with AC purchase</div></span>${icon('wrench', 20)}</button>` : ''}
@@ -286,7 +287,7 @@
         <button class="btn btn-p btn-lg btn-block" data-a="otpverify">Verify and continue</button><div class="row" style="gap:4px"><button class="btn btn-g btn-sm" data-a="otpresend">Resend code</button><button class="btn btn-g btn-sm" data-a="otpclose">Change number</button></div><span class="faint" style="font-size:12px">Demo code: ${DEMO_OTP}. No SMS is sent in this prototype.</span></div></div>`;
     }
     if (sh.t === 'cats' || sh.t === 'sort') {
-      const cc = { all: AC.catalog.length, ac: 0, bag: 0, cos: 0 }; AC.catalog.forEach(p => cc[p.cat]++);
+      const cc = { all: S.storeProducts().length, ac: 0, bag: 0, cos: 0 }; S.storeProducts().forEach(p => cc[p.cat]++);
       const rows = sh.t === 'cats' ? [['all', 'All products'], ['ac', 'Air conditioners'], ['bag', 'Bags'], ['cos', 'Cosmetics']].map(x => `<button class="sheet-opt ${ui.cat === x[0] ? 'on' : ''}" data-a="shopcat" data-v="${x[0]}"><span>${x[1]}</span><small>${cc[x[0]]}</small>${ui.cat === x[0] ? icon('check', 18, 2.5) : ''}</button>`).join('')
         : [['popular', 'Popular'], ['low', 'Price: low to high'], ['high', 'Price: high to low'], ['rating', 'Top rated']].map(x => `<button class="sheet-opt ${ui.sort === x[0] ? 'on' : ''}" data-a="sort" data-v="${x[0]}"><span>${x[1]}</span>${ui.sort === x[0] ? icon('check', 18, 2.5) : ''}</button>`).join('');
       return `<div class="scrim" data-a="closesheet"></div><div class="sheet"><div class="grab"></div><h3 style="font-size:18px;margin-bottom:6px">${sh.t === 'cats' ? 'Categories' : 'Sort by'}</h3>${rows}</div>`;
@@ -321,7 +322,7 @@
     if (t) {
       if (t.s === 'book') { body = Book(); cta = `<div class="cta-bar"><div class="grow"><div class="muted" style="font-size:12px">Estimated total</div><b style="font-size:18px">${money(AC.svcById[ui.book.svc].price * ui.book.units - 100)}</b></div><button class="btn btn-ok btn-lg" style="flex:1.4" data-a="confirm">Confirm booking</button></div>`; }
       else if (t.s === 'track') body = Track(t.p.id);
-      else if (t.s === 'prod') { body = Prod(t.p.id); const p = AC.catById[t.p.id], d = ui.pdraft, unit = p.price + (d.install && p.cat === 'ac' ? Math.round(AC.INSTALL_FEE * (1 - AC.config.INSTALL_DISCOUNT)) : 0); cta = `<div class="cta-bar"><button class="btn btn-s btn-lg grow" data-a="addcart">${ui.added ? icon('check', 18, 2.5) + 'Added' : icon('cart', 18) + 'Add to cart'}</button><button class="btn btn-p btn-lg" style="flex:1.25" data-a="buynow2">Buy now . ${money(unit * d.qty)}</button></div>`; }
+      else if (t.s === 'prod') { body = Prod(t.p.id); const p = AC.catById[t.p.id], d = ui.pdraft, unit = p.price + (d.install && p.cat === 'ac' ? Math.round(AC.INSTALL_FEE * (1 - AC.config.INSTALL_DISCOUNT)) : 0); cta = !S.canBuy(p) ? `<div class="cta-bar"><button class="btn btn-s btn-lg grow" disabled>Unavailable</button></div>` : `<div class="cta-bar"><button class="btn btn-s btn-lg grow" data-a="addcart">${ui.added ? icon('check', 18, 2.5) + 'Added' : icon('cart', 18) + 'Add to cart'}</button><button class="btn btn-p btn-lg" style="flex:1.25" data-a="buynow2">Buy now . ${money(unit * d.qty)}</button></div>`; }
       else if (t.s === 'cart') { body = Cart(); if (ui.cart.length) cta = `<div class="cta-bar"><div class="grow"><div class="muted" style="font-size:12px">Total</div><b style="font-size:18px">${money(cartCalc().total)}</b></div><button class="btn btn-p btn-lg" style="flex:1.4" data-a="checkout">Checkout</button></div>`; }
       else if (t.s === 'checkout') { body = Checkout(); cta = `<div class="cta-bar"><div class="grow"><div class="muted" style="font-size:12px">Total</div><b style="font-size:18px">${money(cartCalc().total)}</b></div><button class="btn btn-ok btn-lg" style="flex:1.4" data-a="place">Place order</button></div>`; }
       else if (t.s === 'done') { body = OrderDone(t.p.id); }
@@ -373,11 +374,11 @@
     pvar(el) { ui.pdraft.variant = el.dataset.v; render(); },
     pqty(el) { ui.pdraft.qty = Math.max(1, ui.pdraft.qty + +el.dataset.v); render(); },
     pinst() { ui.pdraft.install = !ui.pdraft.install; render(); },
-    quick(el) { const p = AC.catById[el.dataset.v]; addLine(p, p.variants[0], 1, false); render(); },
+    quick(el) { const p = AC.catById[el.dataset.v]; if (!S.canBuy(p)) { toast('This product is unavailable.', 'alert'); return; } addLine(p, p.variants[0], 1, false); render(); },
     pq(el) { const i = ui.cart.findIndex(l => l.pid === el.dataset.v); if (i < 0) return; ui.cart[i].qty += +el.dataset.d; if (ui.cart[i].qty < 1) ui.cart.splice(i, 1); render(); },
     wish(el) { ui.wish[el.dataset.v] = !ui.wish[el.dataset.v]; render(); },
     sort(el) { ui.sort = el.dataset.v; ui.sheet = null; render(); }, qclear() { ui.d.q = ''; render(); },
-    buynow(el) { const p = AC.catById[el.dataset.v]; ui.buy = [{ pid: p.id, variant: p.variants[0], qty: 1, install: false }]; ui.buyMode = true; ui.d.pm = ui.d.pm || 'cod'; push('checkout'); },
+    buynow(el) { const p = AC.catById[el.dataset.v]; if (!S.canBuy(p)) { toast('This product is unavailable.', 'alert'); return; } ui.buy = [{ pid: p.id, variant: p.variants[0], qty: 1, install: false }]; ui.buyMode = true; ui.d.pm = ui.d.pm || 'cod'; push('checkout'); },
     buynow2() { const p = AC.catById[ui.stack[ui.stack.length - 1].p.id], d = ui.pdraft; ui.buy = [{ pid: p.id, variant: d.variant, qty: d.qty, install: d.install }]; ui.buyMode = true; ui.d.pm = ui.d.pm || 'cod'; push('checkout'); },
     addcart() { const p = AC.catById[ui.stack[ui.stack.length - 1].p.id], d = ui.pdraft; addLine(p, d.variant, d.qty, d.install); ui.added = true; render(); setTimeout(() => { ui.added = false; render(); }, 1400); },
     cart() { push('cart'); },
@@ -401,6 +402,7 @@
     pm(el) { ui.d.pm = el.dataset.v; render(); },
     place() { requireOtp(ui.d.cphone || me.phone, () => A.doPlace()); },
     doPlace() {
+      const gone = lines().filter(l => !S.canBuy(AC.catById[l.pid])); if (gone.length) { const ids = gone.map(l => l.pid); ui.cart = ui.cart.filter(l => !ids.includes(l.pid)); ui.buy = ui.buy.filter(l => !ids.includes(l.pid)); ui.sheet = null; toast(gone.length + ' item' + (gone.length > 1 ? 's' : '') + ' became unavailable and ' + (gone.length > 1 ? 'were' : 'was') + ' removed.', 'alert'); render(); return; }
       const c = cartCalc(), m = ui.d.pm || 'cod';
       const finish = () => {
         const id = S.act.placeOrder({ cust: ME, items: lines().map(l => ({ pid: l.pid, qty: l.qty, price: AC.catById[l.pid].price, variant: l.variant })), subtotal: c.sub, inst: c.inst, discount: c.disc, delivery: c.delivery, install: lines().some(l => l.install && AC.catById[l.pid].cat === 'ac'), addr: ui.d.caddr || me.addr, phone: ui.d.cphone || me.phone, verified: true, pay: { method: m, status: m === 'cod' ? 'unpaid' : 'paid' } });
@@ -464,7 +466,8 @@
 
   /* Notifications on live changes from admin / vendor / technician */
   S.subscribe((s, prev) => {
-    s.orders.filter(x => x.cust === ME).forEach(x => { const o = prev.orders.find(y => y.id === x.id); if (o && o.status !== x.status) toast('Order ' + x.id + ': ' + x.status, 'box'); });
+    /* Every notification for this customer shows as a toast as it arrives: technician updates, declines and reassignments, order steps. */
+    const seen = new Set((prev.notifs || []).map(n => n.id)); (s.notifs || []).filter(n => n.aud === 'cust:' + ME && !seen.has(n.id)).slice(-2).forEach(n => toast(n.text, ({ declined: 'alert', timeout: 'alert', ontheway: 'nav', arrived: 'pin', working: 'wrench', completed: 'checkc', assigned: 'user', accepted: 'checkc', shipped: 'truck', courier: 'truck', placed: 'box', packed: 'box', delivered: 'checkc' })[n.kind] || 'bell'));
     const last = s.msgs[s.msgs.length - 1], pl = prev.msgs[prev.msgs.length - 1];
     if (last && (!pl || last.id !== pl.id) && last.thread === ME && last.from === 'admin') toast('New message from NEW Support', 'chat');
     const lc = (s.chat || []).slice(-1)[0], pc = (prev.chat || []).slice(-1)[0], tp = ui.stack[ui.stack.length - 1];

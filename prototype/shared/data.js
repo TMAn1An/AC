@@ -25,7 +25,7 @@ window.AC = window.AC || {};
     dhanmondi: { n: 'Dhanmondi', x: 355, y: 420 }, motijheel: { n: 'Motijheel', x: 650, y: 490 }, olddhaka: { n: 'Old Dhaka', x: 450, y: 548 }
   };
   /* Business rules live here so they can change without touching app code. */
-  AC.config = { SERVICE_RADIUS: 160, OFFER_SECONDS: 60, VENDOR_MINUTES: 15, INSTALL_FEE: 1800, INSTALL_DISCOUNT: 0.2, INCENTIVE_RATE: 0.12, CONFIRM_DISCOUNT: 100, SERVICE_INTERVAL_DAYS: 180, WARRANTY_DAYS: 365 };
+  AC.config = { MAX_HELPERS: 3, GOODS_COMMISSION: 0.08, VENDOR_NAME_CHANGES: 1, SERVICE_RADIUS: 160, OFFER_SECONDS: 60, VENDOR_MINUTES: 15, INSTALL_FEE: 1800, INSTALL_DISCOUNT: 0.2, INCENTIVE_RATE: 0.12, CONFIRM_DISCOUNT: 100, SERVICE_INTERVAL_DAYS: 180, WARRANTY_DAYS: 365 };
   AC.SERVICE_RADIUS = AC.config.SERVICE_RADIUS; // map units, about 4 km
 
   AC.services = [
@@ -44,29 +44,35 @@ window.AC = window.AC || {};
   AC.INSTALL_FEE = AC.config.INSTALL_FEE;
 
   AC.catalog = [
-    { id: 'ac1', cat: 'ac', brand: 'Arctica', name: 'Inverter Split AC 1.5 Ton', price: 68500, was: 72000, rating: 4.8, kind: 'split', tint: 0, tag: 'Inverter', variants: ['1 Ton', '1.5 Ton', '2 Ton'], stock: 14, sold: 63 },
-    { id: 'ac2', cat: 'ac', brand: 'Hima', name: 'Non-Inverter Split AC 1 Ton', price: 42900, was: 45500, rating: 4.5, kind: 'split', tint: 5, tag: 'Best value', variants: ['1 Ton', '1.5 Ton'], stock: 22, sold: 91 },
-    { id: 'ac3', cat: 'ac', brand: 'Zephyr', name: 'Window AC 1.5 Ton', price: 39500, was: 0, rating: 4.3, kind: 'window', tint: 1, tag: 'Window', variants: ['1 Ton', '1.5 Ton'], stock: 9, sold: 24 },
-    { id: 'ac4', cat: 'ac', brand: 'Arctica', name: 'Ceiling Cassette AC 3 Ton', price: 148000, was: 0, rating: 4.6, kind: 'cassette', tint: 4, tag: 'Commercial', variants: ['2 Ton', '3 Ton', '4 Ton'], stock: 4, sold: 7 },
-    { id: 'bg1', cat: 'bag', brand: 'Tanti Crafts', name: 'Mohua Leather Tote', price: 3450, was: 4200, rating: 4.7, kind: 'tote', tint: 1, tag: 'Handmade', variants: ['Tan', 'Black'], stock: 40, sold: 118 },
-    { id: 'bg2', cat: 'bag', brand: 'Urban Kit', name: 'City Daypack 22L', price: 2650, was: 0, rating: 4.4, kind: 'pack', tint: 0, tag: 'Water resistant', variants: ['Navy', 'Slate'], stock: 62, sold: 207 },
-    { id: 'bg3', cat: 'bag', brand: 'Urban Kit', name: 'Weekender Duffel 40L', price: 3900, was: 4500, rating: 4.5, kind: 'duffel', tint: 2, tag: 'Travel', variants: ['Olive', 'Black'], stock: 28, sold: 66 },
-    { id: 'bg4', cat: 'bag', brand: 'Tanti Crafts', name: 'Jamdani Evening Clutch', price: 1850, was: 0, rating: 4.9, kind: 'clutch', tint: 3, tag: 'Local weave', variants: ['Rose', 'Ivory'], stock: 33, sold: 54 },
-    { id: 'cs1', cat: 'cos', brand: 'Nodi', name: 'Neem and Tulsi Face Wash', price: 320, was: 0, rating: 4.6, kind: 'tube', tint: 2, tag: 'Local', variants: ['100 ml'], stock: 210, sold: 640 },
-    { id: 'cs2', cat: 'cos', brand: 'Kesh', name: 'Amla and Hibiscus Hair Oil', price: 450, was: 520, rating: 4.7, kind: 'bottle', tint: 4, tag: 'Local', variants: ['200 ml'], stock: 150, sold: 512 },
-    { id: 'cs3', cat: 'cos', brand: 'Golap', name: 'Rose Water Mist', price: 380, was: 0, rating: 4.5, kind: 'spray', tint: 3, tag: 'Local', variants: ['100 ml'], stock: 120, sold: 301 },
-    { id: 'cs4', cat: 'cos', brand: 'Haldi', name: 'Turmeric Glow Cream', price: 540, was: 600, rating: 4.4, kind: 'jar', tint: 1, tag: 'Local', variants: ['50 g'], stock: 88, sold: 233 },
-    { id: 'cs5', cat: 'cos', brand: 'Kajol', name: 'Pure Kohl Pencil', price: 260, was: 0, rating: 4.8, kind: 'stick', tint: 5, tag: 'Local', variants: ['Black'], stock: 300, sold: 880 }
+    { id: 'ac1', vendorId: 'V1', cat: 'ac', brand: 'Arctica', name: 'Inverter Split AC 1.5 Ton', price: 68500, was: 72000, rating: 4.8, kind: 'split', tint: 0, tag: 'Inverter', variants: ['1 Ton', '1.5 Ton', '2 Ton'], stock: 14, sold: 63 },
+    { id: 'ac2', vendorId: 'V4', cat: 'ac', brand: 'Hima', name: 'Non-Inverter Split AC 1 Ton', price: 42900, was: 45500, rating: 4.5, kind: 'split', tint: 5, tag: 'Best value', variants: ['1 Ton', '1.5 Ton'], stock: 22, sold: 91 },
+    { id: 'ac3', vendorId: 'V1', cat: 'ac', brand: 'Zephyr', name: 'Window AC 1.5 Ton', price: 39500, was: 0, rating: 4.3, kind: 'window', tint: 1, tag: 'Window', variants: ['1 Ton', '1.5 Ton'], stock: 9, sold: 24 },
+    { id: 'ac4', vendorId: 'V4', cat: 'ac', brand: 'Arctica', name: 'Ceiling Cassette AC 3 Ton', price: 148000, was: 0, rating: 4.6, kind: 'cassette', tint: 4, tag: 'Commercial', variants: ['2 Ton', '3 Ton', '4 Ton'], stock: 4, sold: 7 },
+    { id: 'bg1', vendorId: 'V5', cat: 'bag', brand: 'Tanti Crafts', name: 'Mohua Leather Tote', price: 3450, was: 4200, rating: 4.7, kind: 'tote', tint: 1, tag: 'Handmade', variants: ['Tan', 'Black'], stock: 40, sold: 118 },
+    { id: 'bg2', vendorId: 'V5', cat: 'bag', brand: 'Urban Kit', name: 'City Daypack 22L', price: 2650, was: 0, rating: 4.4, kind: 'pack', tint: 0, tag: 'Water resistant', variants: ['Navy', 'Slate'], stock: 62, sold: 207 },
+    { id: 'bg3', vendorId: 'V5', cat: 'bag', brand: 'Urban Kit', name: 'Weekender Duffel 40L', price: 3900, was: 4500, rating: 4.5, kind: 'duffel', tint: 2, tag: 'Travel', variants: ['Olive', 'Black'], stock: 28, sold: 66 },
+    { id: 'bg4', vendorId: 'V5', cat: 'bag', brand: 'Tanti Crafts', name: 'Jamdani Evening Clutch', price: 1850, was: 0, rating: 4.9, kind: 'clutch', tint: 3, tag: 'Local weave', variants: ['Rose', 'Ivory'], stock: 33, sold: 54 },
+    { id: 'cs1', vendorId: 'V6', cat: 'cos', brand: 'Nodi', name: 'Neem and Tulsi Face Wash', price: 320, was: 0, rating: 4.6, kind: 'tube', tint: 2, tag: 'Local', variants: ['100 ml'], stock: 210, sold: 640 },
+    { id: 'cs2', vendorId: 'V6', cat: 'cos', brand: 'Kesh', name: 'Amla and Hibiscus Hair Oil', price: 450, was: 520, rating: 4.7, kind: 'bottle', tint: 4, tag: 'Local', variants: ['200 ml'], stock: 150, sold: 512 },
+    { id: 'cs3', vendorId: 'V6', cat: 'cos', brand: 'Golap', name: 'Rose Water Mist', price: 380, was: 0, rating: 4.5, kind: 'spray', tint: 3, tag: 'Local', variants: ['100 ml'], stock: 120, sold: 301 },
+    { id: 'cs4', vendorId: 'V2', cat: 'cos', brand: 'Haldi', name: 'Turmeric Glow Cream', price: 540, was: 600, rating: 4.4, kind: 'jar', tint: 1, tag: 'Local', variants: ['50 g'], stock: 88, sold: 233 },
+    { id: 'cs5', vendorId: 'V6', cat: 'cos', brand: 'Kajol', name: 'Pure Kohl Pencil', price: 260, was: 0, rating: 4.8, kind: 'stick', tint: 5, tag: 'Local', variants: ['Black'], stock: 300, sold: 880 }
   ];
   AC.catById = Object.fromEntries(AC.catalog.map(p => [p.id, p]));
   AC.svcById = Object.fromEntries(AC.services.map(s => [s.id, s]));
 
   AC.vendors = [
-    { id: 'V1', name: 'CoolTech Services', owner: 'Mizanur Rahman', area: 'mirpur', x: 250, y: 190, addr: 'Plot 12, Section 10, Mirpur, Dhaka', phone: '01700-000311', commission: 12, since: 'Mar 2025' },
-    { id: 'V2', name: 'Zenith Air Care', owner: 'Shafiqul Alam', area: 'uttara', x: 700, y: 85, addr: 'House 8, Sector 7, Uttara, Dhaka', phone: '01700-000312', commission: 12, since: 'Jun 2025' },
-    { id: 'V3', name: 'Metro Cooling Solutions', owner: 'Kamrul Hasan', area: 'motijheel', x: 630, y: 510, addr: 'Shapla Tower, Motijheel C/A, Dhaka', phone: '01700-000313', commission: 10, since: 'Aug 2025' }
+    { id: 'V1', name: 'CoolTech Services', owner: 'Mizanur Rahman', area: 'mirpur', x: 250, y: 190, addr: 'Plot 12, Section 10, Mirpur, Dhaka', phone: '01700-000311', commission: 12, since: 'Mar 2025', sells: true },
+    { id: 'V2', name: 'Zenith Air Care', owner: 'Shafiqul Alam', area: 'uttara', x: 700, y: 85, addr: 'House 8, Sector 7, Uttara, Dhaka', phone: '01700-000312', commission: 12, since: 'Jun 2025', sells: true },
+    { id: 'V3', name: 'Metro Cooling Solutions', owner: 'Kamrul Hasan', area: 'motijheel', x: 630, y: 510, addr: 'Shapla Tower, Motijheel C/A, Dhaka', phone: '01700-000313', commission: 10, since: 'Aug 2025', sells: true },
+    /* Sellers: marketplace vendors that only sell goods (no field service). They never receive jobs. */
+    { id: 'V4', name: 'Cool Mart Bangladesh', owner: 'Tanvir Ahmed', area: 'gulshan', x: 560, y: 250, addr: 'Shop 14, Gulshan Circle 1, Dhaka', phone: '01700-000314', commission: 0, since: 'Oct 2025', sells: true, seller: true },
+    { id: 'V5', name: 'Heritage Bags', owner: 'Salma Khatun', area: 'dhanmondi', x: 330, y: 380, addr: 'Road 5, Dhanmondi, Dhaka', phone: '01700-000315', commission: 0, since: 'Nov 2025', sells: true, seller: true },
+    { id: 'V6', name: 'Desh Beauty', owner: 'Rumana Islam', area: 'mirpur', x: 280, y: 215, addr: 'Block C, Mirpur 11, Dhaka', phone: '01700-000316', commission: 0, since: 'Dec 2025', sells: true, seller: true }
   ];
-  AC.vendById = Object.fromEntries(AC.vendors.map(v => [v.id, v]));
+  AC.partners = AC.vendors.slice();
+  AC.vendors = AC.partners.filter(v => !v.seller);
+  AC.vendById = Object.fromEntries(AC.partners.map(v => [v.id, v]));
 
   AC.techs = [
     { id: 'T1', name: 'Rakib Hasan', vendor: null, area: 'mohakhali', x: 515, y: 298, phone: '01700-000201', rating: 4.9, jobs: 312 },
