@@ -55,7 +55,7 @@ Phase 0 is done: a clickable design prototype in `prototype/` (plain HTML, CSS, 
 
 - Serve with `./scripts/serve.sh` and open `http://localhost:8080`.
 - Shared code: `prototype/shared/store.js` is the single source of truth and the live sync layer (BroadcastChannel, localStorage, postMessage relay through the hub). Add new behaviour as an action there, then render it in each app. Do not keep job or order state inside an app.
-- `prototype/costs.html` is the client-facing cost estimate: development price (editable in the calculator), fixed costs, usage costs as ranges, payment fees per method, gateway comparison, calculator. Update the numbers from provider quotes. `prototype/NEW-cost-estimate.pdf` is printed from it (Playwright `page.pdf` with print media; copy to `marketing/`). Keep copy short and exact.
+- `prototype/costs.html` is the client-facing cost estimate: development price as a range (never a single fixed number), fixed costs, usage costs as ranges, payment fees per method, gateway comparison, calculator. Update the numbers from provider quotes. `prototype/NEW-cost-estimate.pdf` is printed from it (Playwright `page.pdf` with print media; copy to `marketing/`). Keep copy short and exact.
 - `prototype/shared/data.js` holds static reference data (areas, services, catalog, technicians, vendors, customers, promos).
 - Rules to keep passing: `npm run smoke` includes 51 checks for timeouts, completion code, override, extra work, wallet, KYC visibility, unread, job chat, dispatch help, reschedule, service report, warranty, no double assignment, crew and helpers, marketplace approval and scope, commission and vendor rename.
 - Smoke test: `npm install && npm run smoke` loads every page in headless Chromium and fails on console errors.

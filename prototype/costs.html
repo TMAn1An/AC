@@ -144,7 +144,6 @@ footer { padding: 36px 0 50px; color: var(--ink-3); font-size: 13.5px; }
       <div class="field"><label for="c-fx">Taka per US dollar</label><input class="inp" id="c-fx" type="number" value="120" min="80" max="200"></div>
       <label class="chk"><input type="checkbox" id="c-m" checked>Include monthly support after launch</label>
       <label class="chk"><input type="checkbox" id="c-d" checked>Include development cost</label>
-      <div class="field" id="dev-f"><label for="c-dev">Development cost (BDT)</label><input class="inp" id="c-dev" type="number" value="420000" step="10000"></div>
     </div>
     <div class="box out">
       <small class="muted" style="font-weight:600">Running cost per month</small>
@@ -175,18 +174,18 @@ footer { padding: 36px 0 50px; color: var(--ink-3); font-size: 13.5px; }
   $('mk').innerHTML = AC.logo.mark(28); const draw = () => { $('themectl').innerHTML = AC.theme.seg(); }; draw(); AC.theme.on(draw);
 
   const DEV = [
-    ['Customer app (Android)', 'Booking, shop, tracking, estimate approval, online payment, chat, reviews', 80000],
-    ['Customer website', 'Responsive web version of the customer app', 30000],
-    ['Technician app', 'Jobs, live navigation, extra work, service report, helpers, wallet', 60000],
-    ['Vendor app', 'Service vendors and product sellers: own jobs, own products, earnings', 45000],
-    ['Admin mobile app', 'Dispatch, approvals and messages on the go', 35000],
-    ['Admin web panel', 'Marketplace, orders, finance, roles, reports', 75000],
-    ['Backend and database', 'Live updates, notifications, wallet ledger, security', 55000],
-    ['Payments and SMS', 'Gateway, mobile wallets, bank transfer, automatic SMS code fill', 20000],
-    ['Testing and release', 'Device testing, Play Store release, handover', 20000]
+    ['Customer app (Android)', 'Booking, shop, tracking, estimate approval, online payment, chat, reviews', 78000, 84000],
+    ['Customer website', 'Responsive web version of the customer app', 28000, 31000],
+    ['Technician app', 'Jobs, live navigation, extra work, service report, helpers, wallet', 58000, 64000],
+    ['Vendor app', 'Service vendors and product sellers: own jobs, own products, earnings', 42000, 47000],
+    ['Admin mobile app', 'Dispatch, approvals and messages on the go', 33000, 37000],
+    ['Admin web panel', 'Marketplace, orders, finance, roles, reports', 72000, 79000],
+    ['Backend and database', 'Live updates, notifications, wallet ledger, security', 53000, 57000],
+    ['Payments and SMS', 'Gateway, mobile wallets, bank transfer, automatic SMS code fill', 18000, 21000],
+    ['Testing and release', 'Device testing, load test, Play Store release, handover', 18000, 20000]
   ];
-  const DEVT = DEV.reduce((a, d) => a + d[2], 0);
-  $('dev-body').innerHTML = DEV.map(d => `<tr><td><b>${d[0]}</b></td><td>${d[1]}</td><td class="n">${IN(d[2])}</td></tr>`).join('') + `<tr class="sum"><td>Total, paid once</td><td></td><td class="n">${IN(DEVT)}</td></tr>`;
+  const DEVR = [DEV.reduce((a, d) => a + d[2], 0), DEV.reduce((a, d) => a + d[3], 0)];
+  $('dev-body').innerHTML = DEV.map(d => `<tr><td><b>${d[0]}</b></td><td>${d[1]}</td><td class="n">${rng(d[2], d[3])}</td></tr>`).join('') + `<tr class="sum"><td>Total, paid once</td><td></td><td class="n">${rng(DEVR[0], DEVR[1])}</td></tr>`;
 
   const FX = () => +$('c-fx').value || 120;
   const TIERS = [{ n: 'Start', usd: 110 }, { n: 'Growth', usd: 320 }, { n: 'Busy', usd: 850 }];
@@ -236,7 +235,7 @@ footer { padding: 36px 0 50px; color: var(--ink-3); font-size: 13.5px; }
     const rew = online * i.r / 100;
     const lo = host + sms * SMS[0] + fee[0] + rew + maint * MAINT[0], hi = host + sms * SMS[1] + fee[1] + rew + maint * MAINT[1];
     const once = [PLAY * fx + DOMAIN[0], PLAY * fx + DOMAIN[1] + GATEWAY_SETUP[1]];
-    return { host, sms: [sms * SMS[0], sms * SMS[1]], fee, rew, maint: [maint * MAINT[0], maint * MAINT[1]], lo, hi, once, units: i.b + i.o, yr: [lo * 12 + once[0] + (i.dev || 0), hi * 12 + once[1] + (i.dev || 0)] };
+    return { host, sms: [sms * SMS[0], sms * SMS[1]], fee, rew, maint: [maint * MAINT[0], maint * MAINT[1]], lo, hi, once, units: i.b + i.o, yr: [lo * 12 + once[0] + (i.dev ? DEVR[0] : 0), hi * 12 + once[1] + (i.dev ? DEVR[1] : 0)] };
   }
   const base = { fx: 120, tier: 0, p: 60, w: 45, k: 15, r: 1, m: 1, ts: 2500, to: 12000, n: 250, dev: 0 };
   const EX = [['Pilot', 300, 100, 250, 0], ['Growth', 1500, 600, 1200, 1], ['Busy', 5000, 2000, 4000, 2]];
@@ -244,22 +243,21 @@ footer { padding: 36px 0 50px; color: var(--ink-3); font-size: 13.5px; }
 
   /* summary cards use the pilot example */
   const P = model(Object.assign({}, base, { b: 300, o: 100, n: 250, tier: 0 })), R12 = [P.lo * 12 + P.once[0], P.hi * 12 + P.once[1]];
-  $('tot').innerHTML = `<div class="t"><small>Development, one time</small><b>${IN(DEVT)}</b><span>Fixed price</span></div>
+  $('tot').innerHTML = `<div class="t"><small>Development, one time</small><b>${rng(DEVR[0], DEVR[1])}</b><span>Final price set after the scope is agreed</span></div>
     <div class="t"><small>Running, per month (pilot)</small><b>${rng(P.lo, P.hi)}</b><span>Fixed ${rng(P.host + P.maint[0], P.host + P.maint[1])}, plus ${rng(P.lo - P.host - P.maint[0], P.hi - P.host - P.maint[1])} that grows with sales</span></div>
-    <div class="t hi"><small>First year, with development</small><b>${rng(DEVT + R12[0], DEVT + R12[1])}</b><span>Without development: ${rng(R12[0], R12[1])}</span></div>`;
+    <div class="t hi"><small>First year, with development</small><b>${rng(DEVR[0] + R12[0], DEVR[1] + R12[1])}</b><span>Without development: ${rng(R12[0], R12[1])}</span></div>`;
 
   /* calculator */
   const g = id => +$(id).value, tierSel = { v: 0 };
   function calc() {
-    const i = { b: g('c-b'), o: g('c-o'), n: g('c-n'), ts: g('c-ts'), to: g('c-to'), p: g('c-p'), w: g('c-w'), k: g('c-k'), r: g('c-r'), tier: tierSel.v, fx: FX(), m: $('c-m').checked ? 1 : 0, dev: $('c-d').checked ? g('c-dev') : 0 };
+    const i = { b: g('c-b'), o: g('c-o'), n: g('c-n'), ts: g('c-ts'), to: g('c-to'), p: g('c-p'), w: g('c-w'), k: g('c-k'), r: g('c-r'), tier: tierSel.v, fx: FX(), m: $('c-m').checked ? 1 : 0, dev: $('c-d').checked ? 1 : 0 };
     if (i.w + i.k > 100) { i.k = 100 - i.w; }
     ['b', 'o', 'n'].forEach(k => $('o-' + k).textContent = i[k].toLocaleString('en-IN'));
     $('o-ts').textContent = IN(i.ts); $('o-to').textContent = IN(i.to); $('o-p').textContent = i.p + '%'; $('o-w').textContent = i.w + '%'; $('o-k').textContent = i.k + '%'; $('o-r').textContent = i.r + '%';
-    $('dev-f').style.display = $('c-d').checked ? '' : 'none';
     const m = model(i), hl = [m.host, m.host];
     $('r-m').textContent = rng(m.lo, m.hi); $('r-h').textContent = IN(m.host); $('r-s').textContent = rng(m.sms[0], m.sms[1]); $('r-g').textContent = rng(m.fee[0], m.fee[1]); $('r-r').textContent = IN(m.rew); $('r-u').textContent = i.m ? rng(m.maint[0], m.maint[1]) : 'Not included';
     $('r-p').textContent = m.units ? rng(m.lo / m.units, m.hi / m.units) : '-';
-    $('r-y').textContent = rng(m.yr[0], m.yr[1]); $('r-y1').textContent = rng(m.lo * 12, m.hi * 12); $('r-y2').textContent = rng(m.once[0], m.once[1]); $('r-y3').textContent = i.dev ? IN(i.dev) : 'Not included';
+    $('r-y').textContent = rng(m.yr[0], m.yr[1]); $('r-y1').textContent = rng(m.lo * 12, m.hi * 12); $('r-y2').textContent = rng(m.once[0], m.once[1]); $('r-y3').textContent = i.dev ? rng(DEVR[0], DEVR[1]) : 'Not included';
   }
   document.querySelectorAll('.calc input').forEach(e => e.addEventListener('input', calc));
   $('tiers').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; tierSel.v = +b.dataset.t; document.querySelectorAll('#tiers button').forEach(x => x.classList.toggle('on', x === b)); calc(); });
