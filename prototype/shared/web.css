@@ -1,0 +1,55 @@
+/* Customer app, web layout. Phones keep the app layout. From 768 px the same screens become a responsive website:
+   top navigation instead of the tab bar, no device frame, wider grids, two-column product page. Tokens only. */
+.webhead { display: none; }
+
+@media (min-width: 768px) {
+  body { overflow: auto; background: var(--bg); }
+  .stage { display: block; height: 100vh; }
+  .device { width: 100%; height: 100vh; border: 0; border-radius: 0; box-shadow: none; background: var(--bg); }
+  .statusbar, .screen .tabbar { display: none !important; }
+
+  /* Header */
+  .webhead { display: block; flex: none; background: var(--surface); border-bottom: 1px solid var(--line); position: relative; z-index: 5; }
+  .wh-in { display: flex; align-items: center; gap: 8px; max-width: 1180px; margin: 0 auto; padding: 0 24px; height: 68px; }
+  .wh-logo { display: flex; align-items: center; gap: 10px; margin-right: 24px; font-family: var(--f-display); font-size: 20px; font-weight: 700; color: var(--ink); }
+  .wh-nav { display: flex; gap: 4px; }
+  .wh-tab { position: relative; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 12px; font-size: 15px; font-weight: 600; color: var(--ink-3); transition: background .15s ease, color .15s ease; }
+  .wh-tab:hover { background: var(--bg-2); color: var(--ink); }
+  .wh-tab.on { color: var(--brand); }
+  .wh-tab .dot { position: static; margin-left: 2px; }
+  .wh-in .icon-btn { position: relative; }
+  #app[data-s=home] .band .top > svg:first-child, #app[data-s=home] .band .top > .logo-tile:first-child { display: none; }
+  .band .top .icon-btn[data-a=cart], .band .top .icon-btn[data-a=notifs] { display: none; }
+
+  /* Content width. The view scrolls, its content is centred. */
+  .view { padding-inline: max(0px, calc((100% - 1180px) / 2)); padding-bottom: 48px; scrollbar-width: thin; }
+  .view::-webkit-scrollbar { display: block; width: 10px; }
+  #app[data-s=track] .view, #app[data-s=order] .view, #app[data-s=cart] .view, #app[data-s=checkout] .view, #app[data-s=done] .view, #app[data-s=book] .view,
+  #app[data-s=history] .view, #app[data-s=notifs] .view, #app[data-s=chat] .view, #app[data-s=jchat] .view, #app[data-s=orders] .view, #app[data-s=account] .view { padding-inline: max(0px, calc((100% - 760px) / 2)); }
+  .cta-bar { padding-inline: max(20px, calc((100% - 1180px) / 2 + 20px)); }
+  #app[data-s=cart] .cta-bar, #app[data-s=checkout] .cta-bar, #app[data-s=book] .cta-bar, #app[data-s=chat] .cta-bar, #app[data-s=jchat] .cta-bar { padding-inline: max(20px, calc((100% - 760px) / 2 + 20px)); }
+
+  /* Grids */
+  .svc-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .pgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 16px; }
+  .hscroll { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; overflow: visible; padding-bottom: 0; }
+  .hscroll .pc, .hscroll .pcard { width: auto; }
+  .pad, .sec-h { padding-inline: 20px; }
+
+  /* Product page: picture on the left, details on the right */
+  .prod-web { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 32px; align-items: start; padding: 24px 24px 0; }
+  .prod-web .phero { position: sticky; top: 24px; border-radius: 24px; overflow: hidden; aspect-ratio: 1; }
+  .prod-web .pbody { margin-top: 0; padding: 4px 0 0; border-radius: 0; background: transparent; }
+  .prod-web .pbody h1 { font-size: 32px; }
+
+  /* Overlays stay a sensible size */
+  .sheet { left: 0; right: 0; margin-inline: auto; max-width: 520px; border-radius: 24px 24px 0 0; }
+  .snack { max-width: 420px; margin-inline: auto; }
+}
+
+@media (min-width: 1024px) {
+  .svc-grid { grid-template-columns: repeat(6, 1fr); }
+  .pgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .hscroll { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .prod-web { gap: 56px; padding-top: 32px; }
+}
