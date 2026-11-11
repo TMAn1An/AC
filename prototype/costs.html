@@ -72,7 +72,7 @@ footer { padding: 36px 0 50px; color: var(--ink-3); font-size: 13.5px; }
   <h1>Cost estimate</h1>
   <p class="lead">Fixed costs are shown as fixed. Costs that grow with customers are shown as a range. All amounts in Bangladeshi taka, excluding VAT and tax.</p>
   <div class="tot" id="tot"></div>
-  <p class="note">Pilot size is about 300 bookings and 100 shop orders a month. Most of the running cost is payment fees, which are a share of each sale.</p>
+  <p class="note">First months means a small launch: about 300 bookings and 100 shop orders a month. Most of the monthly cost is payment gateway fees. These are taken from the customer payments, not paid from your pocket.</p>
 </section>
 
 <section class="sec" id="dev">
@@ -85,14 +85,13 @@ footer { padding: 36px 0 50px; color: var(--ink-3); font-size: 13.5px; }
   <h2>2. Fixed costs</h2>
   <p class="lead">Paid to providers in your name. Same cost whether you have 10 customers or 10,000.</p>
   <div class="tw"><table><thead><tr><th>Item</th><th>Need</th><th>When</th><th class="n">Cost</th></tr></thead><tbody id="fix-body"></tbody></table></div>
-  <p class="note">Dollar prices are converted at ৳120 per US dollar. Change the rate in the calculator.</p>
-  <div class="box" style="margin-top:14px"><h3>Hosting for smooth apps</h3><p>We recommend a fast tier from day one, not the cheapest plan. The live map, chat and notifications need a server that answers quickly.</p><ul>
-    <li><b>Region:</b> Singapore or Mumbai, the closest to Dhaka.</li>
-    <li><b>Server:</b> dedicated API server, 2 CPU and 4 GB, with room to add more.</li>
-    <li><b>Database:</b> managed Postgres with location search and daily backups.</li>
-    <li><b>Fast layer:</b> Redis for live tracking and chat, CDN for images.</li>
-    <li><b>Before launch:</b> load test with thousands of simulated users (included in development).</li>
-    <li><b>Later:</b> automatic scaling when bookings grow. Examples: ৳11,000 to 16,000 a month at launch, about ৳36,000 to 48,000 when growing.</li></ul></div>
+  <p class="note">Server prices follow Bangladesh dedicated hosting price lists (about ৳6,500 to ৳14,000 a month for a good server). Confirm with the host you choose.</p>
+  <div class="box" style="margin-top:14px"><h3>Hosting for smooth apps</h3><p>One good dedicated server in Bangladesh is enough to start. It is close to your customers, so the live map, chat and notifications answer fast.</p><ul>
+    <li><b>Launch:</b> one dedicated server (Ryzen class, NVMe disk) runs the app, database and photos. ৳10,000 to 14,000 a month.</li>
+    <li><b>Backup:</b> a daily copy kept at a second place. ৳500 to 1,500 a month. One server alone is a risk, so do not skip this.</li>
+    <li><b>Growing:</b> a second server so the database has its own machine. ৳20,000 to 30,000 a month.</li>
+    <li><b>CDN:</b> not needed. A CDN keeps copies of photos near users. At this size the server is fast enough. If photos load slowly later, add Cloudflare, its free plan is enough.</li>
+    <li><b>Before launch:</b> a load test with thousands of simulated users, included in development.</li></ul></div>
 </section>
 
 <section class="sec" id="usage">
@@ -142,17 +141,15 @@ footer { padding: 36px 0 50px; color: var(--ink-3); font-size: 13.5px; }
       <div class="field"><div class="row"><label for="c-r">Reward for paying online</label><output id="o-r"></output></div><input type="range" id="c-r" min="0" max="5" step="0.5" value="1"></div>
       <div class="field"><label>Hosting size</label><div class="opts" id="tiers"><button data-t="0" class="on">Launch</button><button data-t="1">Growing</button><button data-t="2">Busy</button></div></div>
       <div class="field"><label for="c-fx">Taka per US dollar</label><input class="inp" id="c-fx" type="number" value="120" min="80" max="200"></div>
-      <label class="chk"><input type="checkbox" id="c-m" checked>Include monthly support after launch</label>
       <label class="chk"><input type="checkbox" id="c-d" checked>Include development cost</label>
     </div>
     <div class="box out">
       <small class="muted" style="font-weight:600">Running cost per month</small>
       <div class="big" id="r-m"></div>
-      <div class="line"><span>Hosting, storage, monitoring</span><b id="r-h"></b></div>
+      <div class="line"><span>Server and backup</span><b id="r-h"></b></div>
       <div class="line"><span>SMS codes</span><b id="r-s"></b></div>
       <div class="line"><span>Payment gateway fees</span><b id="r-g"></b></div>
       <div class="line"><span>Online payment reward</span><b id="r-r"></b></div>
-      <div class="line"><span>Support after launch</span><b id="r-u"></b></div>
       <div class="line"><span>Per booking or order</span><b id="r-p"></b></div>
       <small class="muted" style="font-weight:600;display:block;margin-top:16px">First year total</small>
       <div class="big" id="r-y"></div>
@@ -188,20 +185,14 @@ footer { padding: 36px 0 50px; color: var(--ink-3); font-size: 13.5px; }
   $('dev-body').innerHTML = DEV.map(d => `<tr><td><b>${d[0]}</b></td><td>${d[1]}</td><td class="n">${rng(d[2], d[3])}</td></tr>`).join('') + `<tr class="sum"><td>Total, paid once</td><td></td><td class="n">${rng(DEVR[0], DEVR[1])}</td></tr>`;
 
   const FX = () => +$('c-fx').value || 120;
-  const TIERS = [{ n: 'Start', usd: 110 }, { n: 'Growth', usd: 320 }, { n: 'Busy', usd: 850 }];
-  const MAINT = [4000, 6000], DOMAIN = [1000, 2500], SMS = [0.31, 0.64], PLAY = 25, GATEWAY_SETUP = [0, 25500];
+  const TIERS = [{ n: 'Launch', bdt: [10500, 15500] }, { n: 'Growing', bdt: [20000, 30000] }, { n: 'Busy', bdt: [45000, 70000] }];
+  const DOMAIN = [1000, 2500], SMS = [0.31, 0.64], PLAY = 25, GATEWAY_SETUP = [0, 25500];
   const FIX = [
     ['Domain name (.com.bd)', 'req', 'Yearly', () => rng(DOMAIN[0], DOMAIN[1]) + ' a year'],
-    ['Hosting and database (fast tier, see below)', 'req', 'Monthly', () => rng(11000, 16000) + ' to start, ' + rng(36000, 48000) + ' growing, ' + rng(90000, 110000) + ' busy'],
-    ['File storage and image delivery (CDN)', 'req', 'Monthly', () => rng(600, 3000)],
+    ['Dedicated server in Bangladesh (app, database, photos)', 'req', 'Monthly', () => rng(10000, 14000)],
+    ['Offsite daily backup', 'req', 'Monthly', () => rng(500, 1500)],
     ['Google Play account', 'req', 'Once', () => IN(PLAY * 120) + ' ($25)'],
-    ['Push notifications, crash reports', 'req', 'Monthly', () => 'Free'],
-    ['Maps (OpenStreetMap)', 'req', 'Monthly', () => 'Free to start'],
-    ['Support after launch', 'opt', 'Monthly', () => rng(MAINT[0], MAINT[1])],
-    ['Monitoring and alerts', 'opt', 'Monthly', () => 'Free to ' + IN(80 * 120)],
-    ['Apple developer account (iOS later)', 'opt', 'Yearly', () => IN(99 * 120) + ' ($99)'],
-    ['SMS masking sender name', 'opt', 'Once', () => 'Ask your SMS provider'],
-    ['NID record check', 'opt', 'Per check', () => 'Not needed. Photos, selfie and review are used']
+    ['Apple developer account (iOS later)', 'opt', 'Yearly', () => IN(99 * 120) + ' ($99)']
   ];
   $('fix-body').innerHTML = FIX.map(f => `<tr><td><b>${f[0]}</b></td><td><span class="tag ${f[1]}">${f[1] === 'req' ? 'Needed' : 'Optional'}</span></td><td>${f[2]}</td><td class="n">${f[3]()}</td></tr>`).join('');
 
@@ -230,32 +221,32 @@ footer { padding: 36px 0 50px; color: var(--ink-3); font-size: 13.5px; }
   /* cost model. lo and hi use the low and high rates */
   function model(i) {
     const fx = i.fx, S = i.b * i.ts, H = i.o * i.to, online = (S + H) * i.p / 100, card = online * i.w / 100, bank = online * i.k / 100, wal = Math.max(0, online - card - bank);
-    const host = TIERS[i.tier].usd * fx, sms = i.n * 1.5, maint = i.m ? 1 : 0;
+    const host = TIERS[i.tier].bdt, sms = i.n * 1.5;
     const fee = [wal * 0.012 + card * 0.025, wal * 0.021 + card * 0.0325].map(x => x + bank * 0 );
     const rew = online * i.r / 100;
-    const lo = host + sms * SMS[0] + fee[0] + rew + maint * MAINT[0], hi = host + sms * SMS[1] + fee[1] + rew + maint * MAINT[1];
+    const lo = host[0] + sms * SMS[0] + fee[0] + rew, hi = host[1] + sms * SMS[1] + fee[1] + rew;
     const once = [PLAY * fx + DOMAIN[0], PLAY * fx + DOMAIN[1] + GATEWAY_SETUP[1]];
-    return { host, sms: [sms * SMS[0], sms * SMS[1]], fee, rew, maint: [maint * MAINT[0], maint * MAINT[1]], lo, hi, once, units: i.b + i.o, yr: [lo * 12 + once[0] + (i.dev ? DEVR[0] : 0), hi * 12 + once[1] + (i.dev ? DEVR[1] : 0)] };
+    return { host, sms: [sms * SMS[0], sms * SMS[1]], fee, rew, lo, hi, once, units: i.b + i.o, yr: [lo * 12 + once[0] + (i.dev ? DEVR[0] : 0), hi * 12 + once[1] + (i.dev ? DEVR[1] : 0)] };
   }
-  const base = { fx: 120, tier: 0, p: 60, w: 45, k: 15, r: 1, m: 1, ts: 2500, to: 12000, n: 250, dev: 0 };
-  const EX = [['Pilot', 300, 100, 250, 0], ['Growth', 1500, 600, 1200, 1], ['Busy', 5000, 2000, 4000, 2]];
-  $('ex-body').innerHTML = EX.map(e => { const m = model(Object.assign({}, base, { b: e[1], o: e[2], n: e[3], tier: e[4] })); return `<tr><td><b>${e[0]}</b></td><td class="n">${e[1].toLocaleString('en-IN')}</td><td class="n">${e[2].toLocaleString('en-IN')}</td><td class="n">${rng(m.host + m.maint[0], m.host + m.maint[1])}</td><td class="n">${rng(m.lo - m.host - m.maint[0], m.hi - m.host - m.maint[1])}</td><td class="n"><b>${rng(m.lo, m.hi)}</b></td></tr>`; }).join('');
+  const base = { fx: 120, tier: 0, p: 60, w: 45, k: 15, r: 1, ts: 2500, to: 12000, n: 250, dev: 0 };
+  const EX = [['First months', 300, 100, 250, 0], ['Growing', 1500, 600, 1200, 1], ['Busy', 5000, 2000, 4000, 2]];
+  $('ex-body').innerHTML = EX.map(e => { const m = model(Object.assign({}, base, { b: e[1], o: e[2], n: e[3], tier: e[4] })); return `<tr><td><b>${e[0]}</b></td><td class="n">${e[1].toLocaleString('en-IN')}</td><td class="n">${e[2].toLocaleString('en-IN')}</td><td class="n">${rng(m.host[0], m.host[1])}</td><td class="n">${rng(m.lo - m.host[0], m.hi - m.host[1])}</td><td class="n"><b>${rng(m.lo, m.hi)}</b></td></tr>`; }).join('');
 
   /* summary cards use the pilot example */
   const P = model(Object.assign({}, base, { b: 300, o: 100, n: 250, tier: 0 })), R12 = [P.lo * 12 + P.once[0], P.hi * 12 + P.once[1]];
   $('tot').innerHTML = `<div class="t"><small>Development, one time</small><b>${rng(DEVR[0], DEVR[1])}</b><span>Final price set after the scope is agreed</span></div>
-    <div class="t"><small>Running, per month (pilot)</small><b>${rng(P.lo, P.hi)}</b><span>Fixed ${rng(P.host + P.maint[0], P.host + P.maint[1])}, plus ${rng(P.lo - P.host - P.maint[0], P.hi - P.host - P.maint[1])} that grows with sales</span></div>
+    <div class="t"><small>Monthly cost in the first months</small><b>${rng(P.lo, P.hi)}</b><span>Server ${rng(P.host[0], P.host[1])}, plus ${rng(P.lo - P.host[0], P.hi - P.host[1])} of payment fees and SMS that grow with sales</span></div>
     <div class="t hi"><small>First year, with development</small><b>${rng(DEVR[0] + R12[0], DEVR[1] + R12[1])}</b><span>Without development: ${rng(R12[0], R12[1])}</span></div>`;
 
   /* calculator */
   const g = id => +$(id).value, tierSel = { v: 0 };
   function calc() {
-    const i = { b: g('c-b'), o: g('c-o'), n: g('c-n'), ts: g('c-ts'), to: g('c-to'), p: g('c-p'), w: g('c-w'), k: g('c-k'), r: g('c-r'), tier: tierSel.v, fx: FX(), m: $('c-m').checked ? 1 : 0, dev: $('c-d').checked ? 1 : 0 };
+    const i = { b: g('c-b'), o: g('c-o'), n: g('c-n'), ts: g('c-ts'), to: g('c-to'), p: g('c-p'), w: g('c-w'), k: g('c-k'), r: g('c-r'), tier: tierSel.v, fx: FX(), dev: $('c-d').checked ? 1 : 0 };
     if (i.w + i.k > 100) { i.k = 100 - i.w; }
     ['b', 'o', 'n'].forEach(k => $('o-' + k).textContent = i[k].toLocaleString('en-IN'));
     $('o-ts').textContent = IN(i.ts); $('o-to').textContent = IN(i.to); $('o-p').textContent = i.p + '%'; $('o-w').textContent = i.w + '%'; $('o-k').textContent = i.k + '%'; $('o-r').textContent = i.r + '%';
     const m = model(i), hl = [m.host, m.host];
-    $('r-m').textContent = rng(m.lo, m.hi); $('r-h').textContent = IN(m.host); $('r-s').textContent = rng(m.sms[0], m.sms[1]); $('r-g').textContent = rng(m.fee[0], m.fee[1]); $('r-r').textContent = IN(m.rew); $('r-u').textContent = i.m ? rng(m.maint[0], m.maint[1]) : 'Not included';
+    $('r-m').textContent = rng(m.lo, m.hi); $('r-h').textContent = rng(m.host[0], m.host[1]); $('r-s').textContent = rng(m.sms[0], m.sms[1]); $('r-g').textContent = rng(m.fee[0], m.fee[1]); $('r-r').textContent = IN(m.rew); 
     $('r-p').textContent = m.units ? rng(m.lo / m.units, m.hi / m.units) : '-';
     $('r-y').textContent = rng(m.yr[0], m.yr[1]); $('r-y1').textContent = rng(m.lo * 12, m.hi * 12); $('r-y2').textContent = rng(m.once[0], m.once[1]); $('r-y3').textContent = i.dev ? rng(DEVR[0], DEVR[1]) : 'Not included';
   }
