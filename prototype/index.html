@@ -64,13 +64,13 @@ html, body { height: auto; } body { overflow-x: hidden; }
 .foot { margin-top: 64px; padding-block: 28px 40px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 13px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .link { color: var(--brand); font-weight: 700; display: inline-flex; gap: 6px; align-items: center; }
 @media (max-width: 1100px) { .demo { grid-template-columns: 1fr; } .guide { position: static; } .hero { grid-template-columns: 1fr; gap: 28px; } .g4 { grid-template-columns: repeat(2, 1fr); } .g3 { grid-template-columns: 1fr; } }
-@media (max-width: 640px) { .g4, .g2 { grid-template-columns: 1fr; } .hero { padding-block: 40px 20px; } .stagebox { padding: 14px 8px; } .nav nav a:nth-child(n+4) { display: none; } }
+@media (max-width: 640px) { .g4, .g2 { grid-template-columns: 1fr; } .hero { padding-block: 40px 20px; } .stagebox { padding: 14px 8px; } .nav nav a:nth-child(n+3) { display: none; } }
 .themectl { margin-left: 12px; } .themectl .theme-seg { min-width: 190px; } .themectl .theme-seg button { height: 32px; font-size: 12.5px; }
 @media (max-width: 760px) { .themectl { display: none; } }
 </style>
 </head>
 <body>
-<header class="nav"><div class="w"><div class="logo"><span class="mk" id="mk"></span>NEW</div><nav><a href="#demo">Live demo</a><a href="#flow">Dispatch flow</a><a href="#videos">Videos</a><a href="#sprint">Design sprint</a><a href="#system">Plan</a><a href="costs.html">Costs</a><a href="#run">Run locally</a></nav><span id="themectl" class="themectl"></span></div></header>
+<header class="nav"><div class="w"><div class="logo"><span class="mk" id="mk"></span>NEW</div><nav><a href="#demo">Live demo</a><a href="customer/index.html">Customer web</a><a href="admin/index.html">Admin web</a><a href="#flow">Dispatch flow</a><a href="#videos">Videos</a><a href="#sprint">Design sprint</a><a href="#system">Plan</a><a href="costs.html">Costs</a><a href="#run">Run locally</a></nav><span id="themectl" class="themectl"></span></div></header>
 
 <section class="w hero">
   <div>
@@ -96,7 +96,7 @@ html, body { height: auto; } body { overflow-x: hidden; }
       <div class="bar"><div class="seg" id="views"><button data-view="all" class="on">Together</button><button data-view="admin">Admin web</button><button data-view="adminapp">Admin app</button><button data-view="vendor">Vendor</button><button data-view="technician">Technician</button><button data-view="customer">Customer</button></div>
         <span style="flex:1"></span><button class="btn btn-s btn-sm" id="quick"></button><button class="btn btn-s btn-sm" id="auto"></button><button class="btn btn-g btn-sm" id="reset"></button></div>
       <div class="stagebox" id="stage"></div>
-      <p class="muted" style="font-size:13px;margin-top:12px">Tip: on a phone or narrow window, pick one app at a time. Each app also opens full screen: <a class="link" href="customer/index.html" target="_blank" rel="noopener">Customer</a> <a class="link" href="technician/index.html" target="_blank" rel="noopener">Technician</a> <a class="link" href="vendor/index.html" target="_blank" rel="noopener">Vendor</a> <a class="link" href="admin-app/index.html" target="_blank" rel="noopener">Admin app</a> <a class="link" href="admin/index.html" target="_blank" rel="noopener">Admin web</a></p>
+      <p class="muted" style="font-size:13px;margin-top:12px">Tip: on a phone or narrow window, pick one app at a time. Each app also opens full screen. The customer app is also a responsive website on a wide window (<a class="link" href="customer/index.html" target="_blank" rel="noopener">Customer web</a>): <a class="link" href="customer/index.html" target="_blank" rel="noopener">Customer</a> <a class="link" href="technician/index.html" target="_blank" rel="noopener">Technician</a> <a class="link" href="vendor/index.html" target="_blank" rel="noopener">Vendor</a> <a class="link" href="admin-app/index.html" target="_blank" rel="noopener">Admin app</a> <a class="link" href="admin/index.html" target="_blank" rel="noopener">Admin web</a></p>
     </div>
     <aside class="guide"><div class="row between wrap"><div><h3>Guided demo</h3><p class="muted" style="font-size:13px;margin-top:4px">Follows the live state. The highlighted step is what to do next.</p></div></div><div class="steps" id="steps"></div>
       <div class="note" style="display:flex;gap:10px;padding:12px;border-radius:12px;background:var(--info-l);color:#1F2270;font-size:13px"><span data-i="info"></span><span>No real payments, maps or messages are used. Payments show a demo gateway.</span></div></aside>
