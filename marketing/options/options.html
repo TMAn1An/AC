@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>NEW platform: launch options</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+:root { --brand:#272B7A; --ink:#1C1E26; --ink2:#4A4E5C; --ink3:#767A88; --line:#E3E1DA; --bg2:#F3F1EC; --ok:#0B7A43; --okl:#E0F0E7; --warn:#8A5A00; --warnl:#FBEFD3; --bad:#9A2A22; --badl:#F8E1DE; }
+* { box-sizing: border-box; } body { margin: 0; font-family: 'Hanken Grotesk', system-ui, sans-serif; color: var(--ink); font-size: 13px; line-height: 1.45; }
+h1, h2, h3 { font-family: 'Bricolage Grotesque', 'Hanken Grotesk', sans-serif; margin: 0; }
+h1 { font-size: 30px; } h2 { font-size: 19px; margin: 22px 0 8px; break-after: avoid; } h3 { font-size: 15px; }
+.sub { color: var(--ink2); font-size: 14px; margin: 6px 0 14px; max-width: 70ch; }
+table { width: 100%; border-collapse: collapse; margin: 6px 0; } th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink3); background: var(--bg2); padding: 8px 10px; border-bottom: 1px solid var(--line); }
+td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; } tr { break-inside: avoid; }
+.opt { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 8px; }
+.card { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; break-inside: avoid; } .card.rec { border: 2px solid var(--brand); }
+.tag { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--brand); color: #fff; margin-bottom: 6px; }
+.price { font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 700; margin: 6px 0 2px; color: var(--brand); } .muted { color: var(--ink3); font-size: 12px; }
+.card ul { margin: 6px 0 0; padding-left: 16px; } .card li { margin: 2px 0; }
+.y { color: var(--ok); font-weight: 700; } .p { color: var(--warn); font-weight: 700; } .n { color: var(--bad); font-weight: 700; }
+.box { background: var(--bg2); border-radius: 12px; padding: 12px 14px; margin-top: 10px; break-inside: avoid; } .box ul { margin: 4px 0 0; padding-left: 18px; }
+.foot { margin-top: 18px; color: var(--ink3); font-size: 11.5px; }
+@page { size: A4; margin: 14mm 12mm; }
+</style></head><body>
+<h1>NEW platform: three ways to launch</h1>
+<p class="sub">Customers, technicians, vendors and admins can use NEW as a website, as phone apps, or as a mix. This page compares the three, what works in each, and what each costs to build.</p>
+
+<div class="opt">
+  <div class="card"><h3>1. Website only</h3><div class="muted">No phone apps</div><div class="price">৳3,20,000 to 3,70,000</div>
+    <ul><li>Customer, technician, vendor and admin all use websites</li><li>No app store accounts needed</li><li>Customers can find the shop on Google</li><li>Technician live location and job alerts are limited (see the table below)</li></ul></div>
+  <div class="card rec"><span class="tag">Recommended</span><h3>2. Website and technician app</h3><div class="muted">Customer, vendor, admin on the web. Technician on Android.</div><div class="price">৳3,30,000 to 3,70,000</div>
+    <ul><li>Customer shop is a website that Google can find</li><li>Technician app keeps location on and rings for new jobs, even with the screen off</li><li>Vendor and admin work in a browser</li><li>Needs one Google Play account ($25, once)</li></ul></div>
+  <div class="card"><h3>3. Full phone apps</h3><div class="muted">Android first, then iPhone, plus admin website</div><div class="price">৳4,00,000 to 4,40,000</div>
+    <ul><li>Customer, technician, vendor and admin mobile apps</li><li>Customer website included</li><li>Best phone experience for everyone</li><li>Google Play ($25, once) and Apple ($99 a year) accounts</li></ul></div>
+</div>
+<p class="muted">Amounts are development only, paid once, excluding VAT and tax. Server, domain, SMS and payment fees are separate and the same in all three (see the cost estimate document). The exact amount is fixed in the agreement.</p>
+
+<h2>What works where</h2>
+<table><thead><tr><th>What you need</th><th>Website only</th><th>Website and technician app</th><th>Full phone apps</th></tr></thead><tbody>
+<tr><td><b>Technician live location on the customer's map</b></td><td class="n">Stops when the phone locks or the page is closed</td><td class="y">Works in the background</td><td class="y">Works in the background</td></tr>
+<tr><td><b>New job alert to the technician (60 seconds to accept)</b></td><td class="p">Web push on Android. Limited on iPhone. Needs an SMS or call as backup</td><td class="y">Reliable alert</td><td class="y">Reliable alert</td></tr>
+<tr><td><b>SMS code fills in automatically</b></td><td class="p">Android Chrome and iPhone keyboard suggestion</td><td class="y">Yes</td><td class="y">Yes</td></tr>
+<tr><td><b>Photos, selfie, identity check</b></td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td></tr>
+<tr><td><b>Online payment (bKash, Nagad, cards, bank)</b></td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td></tr>
+<tr><td><b>Shop pages found on Google</b></td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes (customer website)</td></tr>
+<tr><td><b>Customers install from Google Play or App Store</b></td><td class="n">No, "add to home screen" only</td><td class="p">Technician only</td><td class="y">Yes</td></tr>
+<tr><td><b>Updates reach everyone</b></td><td class="y">At once</td><td class="p">Website at once, technician app after store review</td><td class="p">After store review</td></tr>
+<tr><td><b>Smooth on low-end phones</b></td><td class="p">Good, a little heavier than an app</td><td class="y">Good</td><td class="y">Best</td></tr>
+</tbody></table>
+<div class="box"><b>Why the technician needs an app.</b> The business depends on the technician being reached in 60 seconds and customers seeing the technician on the way. A website cannot do either when the phone is locked in the technician's pocket. Everything else works well on the web.</div>
+
+<h2>Our recommendation</h2>
+<div class="box"><b>Option 2: website for customers, vendors and admin, Android app for technicians.</b>
+<ul><li>It costs about the same as website only, because the technician screens must be built either way.</li><li>Customers get a shop Google can find, with no app to install.</li><li>Technicians get the alerts and live location that the service depends on.</li><li>iPhone apps for customers or vendors can be added later if you need them, at a price agreed then.</li></ul></div>
+
+<h2>Costs that are the same in all three</h2>
+<table><thead><tr><th>Item</th><th>Cost</th></tr></thead><tbody>
+<tr><td>Server, backup and domain</td><td>Fixed monthly and yearly cost, see the cost estimate</td></tr>
+<tr><td>SMS codes</td><td>About ৳0.31 to 0.64 per SMS</td></tr>
+<tr><td>Payment fees</td><td>A share of each online payment, taken from the payment</td></tr>
+<tr><td>Google Play account (options 2 and 3)</td><td>$25, once</td></tr>
+<tr><td>Apple account (option 3, iPhone)</td><td>$99 a year</td></tr>
+</tbody></table>
+
+<h2>How to choose</h2>
+<div class="box"><ul>
+<li><b>Do customers search on Google before they buy?</b> If yes, the customer website matters. All three include it.</li>
+<li><b>Does a missed job alert cost you money?</b> If yes, the technician needs the app. Choose option 2 or 3.</li>
+<li><b>Do you need apps in the stores for trust or marketing?</b> If yes, choose option 3.</li></ul></div>
+
+<p class="foot">These are estimates for discussion, not an offer. Provider prices and rates change. VAT and tax are extra. The agreed price and scope are fixed in the signed agreement.</p>
+</body></html>
