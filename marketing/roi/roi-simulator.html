@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEW online: return on investment</title>
+<style>
+:root { --brand:#272B7A; --brand-l:#E8E9F5; --ink:#1C1E26; --ink2:#4A4E5C; --ink3:#767A88; --line:#E3E1DA; --bg:#FAF9F6; --bg2:#F3F1EC; --surface:#fff; --ok:#0B7A43; --okl:#E0F0E7; --warn:#8A5A00; --warnl:#FBEFD3; --bad:#B4362B; --badl:#F8E1DE; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; color: var(--ink); background: var(--bg); font-size: 14.5px; line-height: 1.5; }
+.w { max-width: 1080px; margin: 0 auto; padding: 28px 20px 48px; }
+h1 { font-size: clamp(26px, 4vw, 36px); margin: 0 0 6px; letter-spacing: -.01em; } h2 { font-size: 20px; margin: 30px 0 10px; } h3 { font-size: 15px; margin: 0 0 6px; }
+.lead { color: var(--ink2); margin: 0 0 18px; max-width: 70ch; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; }
+.seg { display: inline-flex; background: var(--bg2); border-radius: 12px; padding: 4px; gap: 4px; margin-bottom: 14px; }
+.seg button { border: 0; background: transparent; padding: 9px 16px; border-radius: 9px; font: inherit; font-weight: 600; color: var(--ink2); cursor: pointer; }
+.seg button.on { background: var(--surface); color: var(--brand); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.kpi small { color: var(--ink3); font-weight: 600; display: block; font-size: 12.5px; }
+.kpi b { display: block; font-size: 24px; margin: 4px 0 2px; } .kpi span { color: var(--ink3); font-size: 12.5px; }
+.kpi.hi { background: var(--brand); border-color: var(--brand); } .kpi.hi small, .kpi.hi span { color: rgba(255,255,255,.78); } .kpi.hi b { color: #fff; }
+.flow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; margin-top: 4px; }
+.step { position: relative; padding: 14px 14px 14px 16px; background: var(--surface); border: 1px solid var(--line); border-right: 0; }
+.step:first-child { border-radius: 14px 0 0 14px; } .step:last-child { border-right: 1px solid var(--line); border-radius: 0 14px 14px 0; }
+.step .when { font-size: 12px; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: .03em; }
+.step b { display: block; margin: 4px 0 2px; } .step p { margin: 0; color: var(--ink2); font-size: 13px; }
+.step .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: 1px; }
+.chart { width: 100%; height: auto; display: block; }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--ink2); margin-top: 8px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.field { margin-bottom: 12px; } .field .row { display: flex; justify-content: space-between; gap: 10px; } .field label { font-weight: 600; font-size: 13.5px; } .field output { font-weight: 700; font-variant-numeric: tabular-nums; }
+.field input[type=range] { width: 100%; accent-color: var(--brand); } .field small { color: var(--ink3); font-size: 12px; }
+select { font: inherit; padding: 7px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; } th { text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink3); padding: 8px 10px; border-bottom: 1px solid var(--line); background: var(--bg2); }
+td { padding: 8px 10px; border-bottom: 1px solid var(--line); } td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+.note { background: var(--warnl); color: #5A3B00; border-radius: 12px; padding: 12px 14px; font-size: 13.5px; margin-top: 14px; }
+.tips li { margin: 4px 0; } .muted { color: var(--ink3); font-size: 12.5px; }
+.pos { color: var(--ok); font-weight: 700; } .neg { color: var(--bad); font-weight: 700; }
+.print-only { display: none; }
+@media (max-width: 760px) { .kpis, .grid2 { grid-template-columns: 1fr 1fr; } .flow { grid-template-columns: 1fr; } .step { border-right: 1px solid var(--line); border-bottom: 0; border-radius: 0 !important; } .step:first-child { border-radius: 14px 14px 0 0 !important; } .step:last-child { border-bottom: 1px solid var(--line); border-radius: 0 0 14px 14px !important; } }
+@media print {
+  @page { size: A4; margin: 12mm; }
+  body { background: #fff; font-size: 12.5px; } .w { max-width: none; padding: 0; }
+  .no-print { display: none !important; } .print-only { display: block; }
+  .card, .step, tr, .note { break-inside: avoid; } h2 { break-after: avoid; margin-top: 18px; }
+  .kpis { grid-template-columns: repeat(4, 1fr); } .grid2 { grid-template-columns: 1fr 1fr; } .flow { grid-template-columns: repeat(5, 1fr); }
+  .step { border-right: 0; border-bottom: 1px solid var(--line); } .step:last-child { border-right: 1px solid var(--line); }
+}
+</style>
+</head>
+<body>
+<div class="w">
+  <h1>When does NEW online pay back?</h1>
+  <p class="lead">A simple model of the money going out (building the platform, running it, marketing) and the profit coming in from the bag and clothing shop, AC service bookings and AC sales. Online starts from zero: existing offline company clients are not counted.</p>
+
+  <div class="seg no-print" id="scen"><button data-s="slow">Slow start</button><button data-s="exp" class="on">Expected</button><button data-s="good">Good start</button></div>
+  <div class="print-only"><b id="pscen"></b></div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <h2>The path to profit</h2>
+  <div class="flow" id="flow"></div>
+
+  <h2>Money over three years</h2>
+  <div class="card">
+    <h3>Total money so far</h3><p class="muted" style="margin:0 0 6px">Starts below zero by the investment. Crosses zero when the investment is paid back.</p>
+    <svg class="chart" id="chart" viewBox="0 0 1000 340" role="img" aria-label="Total money over 36 months"></svg>
+    <h3 style="margin-top:18px">Profit or loss in each month</h3>
+    <svg class="chart" id="chart2" viewBox="0 0 1000 230" role="img" aria-label="Profit or loss each month"></svg>
+    <div class="legend"><span><i style="background:var(--ok)"></i>Profit in the month</span><span><i style="background:var(--bad)"></i>Loss in the month</span><span><i style="background:var(--brand);height:3px;vertical-align:3px"></i>Total money so far</span></div>
+  </div>
+
+  <h2 class="no-print">Change the numbers</h2>
+  <div class="grid2 no-print">
+    <div class="card">
+      <h3>Investment and monthly costs</h3>
+      <div class="field"><div class="row"><label for="dev">Building the platform (once)</label><output id="o-dev"></output></div><input type="range" id="dev" min="300000" max="500000" step="10000"></div>
+      <div class="field"><div class="row"><label for="marketing">Facebook and online ads per month</label><output id="o-marketing"></output></div><input type="range" id="marketing" min="0" max="80000" step="1000"></div>
+      <div class="field"><div class="row"><label for="staff">Staff for online orders per month</label><output id="o-staff"></output></div><input type="range" id="staff" min="0" max="60000" step="1000"><small>Someone to answer chats, pack orders and dispatch jobs. 0 if current staff do it.</small></div>
+      <div class="field"><div class="row"><label for="server">Server, backup, SMS per month</label><output id="o-server"></output></div><input type="range" id="server" min="2000" max="20000" step="500"></div>
+      <div class="field"><label for="launch">Launch month</label> <select id="launch"></select></div>
+    </div>
+    <div class="card">
+      <h3>Sales in the first month, and growth</h3>
+      <div class="field"><div class="row"><label for="shopStart">Shop orders in month 1</label><output id="o-shopStart"></output></div><input type="range" id="shopStart" min="0" max="150" step="1"></div>
+      <div class="field"><div class="row"><label for="svcStart">AC service bookings in month 1</label><output id="o-svcStart"></output></div><input type="range" id="svcStart" min="0" max="80" step="1"></div>
+      <div class="field"><div class="row"><label for="acStart">ACs sold online in month 1</label><output id="o-acStart"></output></div><input type="range" id="acStart" min="0" max="10" step="0.5"></div>
+      <div class="field"><div class="row"><label for="grow">Growth per month</label><output id="o-grow"></output></div><input type="range" id="grow" min="0" max="25" step="1"><small>Until the business reaches its capacity.</small></div>
+      <div class="field"><div class="row"><label for="aov">Average shop order</label><output id="o-aov"></output></div><input type="range" id="aov" min="500" max="6000" step="100"></div>
+      <div class="field"><div class="row"><label for="shopMargin">Profit kept from each shop sale</label><output id="o-shopMargin"></output></div><input type="range" id="shopMargin" min="5" max="50" step="1"><small>After product cost, packing, returns and discounts.</small></div>
+      <div class="field"><div class="row"><label for="ticket">Average service bill</label><output id="o-ticket"></output></div><input type="range" id="ticket" min="1000" max="5000" step="100"></div>
+      <div class="field"><div class="row"><label for="svcMargin">Profit kept from each service</label><output id="o-svcMargin"></output></div><input type="range" id="svcMargin" min="5" max="60" step="1"><small>After technician pay and parts.</small></div>
+    </div>
+  </div>
+
+  <h2>Three scenarios side by side</h2>
+  <div class="card" style="padding:0;overflow-x:auto"><table><thead><tr><th>Scenario</th><th class="n">Sales in month 1</th><th class="n">Growth</th><th class="n">Monthly profit from</th><th class="n">Investment paid back</th><th class="n">Total after 24 months</th><th class="n">Total after 36 months</th></tr></thead><tbody id="cmp"></tbody></table></div>
+
+  <h2>What makes it pay back sooner</h2>
+  <div class="card"><ul class="tips">
+    <li><b>Start selling on the Facebook page now.</b> Blossom Classy already has about 5,000 followers and no products. Posting bags and clothing before launch builds the first buyers, so month 1 does not start from zero.</li>
+    <li><b>Launch before the hot season.</b> AC service demand in Dhaka peaks from March to September. A launch in February or March catches it.</li>
+    <li><b>Bring known customers online.</b> Offline company clients can stay offline, but their staff can book home AC service in the app.</li>
+    <li><b>Keep ads steady, not big.</b> A small monthly budget that runs every month beats one large campaign.</li>
+    <li><b>Vendor commission is extra.</b> Sales by other sellers on the marketplace earn NEW 8 percent. It is not counted here.</li></ul></div>
+
+  <div class="note"><b>This is a model, not a promise.</b> It uses assumptions about orders, growth and profit per sale that only real sales can confirm. Replace them with your own numbers. AC service follows the season (busier from March to September). The 36 months start at launch. VAT and tax are not included.</div>
+  <p class="muted" style="margin-top:14px" id="assump"></p>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id), IN = n => (n < 0 ? '-' : '') + '৳' + Math.round(Math.abs(n)).toLocaleString('en-IN');
+  const lakh = n => (n < 0 ? '-' : '') + '৳' + (Math.abs(n) / 100000).toFixed(Math.abs(n) >= 1000000 ? 1 : 2) + ' lakh';
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  /* AC service by calendar month. Dhaka is busiest March to September. */
+  const SEASON = [0.6, 0.7, 1.0, 1.3, 1.5, 1.5, 1.4, 1.3, 1.1, 0.9, 0.7, 0.6];
+  const FIXED = { once: 8000, online: 60, fee: 2, acPrice: 55000, acMargin: 7, startYear: 2027 };
+  const SC = {
+    slow: { name: 'Slow start', dev: 440000, marketing: 20000, staff: 12000, server: 5000, launch: 2, shopStart: 15, svcStart: 6, acStart: 0.5, grow: 7, aov: 1800, shopMargin: 22, ticket: 1600, svcMargin: 30, cap: [200, 100, 6] },
+    exp: { name: 'Expected', dev: 440000, marketing: 20000, staff: 12000, server: 5000, launch: 2, shopStart: 25, svcStart: 10, acStart: 1, grow: 10, aov: 1800, shopMargin: 22, ticket: 1600, svcMargin: 30, cap: [300, 150, 10] },
+    good: { name: 'Good start', dev: 440000, marketing: 20000, staff: 12000, server: 5000, launch: 2, shopStart: 40, svcStart: 15, acStart: 2, grow: 14, aov: 1800, shopMargin: 22, ticket: 1600, svcMargin: 30, cap: [500, 250, 15] }
+  };
+  let cur = 'exp', P = Object.assign({}, SC.exp);
+  const monthName = (i, m) => { const t = i.launch + m; return MON[t % 12] + ' ' + (FIXED.startYear + Math.floor(t / 12)); };
+
+  function model(i) {
+    const rows = []; let cum = -(i.dev + FIXED.once);
+    const g = (s, c, m) => Math.min(c, s * Math.pow(1 + i.grow / 100, m));
+    for (let m = 0; m < 36; m++) {
+      const cal = (i.launch + m) % 12, shop = g(i.shopStart, i.cap[0], m), svc = g(i.svcStart, i.cap[1], m) * SEASON[cal], ac = g(i.acStart, i.cap[2], m);
+      const sales = shop * i.aov + svc * i.ticket + ac * FIXED.acPrice;
+      const contrib = shop * i.aov * i.shopMargin / 100 + svc * i.ticket * i.svcMargin / 100 + ac * FIXED.acPrice * FIXED.acMargin / 100;
+      const fees = sales * FIXED.online / 100 * FIXED.fee / 100, costs = i.server + i.marketing + i.staff;
+      const net = contrib - fees - costs; cum += net; rows.push({ m, sales, net, cum });
+    }
+    let steady = -1; for (let m = 35; m >= 0; m--) { if (rows[m].net > 0) steady = m; else break; }
+    const first = rows.findIndex(r => r.net > 0), payback = rows.findIndex(r => r.cum >= 0);
+    return { rows, first, steady, payback };
+  }
+  const when = (i, m) => m < 0 ? 'Not within 36 months' : 'Month ' + (m + 1) + ', ' + monthName(i, m);
+
+  function kpis(i, r) {
+    const y1 = r.rows[11].cum + i.dev + FIXED.once;
+    $('kpis').innerHTML = `<div class="card kpi"><small>Investment</small><b>${lakh(i.dev + FIXED.once)}</b><span>Building the platform and set-up</span></div>
+      <div class="card kpi"><small>Monthly profit starts</small><b>${r.steady < 0 ? 'Later' : 'Month ' + (r.steady + 1)}</b><span>${r.steady < 0 ? 'Not within 36 months' : monthName(i, r.steady) + ', and every month after'}</span></div>
+      <div class="card kpi hi"><small>Investment paid back</small><b>${r.payback < 0 ? 'After 36 months' : 'Month ' + (r.payback + 1)}</b><span>${r.payback < 0 ? 'At this pace' : monthName(i, r.payback)}</span></div>
+      <div class="card kpi"><small>Total after 36 months</small><b class="${r.rows[35].cum >= 0 ? 'pos' : 'neg'}">${lakh(r.rows[35].cum)}</b><span>Profit minus everything spent, investment included</span></div>`;
+  }
+  function flow(i, r) {
+    const pb = r.payback, st = r.steady < 0 ? 36 : r.steady;
+    const S = [
+      ['Month 0', 'Build and launch', `Invest ${lakh(i.dev + FIXED.once)}. Apps, website and admin go live.`, 'var(--brand)'],
+      ['Months 1 to ' + Math.max(1, st), 'Find first customers', 'Sales start small. Ads, server and staff cost more than the profit.', 'var(--bad)'],
+      [st >= 36 ? 'Later' : 'From month ' + (st + 1), 'Profit every month', 'Each month earns more than it spends. The loss starts shrinking.', 'var(--warn)'],
+      [pb < 0 ? 'After month 36' : 'Month ' + (pb + 1), 'Investment paid back', 'Everything spent so far has come back.', 'var(--ok)'],
+      [pb < 0 ? 'Later' : 'After month ' + (pb + 1), 'Pure profit', 'From here, monthly profit is the return on the investment.', 'var(--ok)']
+    ];
+    $('flow').innerHTML = S.map(s => `<div class="step"><div class="when"><span class="dot" style="background:${s[3]}"></span>${s[0]}</div><b>${s[1]}</b><p>${s[2]}</p></div>`).join('');
+  }
+  function axis(W, H, L, R, T, B, mn, mx) {
+    const y = v => T + (H - T - B) * (mx - v) / (mx - mn); let g = '';
+    const raw = (mx - mn) / 5, p = Math.pow(10, Math.floor(Math.log10(raw))), nice = [1, 2, 2.5, 5, 10].map(k => k * p).find(k => k >= raw) || p * 10;
+    for (let v = Math.ceil(mn / nice) * nice; v <= mx + 1e-6; v += nice) g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${Math.abs(v) < 1e-6 ? '#9A9DA8' : '#ECEAE4'}" stroke-width="${Math.abs(v) < 1e-6 ? 1.4 : 1}"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="11.5" fill="#767A88">${Math.abs(v) >= 100000 ? lakh(v).replace(' lakh', 'L') : (v < 0 ? '-' : '') + '৳' + Math.round(Math.abs(v) / 1000) + 'k'}</text>`;
+    return { y, g };
+  }
+  function chart(i, r) {
+    const W = 1000, H = 340, L = 70, R = 14, T = 16, B = 30, rows = r.rows, bw = (W - L - R) / 36, x = m => L + bw * m + bw / 2;
+    let mx = Math.max(0, ...rows.map(q => q.cum)), mn = Math.min(0, ...rows.map(q => q.cum)); const pad = (mx - mn) * 0.08; mx += pad; mn -= pad;
+    const A = axis(W, H, L, R, T, B, mn, mx), y = A.y; let s = A.g;
+    s += `<polyline fill="none" stroke="#272B7A" stroke-width="3" stroke-linejoin="round" points="${rows.map(row => x(row.m) + ',' + y(row.cum)).join(' ')}"/>`;
+    rows.forEach(row => { if (row.m % 3 === 0 || row.m === 35) s += `<text x="${x(row.m)}" y="${H - 8}" text-anchor="middle" font-size="11.5" fill="#767A88">M${row.m + 1}</text>`; });
+    if (r.payback >= 0) { const px = x(r.payback); s += `<line x1="${px}" x2="${px}" y1="${T}" y2="${H - B}" stroke="#0B7A43" stroke-dasharray="4 4"/><circle cx="${px}" cy="${y(rows[r.payback].cum)}" r="6" fill="#0B7A43"/><text x="${Math.min(px + 8, W - 230)}" y="${T + 14}" font-size="13" font-weight="700" fill="#0B7A43">Paid back: month ${r.payback + 1}, ${monthName(i, r.payback)}</text>`; }
+    s += `<text x="${L + 6}" y="${Math.min(H - B - 6, y(rows[0].cum) + 18)}" font-size="12" fill="#272B7A" font-weight="600">After month 1: ${lakh(rows[0].cum)}</text>`;
+    $('chart').innerHTML = s;
+    const H2 = 230; let mx2 = Math.max(0, ...rows.map(q => q.net)), mn2 = Math.min(0, ...rows.map(q => q.net)); const pad2 = (mx2 - mn2) * 0.1 || 1000; mx2 += pad2; mn2 -= pad2;
+    const A2 = axis(W, H2, L, R, T, B, mn2, mx2), y2 = A2.y; let s2 = A2.g;
+    rows.forEach(row => { const top = y2(Math.max(0, row.net)), h = y2(Math.min(0, row.net)) - top; s2 += `<rect x="${x(row.m) - bw * 0.32}" y="${top}" width="${bw * 0.64}" height="${Math.max(1, h)}" rx="2" fill="${row.net >= 0 ? '#0B7A43' : '#B4362B'}" opacity=".8"><title>${monthName(i, row.m)}: ${IN(row.net)}</title></rect>`; if (row.m % 3 === 0 || row.m === 35) s2 += `<text x="${x(row.m)}" y="${H2 - 8}" text-anchor="middle" font-size="11.5" fill="#767A88">M${row.m + 1}</text>`; });
+    $('chart2').innerHTML = s2;
+  }
+  function table() {
+    $('cmp').innerHTML = Object.keys(SC).map(k => { const i = Object.assign({}, SC[k], k === cur ? P : {}), r = model(i); return `<tr${k === cur ? ' style="background:var(--brand-l)"' : ''}><td><b>${SC[k].name}</b>${k === cur ? ' <span class="muted">(shown above)</span>' : ''}</td><td class="n">${i.shopStart} orders, ${i.svcStart} services, ${i.acStart} AC</td><td class="n">${i.grow}% a month</td><td class="n">${r.steady < 0 ? 'Later' : 'Month ' + (r.steady + 1)}</td><td class="n">${r.payback < 0 ? 'After month 36' : 'Month ' + (r.payback + 1)}</td><td class="n ${r.rows[23].cum >= 0 ? 'pos' : 'neg'}">${lakh(r.rows[23].cum)}</td><td class="n ${r.rows[35].cum >= 0 ? 'pos' : 'neg'}">${lakh(r.rows[35].cum)}</td></tr>`; }).join('');
+  }
+  const FIELDS = { dev: IN, marketing: IN, staff: IN, server: IN, shopStart: v => v, svcStart: v => v, acStart: v => v, grow: v => v + '%', aov: IN, shopMargin: v => v + '%', ticket: IN, svcMargin: v => v + '%' };
+  function sync() { Object.keys(FIELDS).forEach(k => { $(k).value = P[k]; $('o-' + k).textContent = FIELDS[k](P[k]); }); $('launch').value = P.launch; }
+  function draw() {
+    const r = model(P); kpis(P, r); flow(P, r); chart(P, r); table();
+    $('pscen').textContent = 'Scenario shown: ' + SC[cur].name + '. Launch ' + monthName(P, 0) + '.';
+    $('assump').textContent = `Assumptions in this view: launch ${monthName(P, 0)}; month 1 sales ${P.shopStart} shop orders, ${P.svcStart} AC services, ${P.acStart} AC units; growth ${P.grow}% a month up to ${P.cap[0]} orders, ${P.cap[1]} services and ${P.cap[2]} AC units a month; average order ${IN(P.aov)} keeping ${P.shopMargin}%; average service ${IN(P.ticket)} keeping ${P.svcMargin}%; AC price ${IN(FIXED.acPrice)} keeping ${FIXED.acMargin}%; ${FIXED.online}% paid online at ${FIXED.fee}% fee; monthly ads ${IN(P.marketing)}, staff ${IN(P.staff)}, server and SMS ${IN(P.server)}; set-up ${IN(FIXED.once)} once.`;
+  }
+  for (let t = 0; t < 12; t++) $('launch').insertAdjacentHTML('beforeend', `<option value="${t}">${MON[t]} ${FIXED.startYear}</option>`);
+  Object.keys(FIELDS).forEach(k => $(k).addEventListener('input', e => { P[k] = +e.target.value; $('o-' + k).textContent = FIELDS[k](P[k]); draw(); }));
+  $('launch').addEventListener('change', e => { P.launch = +e.target.value; draw(); });
+  $('scen').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; cur = b.dataset.s; P = Object.assign({}, SC[cur]); document.querySelectorAll('#scen button').forEach(x => x.classList.toggle('on', x === b)); sync(); draw(); });
+  window.setScenario = k => { cur = k; P = Object.assign({}, SC[k]); document.querySelectorAll('#scen button').forEach(x => x.classList.toggle('on', x.dataset.s === k)); sync(); draw(); };
+  sync(); draw();
+})();
+</script>
+</body>
+</html>
