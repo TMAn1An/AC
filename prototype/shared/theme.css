@@ -344,3 +344,19 @@ h1, h2, h3, .big, .kpi b, .page-h h1 { letter-spacing: -0.02em; }
 
 /* ---- Retail ratio (twelvebd.com): white page, near-black ink, one grey, blue only on actions */
 .side .nav a.on, .nav a.on { background: var(--bg-2); color: var(--ink); font-weight: 700; }
+
+/* ---- Product card, retail style (twelvebd.com): no box, square studio image, bold name, plain price, one outlined button */
+.pc, .pgrid .pc { background: transparent; border: 0; border-radius: 0; overflow: visible; box-shadow: none; }
+.pc.in { border: 0; }
+.pc .pimg { aspect-ratio: 1; border-radius: 4px; overflow: hidden; background: var(--bg-2); }
+.pc .ptag { top: 8px; left: 8px; border-radius: 4px; background: var(--ink); color: var(--surface); font-weight: 600; letter-spacing: .02em; }
+.pc .heart { top: 8px; right: 8px; bottom: auto; background: var(--surface); color: var(--ink); }
+.pc .ptext { padding: 10px 0 0; gap: 4px; }
+.pc .ptext .pn { font-weight: 700; font-size: 14px; color: var(--ink); min-height: 0; -webkit-line-clamp: 2; }
+.pc .ptext .pb { text-transform: none; letter-spacing: 0; font-weight: 500; font-size: 12px; color: var(--ink-3); }
+.pc .ptext .pp { margin-top: 2px; padding: 0; align-items: baseline; } .pc .ptext .pp b { font-family: var(--f-body); font-weight: 500; font-size: 15px; color: var(--ink); }
+.pc .pp s { color: var(--ink-4); font-size: 12.5px; } .pc .poff { color: var(--green); font-size: 12.5px; font-weight: 600; }
+.screen .pc .pact { display: flex; padding: 10px 0 0; gap: 0; }
+.screen .pc .pact .pbtn { flex: 1; width: 100%; border-radius: 4px; border-color: var(--ink-4); color: var(--ink); background: var(--surface); font-weight: 500; }
+.screen .pc .pact .step { width: 100%; border-radius: 4px; }
+.screen .pc .pact .step b { font-size: 13px; font-weight: 600; }

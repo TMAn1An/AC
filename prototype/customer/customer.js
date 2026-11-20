@@ -34,17 +34,18 @@
   /* ---------- Pieces ---------- */
   const art = (p) => Art.product(p);
   const tone = s => 'background:var(--bg-2);color:var(--ink)';
+  /* Product card, retail style (after twelvebd.com): no box, studio image, bold name, plain price, one outlined action. */
   function pcard(p) {
-    const off = p.was ? Math.round((1 - p.price / p.was) * 100) : 0, l = ui.cart.find(x => x.pid === p.id), q = l ? l.qty : 0;
-    return `<div class="pc ${q ? 'in' : ''} fade"><div class="pimg"><button class="plink-img" data-a="prod" data-v="${p.id}" aria-label="View ${esc(p.name)}">${art(p)}</button>${S.canBuy(p) ? `<span class="ptag">${esc(p.tag)}</span>` : `<span class="ptag" style="background:var(--ink);color:var(--bg)">Unavailable</span>`}${off ? `<span class="pdisc">-${off}%</span>` : ''}<button class="heart ${ui.wish[p.id] ? 'on' : ''}" data-a="wish" data-v="${p.id}" aria-label="Save ${esc(p.name)}">${icon('heart', 18)}</button></div>
-      <button class="ptext" data-a="prod" data-v="${p.id}"><span class="pb">${esc(p.brand)}</span><span class="pn">${esc(p.name)}</span><span class="prate">${icon('star', 12)} ${p.rating} <i>${p.sold} sold</i></span><span class="pp"><b>${money(p.price)}</b>${p.was ? `<s>${money(p.was)}</s>` : ''}</span></button>
-      <div class="pact">${!S.canBuy(p) ? `<button class="btn btn-s pbtn" style="flex:1" data-a="prod" data-v="${p.id}">Unavailable</button>` : q ? `<div class="step sm" role="group" aria-label="Quantity"><button data-a="pq" data-v="${p.id}" data-d="-1" aria-label="Less">${icon('minus', 16)}</button><b>${q}</b><button data-a="pq" data-v="${p.id}" data-d="1" aria-label="More">${icon('plus', 16)}</button></div>` : `<button class="btn btn-s pbtn" data-a="quick" data-v="${p.id}" aria-label="Add ${esc(p.name)} to cart">${icon('cart', 16)}Add</button>`}${S.canBuy(p) ? `<button class="btn btn-p pbtn" data-a="buynow" data-v="${p.id}">Buy now</button>` : ''}</div></div>`;
-  }
-  const top = (title, o) => o && o.back === false ? `<div class="band sm">${top0(title, o)}</div>` : top0(title, o);
+    const off = p.was ? Math.round((1 - p.price / p.was) * 100) : 0, l = ui.cart.find(x => x.pid === p.id), q = l ? l.qty : 0, ok = S.canBuy(p);
+    return `<div class="pc ${q ? 'in' : ''} fade"><div class="pimg"><button class="plink-img" data-a="prod" data-v="${p.id}" aria-label="View ${esc(p.name)}">${art(p)}</button>${ok ? '' : `<span class="ptag">Unavailable</span>`}<button class="heart ${ui.wish[p.id] ? 'on' : ''}" data-a="wish" data-v="${p.id}" aria-label="Save ${esc(p.name)}">${icon('heart', 18)}</button></div>
+      <button class="ptext" data-a="prod" data-v="${p.id}"><span class="pn">${esc(p.name)}</span><span class="pb">${esc(p.brand)} . ${esc(S.sellerName(p))}</span><span class="pp"><b>${money(p.price)}</b>${p.was ? `<s>${money(p.was)}</s><span class="poff">-${off}%</span>` : ''}</span></button>
+      <div class="pact">${!ok ? `<button class="btn btn-s pbtn" data-a="prod" data-v="${p.id}">See details</button>` : q ? `<div class="step sm" role="group" aria-label="Quantity"><button data-a="pq" data-v="${p.id}" data-d="-1" aria-label="Less">${icon('minus', 16)}</button><b>${q} in cart</b><button data-a="pq" data-v="${p.id}" data-d="1" aria-label="More">${icon('plus', 16)}</button></div>` : `<button class="btn btn-s pbtn" data-a="quick" data-v="${p.id}" aria-label="Add ${esc(p.name)} to cart">Add to cart</button>`}</div></div>`;
+  }  const top = (title, o) => o && o.back === false ? `<div class="band sm">${top0(title, o)}</div>` : top0(title, o);
   const top0 = (title, o) => `<div class="top">${o && o.back === false ? '' : `<button class="back" data-a="back" aria-label="Back">${icon('left', 22)}</button>`}<h1>${title}</h1>${(o && o.right) || ''}</div>`;
   const cartBtn = () => { const n = cartCalc().n; return `<button class="icon-btn" data-a="cart" aria-label="Cart">${icon('cart', 22)}${n ? `<span class="badge-n">${n}</span>` : ''}</button>`; };
 
   /* ---------- Screens ---------- */
+
   function Home() {
     const aj = activeJob(), P = c => S.storeProducts().filter(p => p.cat === c);
     let banner = '';
