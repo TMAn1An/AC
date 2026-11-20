@@ -64,9 +64,10 @@ html, body { height: auto; } body { overflow-x: hidden; }
 .foot { margin-top: 64px; padding-block: 28px 40px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 13px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .link { color: var(--brand); font-weight: 700; display: inline-flex; gap: 6px; align-items: center; }
 @media (max-width: 1100px) { .demo { grid-template-columns: 1fr; } .guide { position: static; } .hero { grid-template-columns: 1fr; gap: 28px; } .g4 { grid-template-columns: repeat(2, 1fr); } .g3 { grid-template-columns: 1fr; } }
-@media (max-width: 640px) { .g4, .g2 { grid-template-columns: 1fr; } .hero { padding-block: 40px 20px; } .stagebox { padding: 14px 8px; } .nav nav a:nth-child(n+3) { display: none; } }
+@media (max-width: 640px) { .g4, .g2 { grid-template-columns: 1fr; } .hero { padding-block: 40px 20px; } .stagebox { padding: 14px 8px; } .nav nav a:first-child, .nav nav a:nth-child(n+3) { display: none; } }
 .themectl { margin-left: 12px; } .themectl .theme-seg { min-width: 190px; } .themectl .theme-seg button { height: 32px; font-size: 12.5px; }
-@media (max-width: 760px) { .themectl { display: none; } }
+.theme-mini { display: none; width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); place-items: center; }
+@media (max-width: 760px) { .themectl { margin-left: 8px; } .themectl .theme-seg { display: none; } .theme-mini { display: grid; } }
 </style>
 </head>
 <body>
@@ -250,7 +251,7 @@ html, body { height: auto; } body { overflow-x: hidden; }
   document.getElementById('logoUses').innerHTML = `<span class="u">${AC.logo.tile(64, true)}App icon</span><span class="u"><span class="band-s">${AC.logo.tile(30, false)}NEW</span>On blue</span><span class="u">${AC.logo.mark(32)}Mark 32</span><span class="u">${AC.logo.mark(20)}Mark 20</span><span class="u">${AC.logo.mark(16)}Mark 16</span>`;
   document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => { const t = b.dataset.copy; const done = () => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1500); }; try { navigator.clipboard.writeText(t).then(done, done); } catch (e) { done(); } }));
 })();
-const tc = document.getElementById('themectl'); const drawT = () => { tc.innerHTML = AC.theme.seg(); }; drawT(); AC.theme.on(drawT);
+const tc = document.getElementById('themectl'); const drawT = () => { const d = AC.theme.isDark(); tc.innerHTML = AC.theme.seg() + `<button class="theme-mini" data-theme-set="${d ? 'light' : 'dark'}" aria-label="${d ? 'Switch to light mode' : 'Switch to dark mode'}">${icon(d ? 'sun' : 'moon', 20)}</button>`; }; drawT(); AC.theme.on(drawT);
 </script>
 </body>
 </html>
