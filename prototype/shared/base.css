@@ -3,15 +3,16 @@
   color-scheme: light;
   /* NEW brand, from the client logo: blue #2E3192, red #ED1B24, green #00A74F.
      Colour ratio 60 / 30 / 10: neutrals 60, brand blue 30, red and green accents 10. */
-  /* Neutrals: clean cool grey, like large consumer apps. One brand colour carries the actions. */
-  --ink: #15171C;
-  --ink-2: #3E434E;
-  --ink-3: #6B717D;
-  --ink-4: #9DA2AC;
-  --bg: #F5F6F8;
+  /* Neutrals follow a clean retail ratio (as on twelvebd.com): white page, near-black text,
+     one light grey for blocks, hairline lines. The brand blue is the only strong colour, on actions. */
+  --ink: #121212;
+  --ink-2: #333333;
+  --ink-3: #5E5E5E;
+  --ink-4: #8E8E8E;
+  --bg: #FFFFFF;
   --surface: #FFFFFF;
-  --line: #E7E9ED;
-  --line-2: #D5D8DE;
+  --line: #E7E7E7;
+  --line-2: #D0D0D0;
   /* Primary: logo blue (30%) */
   --brand: #272B7A;
   --brand-d: #1B1E5A;
@@ -27,7 +28,7 @@
   --sky: #3E48A8; --sky-l: #EEF0F8;
   --sage: var(--green-d); --sage-l: var(--green-l);
   --plum: var(--brand); --plum-l: var(--brand-l);
-  --sand: #F0F1F4;
+  --sand: #F3F3F3;
   /* Semantic */
   --ok: #0A7A3E;  --ok-l: #E3F1E7;
   --warn: #8F5200; --warn-l: #FAEFD9;
@@ -39,7 +40,7 @@
   --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
   /* Shape */
   --r-s: 8px; --r-m: 12px; --r-l: 18px; --r-xl: 26px;
-  --badge: #C9232B; --pay-bkash: #D12053; --pay-nagad: #F37021; --ink-bg: #15171C; --bg-2: #F8F9FA; --seg-bg: #ECEEF1; --unread-bg: #F2F4FC; --stage: #ECEEF1; --surface-a: rgba(255,255,255,.95); --map-bg: #F1F3F9; --map-block: #E6E9F4; --map-water: #CFE1F5; --map-park: #D4EEDC; --map-case: #DDE1EF; --map-road: #FFFFFF; --map-label: #8A90AB; --map-water-label: #6B84C9; --map-route: #A9D6BC; --pin-ring: #FFFFFF;
+  --badge: #C9232B; --pay-bkash: #D12053; --pay-nagad: #F37021; --ink-bg: #121212; --bg-2: #F3F3F3; --seg-bg: #F3F3F3; --unread-bg: #F2F4FC; --stage: #F3F3F3; --surface-a: rgba(255,255,255,.95); --map-bg: #F1F3F9; --map-block: #E6E9F4; --map-water: #CFE1F5; --map-park: #D4EEDC; --map-case: #DDE1EF; --map-road: #FFFFFF; --map-label: #8A90AB; --map-water-label: #6B84C9; --map-route: #A9D6BC; --pin-ring: #FFFFFF;
   --shadow-1: 0 1px 2px rgba(16, 20, 38, .06);
   --shadow-2: 0 8px 24px rgba(16, 20, 38, .10);
 }
@@ -47,14 +48,14 @@
 /* Dark mode. theme.js sets data-theme="dark" or "light" on <html> (the user's choice, or the system setting). */
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --ink: #EEF0F3; --ink-2: #CACED5; --ink-3: #9AA0AA; --ink-4: #6F7580;
-  --bg: #0E0F12; --surface: #17181C; --line: #25272D; --line-2: #363940;
+  --ink: #F3F3F3; --ink-2: #D0D0D0; --ink-3: #A3A3A3; --ink-4: #737373;
+  --bg: #101010; --surface: #161616; --line: #2A2A2A; --line-2: #3A3A3A;
   --brand: #6E77EA; --brand-d: #929AF5; --brand-l: #23264A; --brand-m: #3B4082; --deep: #1D2166;
   --red: #E5484D; --red-d: #FF8F93; --red-l: #3A1F22;
   --green: #2FA866; --green-d: #5BD08C; --green-l: #15301F;
   --sky: #8189F0; --sky-l: #22264C; --sand: #202126;
   --ok: #4CC380; --ok-l: #15301F; --warn: #E3A93E; --warn-l: #352A10; --bad: #F2686D; --bad-l: #3A1F22; --info: #929AF5; --info-l: #23264A;
-  --badge: #E5484D; --ink-bg: #2B2D35; --bg-2: #14151A; --seg-bg: #23242A; --unread-bg: #1A1C3A; --stage: #08090B; --surface-a: rgba(24,25,29,.94);
+  --badge: #E5484D; --ink-bg: #2A2A2A; --bg-2: #1E1E1E; --seg-bg: #222222; --unread-bg: #1A1C3A; --stage: #08090B; --surface-a: rgba(24,25,29,.94);
   --map-bg: #15171C; --map-block: #1D2027; --map-water: #1B2B3F; --map-park: #17281F; --map-case: #2C2F38; --map-road: #3A3E49; --map-label: #8E93A8; --map-water-label: #6F8CCB; --map-route: #2E5B43; --pin-ring: #18191D;
   --shadow-1: 0 1px 2px rgba(0, 0, 0, .5); --shadow-2: 0 8px 24px rgba(0, 0, 0, .55);
 }
@@ -85,8 +86,8 @@ h1, h2, h3, h4 { font-family: var(--f-display); font-weight: 600; letter-spacing
 }
 .btn:active { transform: scale(.98); }
 .btn-p { background: var(--brand); color: #fff; } .btn-p:hover { background: var(--brand-d); }
-.btn-s { background: var(--surface); border-color: var(--line-2); } .btn-s:hover { background: var(--bg); }
-.btn-g { color: var(--ink-2); } .btn-g:hover { background: var(--bg); }
+.btn-s { background: var(--surface); border-color: var(--line-2); } .btn-s:hover { background: var(--bg-2); }
+.btn-g { color: var(--ink-2); } .btn-g:hover { background: var(--bg-2); }
 .btn-a { background: var(--accent); color: var(--ink); } .btn-a:hover { background: var(--brand-d); }
 .btn-d { background: var(--bad-l); color: var(--bad); } .btn-d:hover { background: var(--red-l); }
 .btn-ok { background: var(--ok); color: #fff; }
@@ -95,13 +96,13 @@ h1, h2, h3, h4 { font-family: var(--f-display); font-weight: 600; letter-spacing
 .btn-block { width: 100%; }
 .btn[disabled] { opacity: .45; pointer-events: none; }
 .icon-btn { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: var(--ink-2); position: relative; }
-.icon-btn:hover { background: var(--bg); }
+.icon-btn:hover { background: var(--bg-2); }
 
 /* Badges */
 .badge { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 99px; font-size: 12px; font-weight: 600; white-space: nowrap; }
 .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .badge.nodot::before { display: none; }
-.b-n { background: var(--bg); color: var(--ink-2); } .b-brand { background: var(--brand-l); color: var(--brand-d); }
+.b-n { background: var(--bg-2); color: var(--ink-2); } .b-brand { background: var(--brand-l); color: var(--brand-d); }
 .b-ok { background: var(--ok-l); color: var(--ok); } .b-warn { background: var(--warn-l); color: var(--warn); }
 .b-bad { background: var(--bad-l); color: var(--bad); } .b-info { background: var(--info-l); color: var(--info); }
 .b-acc { background: var(--accent-l); color: var(--accent-d); }

@@ -2,20 +2,20 @@
 (function () {
   /* Product backgrounds are one neutral, like product photos on a studio grey. Each product keeps its own colour. */
   const TL = [
-    { bg: '#F1F2F5', fg: '#272B7A', lt: '#C2C5DE' },
-    { bg: '#F1F2F5', fg: '#7A5230', lt: '#DCC7AB' },
-    { bg: '#F1F2F5', fg: '#0A7A3E', lt: '#A9D0B8' },
-    { bg: '#F1F2F5', fg: '#5A544C', lt: '#D3CDC3' },
-    { bg: '#F1F2F5', fg: '#3E48A8', lt: '#BAC0E6' },
-    { bg: '#F1F2F5', fg: '#181B4B', lt: '#A7ABD2' }
+    { bg: '#F3F3F3', fg: '#272B7A', lt: '#C2C5DE' },
+    { bg: '#F3F3F3', fg: '#7A5230', lt: '#DCC7AB' },
+    { bg: '#F3F3F3', fg: '#0A7A3E', lt: '#A9D0B8' },
+    { bg: '#F3F3F3', fg: '#5A544C', lt: '#D3CDC3' },
+    { bg: '#F3F3F3', fg: '#3E48A8', lt: '#BAC0E6' },
+    { bg: '#F3F3F3', fg: '#181B4B', lt: '#A7ABD2' }
   ];
   const TD = [
-    { bg: '#1D1F25', fg: '#8189F0', lt: '#343A78' },
-    { bg: '#1D1F25', fg: '#D2A66B', lt: '#4A3C24' },
-    { bg: '#1D1F25', fg: '#4CC380', lt: '#24503A' },
-    { bg: '#1D1F25', fg: '#B5AEA3', lt: '#3A3834' },
-    { bg: '#1D1F25', fg: '#8189F0', lt: '#2F3570' },
-    { bg: '#1D1F25', fg: '#8E96F5', lt: '#2C3166' }
+    { bg: '#1E1E1E', fg: '#8189F0', lt: '#343A78' },
+    { bg: '#1E1E1E', fg: '#D2A66B', lt: '#4A3C24' },
+    { bg: '#1E1E1E', fg: '#4CC380', lt: '#24503A' },
+    { bg: '#1E1E1E', fg: '#B5AEA3', lt: '#3A3834' },
+    { bg: '#1E1E1E', fg: '#8189F0', lt: '#2F3570' },
+    { bg: '#1E1E1E', fg: '#8E96F5', lt: '#2C3166' }
   ];
   const dark = () => window.AC && AC.theme && AC.theme.isDark();
   /* Tints follow the theme at the moment a card is drawn, so a re-render after a theme change is enough. */

@@ -33,7 +33,7 @@
 
   /* ---------- Pieces ---------- */
   const art = (p) => Art.product(p);
-  const tone = s => 'background:var(--brand-l);color:var(--brand)';
+  const tone = s => 'background:var(--bg-2);color:var(--ink)';
   function pcard(p) {
     const off = p.was ? Math.round((1 - p.price / p.was) * 100) : 0, l = ui.cart.find(x => x.pid === p.id), q = l ? l.qty : 0;
     return `<div class="pc ${q ? 'in' : ''} fade"><div class="pimg"><button class="plink-img" data-a="prod" data-v="${p.id}" aria-label="View ${esc(p.name)}">${art(p)}</button>${S.canBuy(p) ? `<span class="ptag">${esc(p.tag)}</span>` : `<span class="ptag" style="background:var(--ink);color:var(--bg)">Unavailable</span>`}${off ? `<span class="pdisc">-${off}%</span>` : ''}<button class="heart ${ui.wish[p.id] ? 'on' : ''}" data-a="wish" data-v="${p.id}" aria-label="Save ${esc(p.name)}">${icon('heart', 18)}</button></div>

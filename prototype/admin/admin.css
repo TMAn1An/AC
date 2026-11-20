@@ -13,7 +13,7 @@ body { overflow: hidden; }
 .vbox { border: 1px solid var(--line); border-radius: var(--r-m); padding: 12px; background: var(--bg-2); font-size: 12.5px; color: var(--ink-3); } .vbox b { color: var(--ink); }
 .main { display: flex; flex-direction: column; min-width: 0; height: 100%; }
 .topbar { height: 64px; flex: none; background: var(--surface); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 14px; padding: 0 28px; }
-.topbar .search { flex: 1; max-width: 420px; height: 40px; border-radius: 10px; background: var(--bg); display: flex; align-items: center; gap: 10px; padding: 0 12px; color: var(--ink-3); }
+.topbar .search { flex: 1; max-width: 420px; height: 40px; border-radius: 10px; background: var(--bg-2); display: flex; align-items: center; gap: 10px; padding: 0 12px; color: var(--ink-3); }
 .topbar .search input { border: 0; background: none; outline: none; flex: 1; min-width: 0; }
 .topbar .select { width: auto; height: 40px; font-weight: 600; padding-right: 8px; }
 .menu-btn { display: none; }
@@ -37,15 +37,15 @@ body { overflow: hidden; }
 .cell { display: flex; align-items: center; gap: 10px; }
 .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); padding: 0 12px; overflow-x: auto; }
 .tabs button { height: 46px; padding: 0 12px; font-weight: 600; color: var(--ink-3); border-bottom: 2px solid transparent; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
-.tabs button.on { color: var(--brand-d); border-color: var(--brand); } .tabs button span { background: var(--bg); border-radius: 10px; font-size: 11px; padding: 1px 7px; color: var(--ink-2); } .tabs button.on span { background: var(--brand-l); color: var(--brand-d); }
+.tabs button.on { color: var(--brand-d); border-color: var(--brand); } .tabs button span { background: var(--bg-2); border-radius: 10px; font-size: 11px; padding: 1px 7px; color: var(--ink-2); } .tabs button.on span { background: var(--brand-l); color: var(--brand-d); }
 .toolbar { display: flex; gap: 10px; padding: 14px 16px; align-items: center; flex-wrap: wrap; } .toolbar .input { max-width: 280px; height: 38px; }
 
 /* Lists */
 .alist { display: flex; flex-direction: column; } .arow { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); } .arow:last-child { border: 0; padding-bottom: 0; } .arow:first-child { padding-top: 0; }
-.ico { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex: none; background: var(--bg); color: var(--ink-2); }
+.ico { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex: none; background: var(--bg-2); color: var(--ink-2); }
 .ico.warn { background: var(--warn-l); color: var(--warn); } .ico.bad { background: var(--bad-l); color: var(--bad); } .ico.info { background: var(--info-l); color: var(--info); } .ico.ok { background: var(--ok-l); color: var(--ok); } .ico.brand { background: var(--brand-l); color: var(--brand); }
 .barline { display: grid; grid-template-columns: 120px 1fr 48px; gap: 12px; align-items: center; font-size: 13px; margin-bottom: 12px; } .barline i { display: block; height: 8px; border-radius: 4px; background: var(--brand-m); position: relative; } .barline i::after { content: ''; position: absolute; inset: 0; width: var(--w); background: var(--brand); border-radius: 4px; }
-.pipe { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; } .pipe div { background: var(--bg); border-radius: 10px; padding: 12px; } .pipe b { font-family: var(--f-display); font-size: 24px; display: block; } .pipe small { color: var(--ink-3); font-weight: 600; }
+.pipe { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; } .pipe div { background: var(--bg-2); border-radius: 10px; padding: 12px; } .pipe b { font-family: var(--f-display); font-size: 24px; display: block; } .pipe small { color: var(--ink-3); font-weight: 600; }
 
 /* Drawer */
 .dscrim { position: fixed; inset: 0; background: rgba(16,34,43,.35); z-index: 40; animation: fadeIn .2s both; } @keyframes fadeIn { from { opacity: 0; } }

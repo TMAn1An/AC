@@ -26,22 +26,24 @@ Sampled from the client logo: blue `#2E3192`, red `#ED1B24`, green `#00A74F`.
 
 | Role | Token | Value | Share |
 | --- | --- | --- | --- |
-| Neutrals: canvas, surfaces, lines, text | `--bg`, `--surface`, `--line`, `--ink`, `--ink-3` | `#F5F6F8`, `#FFFFFF`, `#E7E9ED`, `#15171C`, `#6B717D` | most of every screen |
-| Primary: primary actions, active states, links | `--brand`, `--brand-d`, `--brand-l` | `#272B7A`, `#1B1E5A`, `#EEF0F8` | one colour for actions |
+| Page and surfaces | `--bg`, `--surface` | `#FFFFFF` | most of every screen |
+| Text | `--ink`, `--ink-2`, `--ink-3`, `--ink-4` | `#121212`, `#333333`, `#5E5E5E`, `#8E8E8E` | |
+| Fills: icon tiles, search, chips, product backgrounds, active nav | `--bg-2` | `#F3F3F3` | |
+| Lines | `--line`, `--line-2` | `#E7E7E7`, `#D0D0D0` | hairlines |
+| Primary: buttons, active tab, links | `--brand`, `--brand-l` | `#272B7A`, `#EEF0F8` | the only strong colour |
 | Green: success, live, savings | `--green` | `#0A8A47` | sparing |
-| Red: flags and warnings only (unread counts, errors, cancel, needs attention) | `--red`, `--badge` | `#C9232B` | sparing |
-| Warning | `--warn` | `#8F5200` on `#FAEFD9` | rare |
+| Red: flags and warnings only | `--red`, `--badge` | `#C9232B` | sparing |
 
-Use red and green sparingly. If a screen has more than a few red or green elements, remove some.
+## Retail ratio (from Twelve)
 
-## Clean v3 rules
+The colour ratio follows the Bangladeshi clothing brand Twelve (twelvebd.com): a white page, near-black text, one light grey for blocks, thin lines, and a single strong colour only on buttons. NEW keeps its logo blue as that one colour.
 
-- Cool neutral greys, not warm beige. White cards on a light grey canvas, hairline borders.
-- One font, Hanken Grotesk, for headings and body. Headings use tight letter spacing (-0.02em).
-- One icon tint: service and category icons use `--brand-l` with a brand coloured icon. No rainbow tiles.
-- Product illustrations sit on one neutral background, like studio photos. Each product keeps its own colour.
-- Admin web sidebar is light. The active item sits on `--brand-l` with brand text. No dark navigation panels.
-- Flat surfaces. One soft shadow only on floating layers (sheets, menus, toasts). No gradients, no gloss.
+- White page, not grey. Cards sit on white with a hairline border.
+- Any fill that must show on white (search boxes, chips, icon tiles, hover) uses `--bg-2`, never `--bg`.
+- Icons are ink on `--bg-2`. No coloured icon tiles.
+- Product illustrations sit on `--bg-2`, like studio photos. Each product keeps its own colour.
+- One font, Hanken Grotesk. Tight heading letter spacing.
+- Flat surfaces. One soft shadow only on floating layers. No gradients, no gloss.
 
 ## Flutter
 
