@@ -1,16 +1,16 @@
 /* Admin and vendor web panel: dense, calm, table-first. Sidebar collapses to a drawer below 960px. */
 body { overflow: hidden; }
 .app { display: grid; grid-template-columns: 244px minmax(0, 1fr); height: 100%; }
-.side { background: var(--deep); color: #D6D9F5; border-right: 0; display: flex; flex-direction: column; padding: 16px 12px; overflow-y: auto; z-index: 30; }
-.brand { color: #fff; display: flex; align-items: center; gap: 10px; padding: 4px 10px 16px; font-family: var(--f-display); font-weight: 700; font-size: 20px; letter-spacing: -.02em; }
+.side { background: var(--surface); color: var(--ink-2); border-right: 1px solid var(--line); display: flex; flex-direction: column; padding: 16px 12px; overflow-y: auto; z-index: 30; }
+.brand { color: var(--ink); display: flex; align-items: center; gap: 10px; padding: 4px 10px 16px; font-family: var(--f-display); font-weight: 700; font-size: 20px; letter-spacing: -.02em; }
 .mark { width: 34px; height: 34px; border-radius: 10px; background: var(--accent); color: var(--deep); display: grid; place-items: center; }
-.brand small { display: block; font-family: var(--f-body); font-size: 11px; font-weight: 600; color: #A9AEDB; letter-spacing: 0; margin-top: -2px; }
-.nav-g { margin-top: 14px; } .nav-g .eyebrow { padding: 0 10px 6px; display: block; color: #8E94C8; }
-.nav a { display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 10px; border-radius: 9px; font-weight: 600; color: #D6D9F5; cursor: pointer; }
-.nav a:hover { background: rgba(255,255,255,.07); } .nav a.on { background: rgba(255,255,255,.12); color: #fff; box-shadow: inset 3px 0 0 var(--accent); }
+.brand small { display: block; font-family: var(--f-body); font-size: 11px; font-weight: 600; color: var(--ink-3); letter-spacing: 0; margin-top: -2px; }
+.nav-g { margin-top: 14px; } .nav-g .eyebrow { padding: 0 10px 6px; display: block; color: var(--ink-4); }
+.nav a { display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 10px; border-radius: 9px; font-weight: 600; color: var(--ink-2); cursor: pointer; }
+.nav a:hover { background: var(--bg-2); color: var(--ink); } .nav a.on { background: var(--brand-l); color: var(--brand); box-shadow: none; }
 .nav a .cnt { margin-left: auto; background: var(--coral); color: #fff; font-size: 11px; font-weight: 700; min-width: 20px; height: 20px; border-radius: 10px; display: grid; place-items: center; padding: 0 6px; }
 .side-foot { margin-top: auto; padding-top: 16px; }
-.vbox { border: 1px solid rgba(255,255,255,.12); border-radius: var(--r-m); padding: 12px; background: rgba(255,255,255,.06); font-size: 12.5px; color: #D6D9F5; }
+.vbox { border: 1px solid var(--line); border-radius: var(--r-m); padding: 12px; background: var(--bg-2); font-size: 12.5px; color: var(--ink-3); } .vbox b { color: var(--ink); }
 .main { display: flex; flex-direction: column; min-width: 0; height: 100%; }
 .topbar { height: 64px; flex: none; background: var(--surface); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 14px; padding: 0 28px; }
 .topbar .search { flex: 1; max-width: 420px; height: 40px; border-radius: 10px; background: var(--bg); display: flex; align-items: center; gap: 10px; padding: 0 12px; color: var(--ink-3); }

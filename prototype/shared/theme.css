@@ -57,7 +57,7 @@ header.nav { background: var(--bg); }
 .brand .logo-tile { box-shadow: none; }
 
 /* Admin sidebar */
-.nav a.on { background: rgba(255,255,255,.12); box-shadow: inset 3px 0 0 var(--green); }
+.nav a.on { background: var(--brand-l); color: var(--brand); box-shadow: none; }
 .drawer { box-shadow: -12px 0 32px rgba(21,24,88,.14); }
 .wallet, .offer, .code-card, .navbar, .otp-show span { box-shadow: none; }
 
@@ -74,7 +74,7 @@ header.nav { background: var(--bg); }
 .sw.on { background: var(--green); }
 .online .dotg { background: var(--green); box-shadow: none; }
 .w-col .btn-a { background: var(--green); color: #fff; }
-.nav a[data-v=map]::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #3DD68C; margin-left: auto; }
+.nav a[data-v=map]::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--green); margin-left: auto; }
 .nav a[data-v=map] .cnt { display: none; }
 .kyc-dot.done i, .kyc-row.ok .kyc-st { background: var(--green); border-color: var(--green); }
 .okc { box-shadow: 0 0 0 8px var(--green-l); }
@@ -246,7 +246,7 @@ header.nav { background: var(--bg); }
 .tab .dot, .nav a .cnt, .badge-n, .ucount, .pill-n, .un, tr.unread .udot { background: var(--badge); color: #fff; }
 .kgrid .kcard:nth-child(4) { background: var(--warn-l) !important; } .kgrid .kcard:nth-child(4) small .i, .kpi:nth-child(4) small .i { color: var(--warn); }
 .delta.bad, .needs { color: var(--warn); }
-.side .nav a.on { box-shadow: inset 3px 0 0 var(--green); }
+.side .nav a.on { box-shadow: none; }
 
 /* ---- Customer home: services first */
 .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 20px; }
@@ -336,3 +336,8 @@ header.nav { background: var(--bg); }
 /* Stepper: a small count control (helpers needed). */
 .stepper { display: inline-flex; align-items: center; gap: 8px; }
 .stepper .btn { padding: 0; width: 36px; min-width: 36px; }
+
+/* ---- Clean v3: one font, one icon colour, quieter surfaces */
+h1, h2, h3, .big, .kpi b, .page-h h1 { letter-spacing: -0.02em; }
+.svc-tile .svc-ic, .svc-row .svc-ic, .svc-ic { background: var(--brand-l) !important; color: var(--brand) !important; }
+.svc-row .svc-ic { box-shadow: none; }

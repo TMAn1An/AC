@@ -3,19 +3,20 @@
   color-scheme: light;
   /* NEW brand, from the client logo: blue #2E3192, red #ED1B24, green #00A74F.
      Colour ratio 60 / 30 / 10: neutrals 60, brand blue 30, red and green accents 10. */
-  --ink: #1E1B18;
-  --ink-2: #46413B;
-  --ink-3: #756F68;
-  --ink-4: #A29C93;
-  --bg: #F4F1EC;
+  /* Neutrals: clean cool grey, like large consumer apps. One brand colour carries the actions. */
+  --ink: #15171C;
+  --ink-2: #3E434E;
+  --ink-3: #6B717D;
+  --ink-4: #9DA2AC;
+  --bg: #F5F6F8;
   --surface: #FFFFFF;
-  --line: #E6E1D9;
-  --line-2: #D3CDC3;
+  --line: #E7E9ED;
+  --line-2: #D5D8DE;
   /* Primary: logo blue (30%) */
   --brand: #272B7A;
   --brand-d: #1B1E5A;
-  --brand-l: #ECECF3;
-  --brand-m: #C9CBE0;
+  --brand-l: #EEF0F8;
+  --brand-m: #CDD1E6;
   --deep: #181B4B;
   /* Accents (10%): logo red for promotions, alerts and unread; logo green for success and live */
   --red: #C9232B; --red-d: #9E1A20; --red-l: #F8E7E4;
@@ -23,22 +24,22 @@
   --accent: var(--brand); --accent-d: var(--brand-d); --accent-l: var(--brand-l);
   /* Supporting tints for tiles and icons, all drawn from the three logo colours */
   --coral: var(--red); --coral-l: var(--red-l); /* red is reserved for flags and warnings: unread counts, errors, cancel */
-  --sky: #3E48A8; --sky-l: #E9EAF4;
+  --sky: #3E48A8; --sky-l: #EEF0F8;
   --sage: var(--green-d); --sage-l: var(--green-l);
   --plum: var(--brand); --plum-l: var(--brand-l);
-  --sand: #EFEAE2;
+  --sand: #F0F1F4;
   /* Semantic */
   --ok: #0A7A3E;  --ok-l: #E3F1E7;
   --warn: #8F5200; --warn-l: #FAEFD9;
   --bad: #B8181F;  --bad-l: #F8E7E4;
-  --info: #272B7A; --info-l: #ECECF3;
+  --info: #272B7A; --info-l: #EEF0F8;
   /* Type */
-  --f-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --f-display: 'Hanken Grotesk', system-ui, sans-serif;
   --f-body: 'Hanken Grotesk', system-ui, sans-serif;
   --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
   /* Shape */
   --r-s: 8px; --r-m: 12px; --r-l: 18px; --r-xl: 26px;
-  --badge: #C9232B; --pay-bkash: #D12053; --pay-nagad: #F37021; --ink-bg: #1E1B18; --bg-2: #FAF8F4; --seg-bg: #ECE7DE; --unread-bg: #F1F2FC; --stage: #E9E4DA; --surface-a: rgba(255,255,255,.95); --map-bg: #F1F3F9; --map-block: #E6E9F4; --map-water: #CFE1F5; --map-park: #D4EEDC; --map-case: #DDE1EF; --map-road: #FFFFFF; --map-label: #8A90AB; --map-water-label: #6B84C9; --map-route: #A9D6BC; --pin-ring: #FFFFFF;
+  --badge: #C9232B; --pay-bkash: #D12053; --pay-nagad: #F37021; --ink-bg: #15171C; --bg-2: #F8F9FA; --seg-bg: #ECEEF1; --unread-bg: #F2F4FC; --stage: #ECEEF1; --surface-a: rgba(255,255,255,.95); --map-bg: #F1F3F9; --map-block: #E6E9F4; --map-water: #CFE1F5; --map-park: #D4EEDC; --map-case: #DDE1EF; --map-road: #FFFFFF; --map-label: #8A90AB; --map-water-label: #6B84C9; --map-route: #A9D6BC; --pin-ring: #FFFFFF;
   --shadow-1: 0 1px 2px rgba(16, 20, 38, .06);
   --shadow-2: 0 8px 24px rgba(16, 20, 38, .10);
 }
@@ -46,8 +47,8 @@
 /* Dark mode. theme.js sets data-theme="dark" or "light" on <html> (the user's choice, or the system setting). */
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --ink: #F2EFEA; --ink-2: #D2CDC5; --ink-3: #A8A299; --ink-4: #7E7870;
-  --bg: #0F1013; --surface: #18191D; --line: #26282E; --line-2: #383A42;
+  --ink: #EEF0F3; --ink-2: #CACED5; --ink-3: #9AA0AA; --ink-4: #6F7580;
+  --bg: #0E0F12; --surface: #17181C; --line: #25272D; --line-2: #363940;
   --brand: #6E77EA; --brand-d: #929AF5; --brand-l: #23264A; --brand-m: #3B4082; --deep: #1D2166;
   --red: #E5484D; --red-d: #FF8F93; --red-l: #3A1F22;
   --green: #2FA866; --green-d: #5BD08C; --green-l: #15301F;

@@ -26,17 +26,22 @@ Sampled from the client logo: blue `#2E3192`, red `#ED1B24`, green `#00A74F`.
 
 | Role | Token | Value | Share |
 | --- | --- | --- | --- |
-| Neutrals: canvas, surfaces, lines, text | `--bg`, `--surface`, `--line`, `--ink` | `#F5F6FA`, `#FFFFFF`, `#E3E6F0`, `#101426` | 60% |
-| Primary: navigation, headers, primary actions | `--brand`, `--brand-d`, `--deep`, `--brand-l` | `#2E3192`, `#1F2270`, `#151858`, `#E9EAF7` | 30% |
-| Accent red: promotions, alerts, unread, destructive | `--red` | `#ED1B24` (text `#D8151D`) | 5% |
-| Accent green: success, live, vendors, savings | `--green` | `#00A74F` (text `#00873F`) | 5% |
-| Warning only | `--warn` | `#9A5B00` on `#FCF0DA` | rare |
+| Neutrals: canvas, surfaces, lines, text | `--bg`, `--surface`, `--line`, `--ink`, `--ink-3` | `#F5F6F8`, `#FFFFFF`, `#E7E9ED`, `#15171C`, `#6B717D` | most of every screen |
+| Primary: primary actions, active states, links | `--brand`, `--brand-d`, `--brand-l` | `#272B7A`, `#1B1E5A`, `#EEF0F8` | one colour for actions |
+| Green: success, live, savings | `--green` | `#0A8A47` | sparing |
+| Red: flags and warnings only (unread counts, errors, cancel, needs attention) | `--red`, `--badge` | `#C9232B` | sparing |
+| Warning | `--warn` | `#8F5200` on `#FAEFD9` | rare |
 
-Use red and green sparingly. If a screen has more than a few red or green elements, remove some. Text colours for red and green are slightly darker than the logo colours so they pass contrast on white.
+Use red and green sparingly. If a screen has more than a few red or green elements, remove some.
 
-## Glossy finish without gradients
+## Clean v3 rules
 
-Gloss is made from flat layers: a bright inner top edge, a soft coloured shadow, a translucent flat sheen shape on header bands, and glass blur on the tab bar, top bar and toasts. See `prototype/shared/theme.css`. Do not use gradients.
+- Cool neutral greys, not warm beige. White cards on a light grey canvas, hairline borders.
+- One font, Hanken Grotesk, for headings and body. Headings use tight letter spacing (-0.02em).
+- One icon tint: service and category icons use `--brand-l` with a brand coloured icon. No rainbow tiles.
+- Product illustrations sit on one neutral background, like studio photos. Each product keeps its own colour.
+- Admin web sidebar is light. The active item sits on `--brand-l` with brand text. No dark navigation panels.
+- Flat surfaces. One soft shadow only on floating layers (sheets, menus, toasts). No gradients, no gloss.
 
 ## Flutter
 

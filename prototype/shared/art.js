@@ -1,20 +1,21 @@
 /* Flat product illustrations drawn in SVG so every product card has curated visuals without photo licensing. */
 (function () {
+  /* Product backgrounds are one neutral, like product photos on a studio grey. Each product keeps its own colour. */
   const TL = [
-    { bg: '#E8E8F0', fg: '#272B7A', lt: '#C2C5DE' },
-    { bg: '#F0E6D8', fg: '#7A5230', lt: '#DCC7AB' },
-    { bg: '#E1EEE5', fg: '#0A7A3E', lt: '#A9D0B8' },
-    { bg: '#ECE7DE', fg: '#5A544C', lt: '#D3CDC3' },
-    { bg: '#E6E7F2', fg: '#3E48A8', lt: '#BAC0E6' },
-    { bg: '#DBDCEA', fg: '#181B4B', lt: '#A7ABD2' }
+    { bg: '#F1F2F5', fg: '#272B7A', lt: '#C2C5DE' },
+    { bg: '#F1F2F5', fg: '#7A5230', lt: '#DCC7AB' },
+    { bg: '#F1F2F5', fg: '#0A7A3E', lt: '#A9D0B8' },
+    { bg: '#F1F2F5', fg: '#5A544C', lt: '#D3CDC3' },
+    { bg: '#F1F2F5', fg: '#3E48A8', lt: '#BAC0E6' },
+    { bg: '#F1F2F5', fg: '#181B4B', lt: '#A7ABD2' }
   ];
   const TD = [
-    { bg: '#1E2142', fg: '#8189F0', lt: '#343A78' },
-    { bg: '#2B2418', fg: '#D2A66B', lt: '#4A3C24' },
-    { bg: '#16291E', fg: '#4CC380', lt: '#24503A' },
-    { bg: '#22211F', fg: '#B5AEA3', lt: '#3A3834' },
-    { bg: '#1C2040', fg: '#8189F0', lt: '#2F3570' },
-    { bg: '#181B3A', fg: '#8E96F5', lt: '#2C3166' }
+    { bg: '#1D1F25', fg: '#8189F0', lt: '#343A78' },
+    { bg: '#1D1F25', fg: '#D2A66B', lt: '#4A3C24' },
+    { bg: '#1D1F25', fg: '#4CC380', lt: '#24503A' },
+    { bg: '#1D1F25', fg: '#B5AEA3', lt: '#3A3834' },
+    { bg: '#1D1F25', fg: '#8189F0', lt: '#2F3570' },
+    { bg: '#1D1F25', fg: '#8E96F5', lt: '#2C3166' }
   ];
   const dark = () => window.AC && AC.theme && AC.theme.isDark();
   /* Tints follow the theme at the moment a card is drawn, so a re-render after a theme change is enough. */
