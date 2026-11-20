@@ -339,5 +339,5 @@ header.nav { background: var(--bg); }
 
 /* ---- Clean v3: one font, one icon colour, quieter surfaces */
 h1, h2, h3, .big, .kpi b, .page-h h1 { letter-spacing: -0.02em; }
-.svc-tile .svc-ic, .svc-row .svc-ic, .svc-ic { background: var(--brand-l) !important; color: var(--brand) !important; }
+.svc-tile .svc-ic, .svc-row .svc-ic { background: var(--brand-l) !important; color: var(--brand) !important; }
 .svc-row .svc-ic { box-shadow: none; }
